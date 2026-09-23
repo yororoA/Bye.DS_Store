@@ -17,9 +17,9 @@ actor FinderFolderProvider {
     private static let scriptSource = """
         tell application "Finder"
             set openFolders to {}
-            repeat with finderWindow in every Finder window
+            repeat with windowIndex from 1 to (count of Finder windows)
                 try
-                    set end of openFolders to POSIX path of (target of finderWindow as alias)
+                    set end of openFolders to POSIX path of (target of Finder window windowIndex as alias)
                 end try
             end repeat
             return openFolders
