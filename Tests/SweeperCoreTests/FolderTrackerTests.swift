@@ -174,3 +174,45 @@ final class CleanupTargetResolverTests: XCTestCase {
         )
     }
 }
+
+final class FullDiskScannerTests: XCTestCase {
+    private var temporaryDirectoryURL: URL!
+
+    override func setUpWithError() throws {
+        temporaryDirectoryURL = FileManager.default.temporaryDirectory
+            .appendingPathComponent(UUID().uuidString, isDirectory: true)
+        try FileManager.default.createDirectory(
+            at: temporaryDirectoryURL,
+            withIntermediateDirectories: true
+        )
+    }
+
+    override func tearDownWithError() throws {
+        try? FileManager.default.removeItem(at: temporaryDirectoryURL)
+        temporaryDirectoryURL = nil
+    }
+
+    func testScansAndRemovesNestedDSStoreFiles() async throws {
+        let nestedDirectoryURL = temporaryDirectoryURL
+            .appendingPathComponent("nested", isDirectory: true)
+        try FileManager.default.createDirectory(
+            at: nestedDirectoryURL,
+            withIntermediateDirectories: true
+        )
+
+        let rootDSStoreURL = temporaryDirectoryURL
+            .appendingPathComponent(".DS_Store", isDirectory: false)
+        let nestedDSStoreURL = nestedDirectoryURL
+            .appendingPathComponent(".DS_Store", isDirectory: false)
+        try Data("root".utf8).write(to: rootDSStoreURL)
+        try Data("nested".utf8).write(to: nestedDSStoreURL)
+
+        let report = await FullDiskScanner().scanAndClean(rootURL: temporaryDirectoryURL)
+
+        XCTAssertEqual(report.foundDSStoreCount, 2)
+        XCTAssertEqual(report.removedDSStoreCount, 2)
+        XCTAssertEqual(report.failureCount, 0)
+        XCTAssertFalse(FileManager.default.fileExists(atPath: rootDSStoreURL.path))
+        XCTAssertFalse(FileManager.default.fileExists(atPath: nestedDSStoreURL.path))
+    }
+}

@@ -140,6 +140,20 @@ struct SweeperMenuView: View {
             .accessibilityLabel("立即扫描")
 
             Button {
+                if model.isFullDiskScanRunning {
+                    model.cancelFullDiskScan()
+                } else {
+                    model.startFullDiskScan()
+                }
+            } label: {
+                Image(systemName: model.isFullDiskScanRunning ? "stop.fill" : "magnifyingglass")
+                    .frame(width: 22, height: 22)
+            }
+            .buttonStyle(.borderless)
+            .help(model.isFullDiskScanRunning ? "停止本机扫描" : "扫描本机并清理")
+            .accessibilityLabel(model.isFullDiskScanRunning ? "停止本机扫描" : "扫描本机并清理")
+
+            Button {
                 NSApp.activate(ignoringOtherApps: true)
                 openSettings()
             } label: {

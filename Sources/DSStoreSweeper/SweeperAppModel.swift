@@ -29,14 +29,18 @@ final class SweeperAppModel: ObservableObject {
     @Published private(set) var totalRemovedCount = 0
     @Published private(set) var launchAtLoginEnabled = false
     @Published private(set) var launchAtLoginError: String?
+    @Published private(set) var isFullDiskScanRunning = false
+    @Published private(set) var fullDiskScanReport: FullDiskCleanupReport?
 
     let settings: AppSettings
 
     private let finderFolderProvider = FinderFolderProvider()
     private let cleanupWorker = CleanupWorker()
     private let cleanupTargetResolver = CleanupTargetResolver()
+    private let fullDiskScanner = FullDiskScanner()
     private var tracker = FolderTracker()
     private var monitoringTask: Task<Void, Never>?
+    private var fullDiskScanTask: Task<Void, Never>?
 
     init(settings: AppSettings = AppSettings()) {
         self.settings = settings
@@ -91,6 +95,30 @@ final class SweeperAppModel: ObservableObject {
         Task { @MainActor [weak self] in
             await self?.poll()
         }
+    }
+
+    func startFullDiskScan() {
+        guard !isFullDiskScanRunning else {
+            return
+        }
+
+        fullDiskScanReport = nil
+        isFullDiskScanRunning = true
+
+        fullDiskScanTask = Task { @MainActor [weak self] in
+            guard let self else {
+                return
+            }
+
+            let report = await self.fullDiskScanner.scanAndClean()
+            self.fullDiskScanReport = report
+            self.isFullDiskScanRunning = false
+            self.fullDiskScanTask = nil
+        }
+    }
+
+    func cancelFullDiskScan() {
+        fullDiskScanTask?.cancel()
     }
 
     func setLaunchAtLogin(_ isEnabled: Bool) {

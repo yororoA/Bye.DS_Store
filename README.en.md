@@ -9,9 +9,9 @@ Bye.DS_Store is a lightweight macOS menu bar utility that watches the folders cu
 - [x] Monitor active folders
 - [x] Continue monitoring recently active folders for a grace period after they are closed
 - [x] Clean `.DS_Store` files in active folders
-- [ ] Scan the entire local machine for existing `.DS_Store` files and remove them
+- [x] Scan the entire local machine for existing `.DS_Store` files and remove them
 
-The last item is intentionally not implemented yet. Bye.DS_Store currently limits cleanup to folders observed through Finder instead of scanning the whole disk.
+The full-disk scan is an explicit, user-triggered operation. It is not part of the periodic active-folder polling loop.
 
 ## How It Works
 
@@ -25,10 +25,18 @@ The last item is intentionally not implemented yet. Bye.DS_Store currently limit
 - The polling interval and grace period are configurable.
 - The app can launch automatically at login.
 - The app runs as a menu bar item and does not add a Dock icon.
+- A manual full-disk scan can recursively find and remove existing `.DS_Store` files.
+- Full-disk scans can be stopped while they are running.
 
 ### Why Include the Parent Folder?
 
 Practical testing on macOS showed that `.DS_Store` is often not created directly in the folder that was opened. It is commonly written to the original folder when a user enters one of its child folders. The default scope therefore covers both the active folder and its direct parent.
+
+### Full-Disk Scan
+
+The Settings panel and menu bar both provide a manual full-disk scan. It starts at `/`, includes hidden files and package contents, skips symbolic links, and reports the number of scanned items, files removed, and access or deletion failures.
+
+Because macOS protects parts of the file system, a full-disk scan may require Full Disk Access. Inaccessible locations are reported instead of stopping the entire scan.
 
 ## Finder Scope and Limitations
 
@@ -78,7 +86,7 @@ If access was previously denied, open:
 System Settings > Privacy & Security > Automation > Bye.DS_Store > Finder
 ```
 
-macOS may also request separate file access permissions when cleanup reaches protected locations such as Desktop, Documents, or Downloads. Permission errors are displayed in the app settings.
+macOS may also request separate file access permissions when cleanup reaches protected locations such as Desktop, Documents, or Downloads. A full-disk scan may require Full Disk Access. Permission errors are displayed in the app settings.
 
 ## GitHub Releases
 

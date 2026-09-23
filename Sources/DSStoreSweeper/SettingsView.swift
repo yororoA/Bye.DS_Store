@@ -42,6 +42,59 @@ struct SettingsView: View {
                     .fixedSize(horizontal: false, vertical: true)
             }
 
+            Section("本机扫描") {
+                Text("手动递归扫描整个启动卷中的 .DS_Store。扫描可能耗时较长，并可能需要在系统设置中授予完整磁盘访问权限。")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+
+                if model.isFullDiskScanRunning {
+                    HStack {
+                        ProgressView()
+                            .controlSize(.small)
+                        Text("正在扫描本机...")
+                            .foregroundStyle(.secondary)
+                        Spacer()
+                        Button("停止") {
+                            model.cancelFullDiskScan()
+                        }
+                    }
+                } else {
+                    Button {
+                        model.startFullDiskScan()
+                    } label: {
+                        Label("扫描本机并清理", systemImage: "magnifyingglass")
+                    }
+                }
+
+                if let report = model.fullDiskScanReport {
+                    LabeledContent(
+                        report.wasCancelled ? "扫描状态" : "扫描完成",
+                        value: report.wasCancelled ? "已停止" : "已完成"
+                    )
+                    LabeledContent("扫描项目", value: "\(report.scannedItemCount)")
+                    LabeledContent("发现 .DS_Store", value: "\(report.foundDSStoreCount)")
+                    LabeledContent("已删除", value: "\(report.removedDSStoreCount)")
+
+                    if report.failureCount > 0 {
+                        Label(
+                            "有 \(report.failureCount) 个项目无法访问或删除",
+                            systemImage: "exclamationmark.triangle"
+                        )
+                        .font(.caption)
+                        .foregroundStyle(.orange)
+
+                        if let firstFailure = report.failures.first {
+                            Text("\(firstFailure.fileURL.path): \(firstFailure.message)")
+                                .font(.caption2)
+                                .foregroundStyle(.secondary)
+                                .lineLimit(3)
+                                .textSelection(.enabled)
+                        }
+                    }
+                }
+            }
+
             Section("系统") {
                 Toggle(
                     "登录时启动",
@@ -75,7 +128,7 @@ struct SettingsView: View {
             }
         }
         .formStyle(.grouped)
-        .frame(width: 480, height: 420)
+        .frame(width: 480, height: 560)
         .onAppear {
             model.refreshLaunchAtLoginState()
         }
