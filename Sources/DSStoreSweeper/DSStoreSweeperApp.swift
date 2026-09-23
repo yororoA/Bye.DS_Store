@@ -27,7 +27,13 @@ private struct MenuBarLabel: View {
     @ObservedObject var settings: AppSettings
 
     var body: some View {
-        Label("Bye.DS_Store", systemImage: iconName)
+        HStack(spacing: 4) {
+            Image(systemName: iconName)
+            Text("Bye")
+        }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("Bye.DS_Store")
+        .help("Bye.DS_Store")
     }
 
     private var iconName: String {
