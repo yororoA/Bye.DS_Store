@@ -113,7 +113,7 @@ struct SweeperMenuView: View {
                         }
                     }
                 }
-                .frame(maxHeight: 260)
+                .frame(minHeight: 118, maxHeight: 260)
             }
         }
     }
