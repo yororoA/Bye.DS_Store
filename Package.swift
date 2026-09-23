@@ -11,11 +11,19 @@ let package = Package(
         .library(
             name: "SweeperCore",
             targets: ["SweeperCore"]
+        ),
+        .executable(
+            name: "DSStoreSweeper",
+            targets: ["DSStoreSweeper"]
         )
     ],
     targets: [
         .target(
             name: "SweeperCore"
+        ),
+        .executableTarget(
+            name: "DSStoreSweeper",
+            dependencies: ["SweeperCore"]
         ),
         .testTarget(
             name: "SweeperCoreTests",

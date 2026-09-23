@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>CFBundleDevelopmentRegion</key>
+    <string>zh_CN</string>
+    <key>CFBundleDisplayName</key>
+    <string>Bye.DS_Store</string>
+    <key>CFBundleExecutable</key>
+    <string>DSStoreSweeper</string>
+    <key>CFBundleIdentifier</key>
+    <string>com.local.ds-store-sweeper</string>
+    <key>CFBundleInfoDictionaryVersion</key>
+    <string>6.0</string>
+    <key>CFBundleName</key>
+    <string>Bye.DS_Store</string>
+    <key>CFBundlePackageType</key>
+    <string>APPL</string>
+    <key>CFBundleShortVersionString</key>
+    <string>1.0.0</string>
+    <key>CFBundleVersion</key>
+    <string>1</string>
+    <key>LSApplicationCategoryType</key>
+    <string>public.app-category.utilities</string>
+    <key>LSMinimumSystemVersion</key>
+    <string>14.0</string>
+    <key>LSUIElement</key>
+    <true/>
+    <key>NSAppleEventsUsageDescription</key>
+    <string>需要读取 Finder 当前打开的文件夹，以便清理其中的 .DS_Store 文件。</string>
+    <key>NSDesktopFolderUsageDescription</key>
+    <string>需要清理已在 Finder 中打开的桌面文件夹内的 .DS_Store 文件。</string>
+    <key>NSDocumentsFolderUsageDescription</key>
+    <string>需要清理已在 Finder 中打开的文稿文件夹内的 .DS_Store 文件。</string>
+    <key>NSDownloadsFolderUsageDescription</key>
+    <string>需要清理已在 Finder 中打开的下载文件夹内的 .DS_Store 文件。</string>
+    <key>NSHighResolutionCapable</key>
+    <true/>
+</dict>
+</plist>
