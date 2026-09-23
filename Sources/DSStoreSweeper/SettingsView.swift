@@ -170,7 +170,7 @@ struct SettingsView: View {
             }
         }
         .formStyle(.grouped)
-        .frame(width: 520, height: 720)
+        .frame(width: 640, height: 720)
         .onAppear {
             model.refreshLaunchAtLoginState()
         }
