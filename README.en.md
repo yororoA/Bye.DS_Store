@@ -1,5 +1,7 @@
 # Bye.DS_Store
 
+[中文](README.md)
+
 Bye.DS_Store is a lightweight macOS menu bar utility that watches the folders currently open in Finder and periodically removes `.DS_Store` files from the relevant locations.
 
 ## Project Goals
