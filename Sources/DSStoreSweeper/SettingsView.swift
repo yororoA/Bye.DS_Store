@@ -1,4 +1,5 @@
 import SwiftUI
+import SweeperCore
 
 struct SettingsView: View {
     @ObservedObject var model: SweeperAppModel
@@ -28,7 +29,17 @@ struct SettingsView: View {
                     }
                 }
 
-                LabeledContent("清理范围", value: "被监控文件夹的根目录")
+                Picker("清理范围", selection: $settings.cleanupScope) {
+                    ForEach(CleanupScope.allCases, id: \.self) { scope in
+                        Text(scope.title)
+                            .tag(scope)
+                    }
+                }
+
+                Text("经实机排查，.DS_Store 不会直接生成在被打开文件夹的根目录，而是主要在进入其子文件夹时生成在原目录。")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
             }
 
             Section("系统") {

@@ -1,5 +1,6 @@
 import Combine
 import Foundation
+import SweeperCore
 
 @MainActor
 final class AppSettings: ObservableObject {
@@ -10,6 +11,7 @@ final class AppSettings: ObservableObject {
         static let isMonitoringEnabled = "isMonitoringEnabled"
         static let pollingInterval = "pollingInterval"
         static let gracePeriod = "gracePeriod"
+        static let cleanupScope = "cleanupScope"
     }
 
     @Published var isMonitoringEnabled: Bool {
@@ -27,6 +29,12 @@ final class AppSettings: ObservableObject {
     @Published var gracePeriod: TimeInterval {
         didSet {
             defaults.set(gracePeriod, forKey: Key.gracePeriod)
+        }
+    }
+
+    @Published var cleanupScope: CleanupScope {
+        didSet {
+            defaults.set(cleanupScope.rawValue, forKey: Key.cleanupScope)
         }
     }
 
@@ -50,5 +58,9 @@ final class AppSettings: ObservableObject {
         gracePeriod = Self.gracePeriods.contains(storedGracePeriod)
             ? storedGracePeriod
             : 60
+
+        cleanupScope = CleanupScope(
+            rawValue: defaults.string(forKey: Key.cleanupScope) ?? ""
+        ) ?? .monitoredAndParent
     }
 }

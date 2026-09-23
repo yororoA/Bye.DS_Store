@@ -131,3 +131,46 @@ final class DSStoreCleanerTests: XCTestCase {
         XCTAssertTrue(report.failures.isEmpty)
     }
 }
+
+final class CleanupTargetResolverTests: XCTestCase {
+    func testDefaultScopeIncludesDirectParentFolder() {
+        let folderURL = URL(fileURLWithPath: "/tmp/project/src", isDirectory: true)
+        let parentURL = URL(fileURLWithPath: "/tmp/project", isDirectory: true)
+
+        let targets = CleanupTargetResolver().resolve(
+            folderURLs: [folderURL],
+            scope: .monitoredAndParent
+        )
+
+        XCTAssertEqual(Set(targets), Set([folderURL, parentURL]))
+    }
+
+    func testMonitoredOnlyScopeDoesNotIncludeParentFolder() {
+        let folderURL = URL(fileURLWithPath: "/tmp/project/src", isDirectory: true)
+        let parentURL = URL(fileURLWithPath: "/tmp/project", isDirectory: true)
+
+        let targets = CleanupTargetResolver().resolve(
+            folderURLs: [folderURL],
+            scope: .monitoredOnly
+        )
+
+        XCTAssertEqual(targets, [folderURL])
+        XCTAssertFalse(targets.contains(parentURL))
+    }
+
+    func testDuplicateFoldersAndParentsAreDeduplicated() {
+        let firstFolderURL = URL(fileURLWithPath: "/tmp/project/src", isDirectory: true)
+        let secondFolderURL = URL(fileURLWithPath: "/tmp/project/tests", isDirectory: true)
+        let parentURL = URL(fileURLWithPath: "/tmp/project", isDirectory: true)
+
+        let targets = CleanupTargetResolver().resolve(
+            folderURLs: [firstFolderURL, secondFolderURL, firstFolderURL],
+            scope: .monitoredAndParent
+        )
+
+        XCTAssertEqual(
+            Set(targets),
+            Set([firstFolderURL, secondFolderURL, parentURL])
+        )
+    }
+}
