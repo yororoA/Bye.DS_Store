@@ -2,6 +2,8 @@
 
 [English](README.en.md)
 
+最新版本：[v1.0.3](https://github.com/yororoA/Bye.DS_Store/releases/tag/v1.0.3)
+
 一个常驻 macOS 菜单栏的轻量工具。它定时读取 Finder 当前打开的文件夹，并清理相关目录中的 `.DS_Store`。Finder 窗口关闭或切换到其他目录后，原目录会在设定的宽限期内继续参与清理。
 
 ## 项目目标
@@ -98,8 +100,8 @@ swift test --disable-index-store
 推送版本标签后，GitHub Actions 会自动测试、构建并发布 Release：
 
 ```bash
-git tag v1.0.0
-git push origin v1.0.0
+git tag v1.0.3
+git push origin v1.0.3
 ```
 
 工作流会：
@@ -109,6 +111,8 @@ git push origin v1.0.0
 3. 将应用打包为 zip 文件。
 4. 生成 SHA-256 校验文件。
 5. 创建或更新对应标签的 GitHub Release。
+
+如果仓库中存在 `.github/release-notes/<tag>.md`，工作流会使用该文件作为 Release 介绍；否则自动生成变更说明。
 
 构建产物使用 ad hoc 签名，未使用 Apple Developer 证书公证。首次运行时，macOS 可能要求用户手动确认打开。
 
@@ -121,4 +125,5 @@ Tests/SweeperCoreTests/    核心行为测试
 Support/Info.plist         macOS 应用包配置
 scripts/                   应用构建与启动脚本
 .github/workflows/         GitHub Release 自动发布工作流
+.github/release-notes/     按版本保存的 Release 介绍
 ```

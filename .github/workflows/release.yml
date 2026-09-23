@@ -67,7 +67,22 @@ jobs:
         run: |
           set -euo pipefail
 
+          notes_file=".github/release-notes/${RELEASE_TAG}.md"
+
+          if [[ -f "$notes_file" ]]; then
+            notes_args=(--notes-file "$notes_file")
+          else
+            notes_args=(--generate-notes)
+          fi
+
           if gh release view "$RELEASE_TAG" >/dev/null 2>&1; then
+            if [[ -f "$notes_file" ]]; then
+              gh release edit \
+                "$RELEASE_TAG" \
+                --title "Bye.DS_Store $RELEASE_TAG" \
+                --notes-file "$notes_file"
+            fi
+
             gh release upload \
               "$RELEASE_TAG" \
               "$ARCHIVE_PATH" \
@@ -79,6 +94,6 @@ jobs:
               "$ARCHIVE_PATH" \
               "$CHECKSUM_PATH" \
               --verify-tag \
-              --generate-notes \
+              "${notes_args[@]}" \
               --title "Bye.DS_Store $RELEASE_TAG"
           fi

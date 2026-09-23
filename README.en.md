@@ -2,6 +2,8 @@
 
 [中文](README.md)
 
+Latest release: [v1.0.3](https://github.com/yororoA/Bye.DS_Store/releases/tag/v1.0.3)
+
 Bye.DS_Store is a lightweight macOS menu bar utility that watches the folders currently open in Finder and periodically removes `.DS_Store` files from the relevant locations.
 
 ## Project Goals
@@ -106,8 +108,8 @@ The repository includes a GitHub Actions workflow at `.github/workflows/release.
 Push a version tag to build and publish a release automatically:
 
 ```bash
-git tag v1.0.0
-git push origin v1.0.0
+git tag v1.0.3
+git push origin v1.0.3
 ```
 
 The workflow will:
@@ -117,6 +119,8 @@ The workflow will:
 3. Package the app as a zip archive.
 4. Generate a SHA-256 checksum file.
 5. Create or update the GitHub Release for the pushed tag.
+
+When `.github/release-notes/<tag>.md` exists, the workflow uses it as the Release description; otherwise it generates release notes automatically.
 
 The generated app is ad hoc signed for local distribution. It is not notarized with an Apple Developer certificate, so macOS may require users to approve the first launch manually.
 
@@ -129,4 +133,5 @@ Tests/SweeperCoreTests/    Core behavior tests
 Support/Info.plist         macOS application bundle metadata
 scripts/                   Local build and launch scripts
 .github/workflows/         Continuous release automation
+.github/release-notes/     Versioned Release descriptions
 ```
