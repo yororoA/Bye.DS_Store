@@ -9,17 +9,19 @@ APP_BUNDLE="$ROOT_DIR/dist/$APP_NAME.app"
 CONTENTS_DIR="$APP_BUNDLE/Contents"
 MACOS_DIR="$CONTENTS_DIR/MacOS"
 
-swift build \
-    --package-path "$ROOT_DIR" \
-    --disable-index-store \
+SWIFT_BUILD_ARGS=(
+    --package-path "$ROOT_DIR"
     --configuration "$CONFIGURATION"
+)
+
+if [[ "${CI:-false}" != "true" ]]; then
+    SWIFT_BUILD_ARGS+=(--disable-index-store)
+fi
+
+swift build "${SWIFT_BUILD_ARGS[@]}"
 
 BINARY_DIR="$(
-    swift build \
-        --package-path "$ROOT_DIR" \
-        --disable-index-store \
-        --configuration "$CONFIGURATION" \
-        --show-bin-path
+    swift build "${SWIFT_BUILD_ARGS[@]}" --show-bin-path
 )"
 
 if [[ -d "$APP_BUNDLE" ]]; then

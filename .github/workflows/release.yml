@@ -28,7 +28,7 @@ jobs:
           swift --version
 
       - name: Run tests
-        run: swift test --disable-index-store
+        run: swift test
 
       - name: Build application bundle
         run: ./scripts/build-app.sh
