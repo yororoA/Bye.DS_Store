@@ -110,7 +110,12 @@ final class SweeperAppModel: ObservableObject {
                 return
             }
 
-            let report = await self.fullDiskScanner.scanAndClean()
+            let exclusions = self.settings.excludedFolderPatterns.compactMap(
+                FolderExclusionPattern.init
+            )
+            let report = await self.fullDiskScanner.scanAndClean(
+                excluding: exclusions
+            )
             self.fullDiskScanReport = report
             self.isFullDiskScanRunning = false
             self.fullDiskScanTask = nil

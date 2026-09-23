@@ -41,7 +41,8 @@ public actor FullDiskScanner {
     public init() {}
 
     public func scanAndClean(
-        rootURL: URL = URL(fileURLWithPath: "/", isDirectory: true)
+        rootURL: URL = URL(fileURLWithPath: "/", isDirectory: true),
+        excluding exclusions: [FolderExclusionPattern] = []
     ) async -> FullDiskCleanupReport {
         var scannedItemCount = 0
         var foundDSStoreCount = 0
@@ -102,15 +103,25 @@ public actor FullDiskScanner {
 
             scannedItemCount += 1
 
-            guard fileURL.lastPathComponent == ".DS_Store" else {
-                if Self.isSymbolicLink(fileURL, resourceKeys: resourceKeys) {
+            guard let resourceValues = try? fileURL.resourceValues(
+                forKeys: Set(resourceKeys)
+            ) else {
+                continue
+            }
+
+            if resourceValues.isSymbolicLink == true {
+                enumerator.skipDescendants()
+                continue
+            }
+
+            if resourceValues.isDirectory == true {
+                if exclusions.contains(where: { $0.matches(directoryURL: fileURL) }) {
                     enumerator.skipDescendants()
                 }
                 continue
             }
 
-            guard !Self.isSymbolicLink(fileURL, resourceKeys: resourceKeys),
-                  !Self.isDirectory(fileURL, resourceKeys: resourceKeys) else {
+            guard fileURL.lastPathComponent == ".DS_Store" else {
                 continue
             }
 
@@ -143,19 +154,5 @@ public actor FullDiskScanner {
             failures: failures,
             wasCancelled: false
         )
-    }
-
-    private static func isSymbolicLink(
-        _ fileURL: URL,
-        resourceKeys: [URLResourceKey]
-    ) -> Bool {
-        (try? fileURL.resourceValues(forKeys: Set(resourceKeys)).isSymbolicLink) == true
-    }
-
-    private static func isDirectory(
-        _ fileURL: URL,
-        resourceKeys: [URLResourceKey]
-    ) -> Bool {
-        (try? fileURL.resourceValues(forKeys: Set(resourceKeys)).isDirectory) == true
     }
 }
