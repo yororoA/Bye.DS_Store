@@ -27,6 +27,7 @@ The full-disk scan is an explicit, user-triggered operation. It is not part of t
 - The app runs as a menu bar item and does not add a Dock icon.
 - A manual full-disk scan can recursively find and remove existing `.DS_Store` files.
 - Full-disk scans can be stopped while they are running.
+- Full-disk scans support folder exclusion rules such as `node_modules` and `lib/packages`.
 
 ### Why Include the Parent Folder?
 
@@ -37,6 +38,16 @@ Practical testing on macOS showed that `.DS_Store` is often not created directly
 The Settings panel and menu bar both provide a manual full-disk scan. It starts at `/`, includes hidden files and package contents, skips symbolic links, and reports the number of scanned items, files removed, and access or deletion failures.
 
 Because macOS protects parts of the file system, a full-disk scan may require Full Disk Access. Inaccessible locations are reported instead of stopping the entire scan.
+
+### Scan Exclusions
+
+The Settings panel stores exclusion rules as removable tags. Enter a folder name such as `node_modules`, or a parent/target path such as `lib/packages`, then press Return. When the scanner reaches a matching folder, it skips that folder and all of its descendants.
+
+The initial exclusions cover common dependency and generated package directories:
+
+```text
+node_modules, .venv, venv, __pycache__, vendor, Pods, target, .gradle
+```
 
 ## Finder Scope and Limitations
 

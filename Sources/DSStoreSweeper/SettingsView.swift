@@ -4,6 +4,8 @@ import SweeperCore
 struct SettingsView: View {
     @ObservedObject var model: SweeperAppModel
     @ObservedObject private var settings: AppSettings
+    @State private var exclusionInput = ""
+    @State private var exclusionInputError = false
 
     init(model: SweeperAppModel) {
         self.model = model
@@ -95,6 +97,46 @@ struct SettingsView: View {
                 }
             }
 
+            Section("扫描排除") {
+                Text("输入文件夹名称，或输入“父文件夹/目标文件夹”路径。全盘扫描遇到匹配的文件夹时会跳过整个目录。")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+
+                HStack(spacing: 8) {
+                    TextField("例如 node_modules 或 lib/packages", text: $exclusionInput)
+                        .textFieldStyle(.roundedBorder)
+                        .onSubmit(addExclusionPattern)
+
+                    Button(action: addExclusionPattern) {
+                        Image(systemName: "plus")
+                            .frame(width: 22, height: 22)
+                    }
+                    .buttonStyle(.borderless)
+                    .disabled(exclusionInput.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                    .help("添加排除规则")
+                    .accessibilityLabel("添加排除规则")
+                }
+
+                if exclusionInputError {
+                    Text("请输入有效的文件夹名称或路径，例如 node_modules、lib/packages。")
+                        .font(.caption2)
+                        .foregroundStyle(.orange)
+                }
+
+                LazyVGrid(
+                    columns: [GridItem(.adaptive(minimum: 130), alignment: .leading)],
+                    alignment: .leading,
+                    spacing: 8
+                ) {
+                    ForEach(settings.excludedFolderPatterns, id: \.self) { pattern in
+                        ExclusionTag(pattern: pattern) {
+                            settings.removeExcludedFolderPattern(pattern)
+                        }
+                    }
+                }
+            }
+
             Section("系统") {
                 Toggle(
                     "登录时启动",
@@ -128,9 +170,20 @@ struct SettingsView: View {
             }
         }
         .formStyle(.grouped)
-        .frame(width: 480, height: 560)
+        .frame(width: 520, height: 720)
         .onAppear {
             model.refreshLaunchAtLoginState()
+        }
+    }
+
+    private func addExclusionPattern() {
+        let didAdd = settings.addExcludedFolderPattern(exclusionInput)
+        exclusionInputError = !didAdd && !exclusionInput.trimmingCharacters(
+            in: .whitespacesAndNewlines
+        ).isEmpty
+
+        if didAdd {
+            exclusionInput = ""
         }
     }
 
@@ -168,5 +221,31 @@ struct SettingsView: View {
 
         let minutes = seconds / 60
         return "\(minutes) 分钟"
+    }
+}
+
+private struct ExclusionTag: View {
+    let pattern: String
+    let removeAction: () -> Void
+
+    var body: some View {
+        HStack(spacing: 6) {
+            Text(pattern)
+                .font(.caption)
+                .lineLimit(1)
+                .truncationMode(.middle)
+
+            Button(action: removeAction) {
+                Image(systemName: "xmark")
+                    .font(.caption2.weight(.bold))
+            }
+            .buttonStyle(.borderless)
+            .foregroundStyle(.secondary)
+            .help("移除 \(pattern)")
+            .accessibilityLabel("移除 \(pattern)")
+        }
+        .padding(.horizontal, 8)
+        .padding(.vertical, 5)
+        .background(.quaternary, in: Capsule())
     }
 }
