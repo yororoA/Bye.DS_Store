@@ -1,0 +1,84 @@
+name: Publish Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  release:
+    name: Build and publish macOS app
+    runs-on: macos-14
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Show toolchain
+        run: |
+          sw_vers
+          xcodebuild -version
+          swift --version
+
+      - name: Run tests
+        run: swift test --disable-index-store
+
+      - name: Build application bundle
+        run: ./scripts/build-app.sh
+
+      - name: Package release assets
+        id: package
+        shell: bash
+        env:
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: |
+          set -euo pipefail
+
+          architecture="$(uname -m)"
+          archive_path="dist/Bye.DS_Store-${RELEASE_TAG}-macOS-${architecture}.zip"
+          checksum_path="${archive_path}.sha256"
+
+          ditto \
+            -c \
+            -k \
+            --sequesterRsrc \
+            --keepParent \
+            "dist/Bye.DS_Store.app" \
+            "$archive_path"
+
+          shasum -a 256 "$archive_path" > "$checksum_path"
+
+          echo "archive=$archive_path" >> "$GITHUB_OUTPUT"
+          echo "checksum=$checksum_path" >> "$GITHUB_OUTPUT"
+
+      - name: Create or update GitHub Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RELEASE_TAG: ${{ github.ref_name }}
+          ARCHIVE_PATH: ${{ steps.package.outputs.archive }}
+          CHECKSUM_PATH: ${{ steps.package.outputs.checksum }}
+        run: |
+          set -euo pipefail
+
+          if gh release view "$RELEASE_TAG" >/dev/null 2>&1; then
+            gh release upload \
+              "$RELEASE_TAG" \
+              "$ARCHIVE_PATH" \
+              "$CHECKSUM_PATH" \
+              --clobber
+          else
+            gh release create \
+              "$RELEASE_TAG" \
+              "$ARCHIVE_PATH" \
+              "$CHECKSUM_PATH" \
+              --verify-tag \
+              --generate-notes \
+              --title "Bye.DS_Store $RELEASE_TAG"
+          fi
