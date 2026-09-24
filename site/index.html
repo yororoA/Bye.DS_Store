@@ -131,9 +131,14 @@
       display: inline-flex;
       align-items: center;
     }
-    .language-control select {
+    .language-trigger {
+      display: inline-flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
       min-height: 34px;
-      padding: 0 28px 0 10px;
+      min-width: 126px;
+      padding: 0 10px;
       color: #d9e5e6;
       background: #17282e;
       border: 1px solid #3a5056;
@@ -142,9 +147,76 @@
       font-size: 12px;
       cursor: pointer;
     }
-    .language-control select:focus-visible {
+    .language-trigger:hover,
+    .language-control.is-open .language-trigger {
+      background: #20343b;
+      border-color: #5d797e;
+    }
+    .language-trigger:focus-visible {
       outline: 2px solid var(--teal);
       outline-offset: 2px;
+    }
+    .language-chevron {
+      color: #8ea4a7;
+      font-size: 14px;
+      line-height: 1;
+      transition: transform .2s ease;
+    }
+    .language-control.is-open .language-chevron {
+      transform: rotate(180deg);
+    }
+    .language-menu {
+      position: absolute;
+      z-index: 30;
+      top: calc(100% + 8px);
+      right: 0;
+      min-width: 154px;
+      padding: 6px;
+      overflow: hidden;
+      background: #17282e;
+      border: 1px solid #3a5056;
+      border-radius: 8px;
+      box-shadow: 0 16px 36px rgba(0, 0, 0, .28);
+      opacity: 0;
+      transform: translateY(-6px) scale(.98);
+      transform-origin: top right;
+      pointer-events: none;
+      transition: opacity .18s ease, transform .18s ease;
+    }
+    .language-control.is-open .language-menu {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+      pointer-events: auto;
+    }
+    .language-option {
+      display: flex;
+      align-items: center;
+      width: 100%;
+      min-height: 34px;
+      padding: 0 8px;
+      color: #b8c7ca;
+      background: transparent;
+      border: 0;
+      border-radius: 5px;
+      font: inherit;
+      font-size: 12px;
+      text-align: left;
+      cursor: pointer;
+    }
+    .language-option:hover,
+    .language-option:focus-visible,
+    .language-option[aria-selected="true"] {
+      color: #fff;
+      background: #21434a;
+      outline: none;
+    }
+    .language-check {
+      width: 18px;
+      color: var(--teal);
+      visibility: hidden;
+    }
+    .language-option[aria-selected="true"] .language-check {
+      visibility: visible;
     }
     .sr-only {
       position: absolute;
@@ -783,7 +855,8 @@
     @media (max-width: 640px) {
       .nav, .section-inner, .footer-inner, .hero-grid { width: min(100% - 32px, var(--max)); }
       .nav-links { display: none; }
-      .language-control select { max-width: 76px; padding-right: 7px; padding-left: 7px; }
+      .language-trigger { min-width: 90px; padding: 0 7px; }
+      .language-menu { right: -8px; }
       .nav .button { min-height: 36px; padding: 0 11px; font-size: 12px; }
       .hero { padding-bottom: 54px; }
       h1 { font-size: 54px; }
@@ -863,17 +936,48 @@
         <a href="#trust" data-i18n="nav.trust">为什么放心</a>
         <a href="https://github.com/yororoA/Bye.DS_Store" target="_blank" rel="noreferrer">GitHub ↗</a>
       </div>
-      <label class="language-control">
+      <div class="language-control" id="language-control">
         <span class="sr-only" data-i18n="language.label">语言</span>
-        <select id="language-select" aria-label="语言" data-i18n-attr="aria-label:language.label">
-          <option value="zh-Hans">简体中文</option>
-          <option value="zh-Hant">繁體中文</option>
-          <option value="en">English</option>
-          <option value="ja">日本語</option>
-          <option value="de">Deutsch</option>
-          <option value="ru">Русский</option>
-        </select>
-      </label>
+        <button
+          class="language-trigger"
+          id="language-trigger"
+          type="button"
+          aria-haspopup="listbox"
+          aria-expanded="false"
+          aria-controls="language-menu"
+          aria-label="语言"
+          data-i18n-attr="aria-label:language.label"
+        >
+          <span id="language-current">简体中文</span>
+          <span class="language-chevron" aria-hidden="true">⌄</span>
+        </button>
+        <div
+          class="language-menu"
+          id="language-menu"
+          role="listbox"
+          aria-label="语言"
+          data-i18n-attr="aria-label:language.label"
+        >
+          <button class="language-option" type="button" role="option" data-language="zh-Hans" aria-selected="true">
+            <span class="language-check" aria-hidden="true">✓</span>简体中文
+          </button>
+          <button class="language-option" type="button" role="option" data-language="zh-Hant" aria-selected="false">
+            <span class="language-check" aria-hidden="true">✓</span>繁體中文
+          </button>
+          <button class="language-option" type="button" role="option" data-language="en" aria-selected="false">
+            <span class="language-check" aria-hidden="true">✓</span>English
+          </button>
+          <button class="language-option" type="button" role="option" data-language="ja" aria-selected="false">
+            <span class="language-check" aria-hidden="true">✓</span>日本語
+          </button>
+          <button class="language-option" type="button" role="option" data-language="de" aria-selected="false">
+            <span class="language-check" aria-hidden="true">✓</span>Deutsch
+          </button>
+          <button class="language-option" type="button" role="option" data-language="ru" aria-selected="false">
+            <span class="language-check" aria-hidden="true">✓</span>Русский
+          </button>
+        </div>
+      </div>
       <a class="button button-primary" data-release-download href="https://github.com/yororoA/Bye.DS_Store/releases/latest">
         <span data-i18n="download.prefix">下载</span> <span data-release-version>最新版本</span>
       </a>
@@ -1492,9 +1596,21 @@
     const pageTextFallbacks = {
       "scan.scanning": "扫描中"
     };
-    const languageSelect = document.getElementById("language-select");
+    const languageControl = document.getElementById("language-control");
+    const languageTrigger = document.getElementById("language-trigger");
+    const languageCurrent = document.getElementById("language-current");
+    const languageMenu = document.getElementById("language-menu");
+    const languageOptions = [...document.querySelectorAll(".language-option")];
     const activityText = document.getElementById("activity-text");
     const supportedLanguages = ["zh-Hans", "zh-Hant", "en", "ja", "de", "ru"];
+    const languageLabels = {
+      "zh-Hans": "简体中文",
+      "zh-Hant": "繁體中文",
+      en: "English",
+      ja: "日本語",
+      de: "Deutsch",
+      ru: "Русский"
+    };
     const defaultTextByKey = new Map();
     const defaultHTMLByKey = new Map();
     const defaultAttributesByKey = new Map();
@@ -1603,7 +1719,13 @@
         );
       });
 
-      languageSelect.value = activeLanguage;
+      languageCurrent.textContent = languageLabels[activeLanguage];
+      languageOptions.forEach((option) => {
+        option.setAttribute(
+          "aria-selected",
+          option.dataset.language === activeLanguage ? "true" : "false"
+        );
+      });
       activityIndex = 0;
       activityText.textContent = pageActivities[activeLanguage][0];
       try {
@@ -1611,8 +1733,43 @@
       } catch {}
     };
 
-    languageSelect.addEventListener("change", (event) => {
-      applyLanguage(event.target.value);
+    const setLanguageMenuOpen = (isOpen, focusSelected = false) => {
+      languageControl.classList.toggle("is-open", isOpen);
+      languageTrigger.setAttribute("aria-expanded", String(isOpen));
+      if (isOpen && focusSelected) {
+        languageOptions.find((option) => option.dataset.language === activeLanguage)?.focus();
+      }
+    };
+
+    languageTrigger.addEventListener("click", () => {
+      setLanguageMenuOpen(!languageControl.classList.contains("is-open"), true);
+    });
+    languageTrigger.addEventListener("keydown", (event) => {
+      if (event.key === "ArrowDown" || event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        setLanguageMenuOpen(true, true);
+      }
+    });
+    languageOptions.forEach((option, index) => {
+      option.addEventListener("click", () => {
+        applyLanguage(option.dataset.language);
+        setLanguageMenuOpen(false);
+        languageTrigger.focus();
+      });
+      option.addEventListener("keydown", (event) => {
+        if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+          event.preventDefault();
+          const offset = event.key === "ArrowDown" ? 1 : -1;
+          languageOptions[(index + offset + languageOptions.length) % languageOptions.length].focus();
+        } else if (event.key === "Escape") {
+          event.preventDefault();
+          setLanguageMenuOpen(false);
+          languageTrigger.focus();
+        }
+      });
+    });
+    document.addEventListener("pointerdown", (event) => {
+      if (!languageControl.contains(event.target)) setLanguageMenuOpen(false);
     });
     applyLanguage(detectedLanguage());
 

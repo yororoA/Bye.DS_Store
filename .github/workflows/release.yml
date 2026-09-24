@@ -174,3 +174,8 @@ jobs:
               "${notes_args[@]}" \
               --title "Bye.DS_Store $RELEASE_TAG"
           fi
+
+      - name: Refresh GitHub Pages
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh workflow run pages.yml --repo "$GITHUB_REPOSITORY" --ref main
