@@ -7,6 +7,9 @@ on:
     paths:
       - "site/**"
       - ".github/workflows/pages.yml"
+  release:
+    types:
+      - published
   workflow_dispatch:
 
 permissions:
@@ -29,9 +32,33 @@ jobs:
     steps:
       - name: Check out source
         uses: actions/checkout@v4
+        with:
+          ref: main
 
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
+
+      - name: Resolve latest release metadata
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+
+          release_json="$(gh api "repos/${GITHUB_REPOSITORY}/releases/latest")"
+          version="$(jq -r '.tag_name // empty' <<<"$release_json")"
+          dmg_url="$(jq -r '[.assets[]? | select(.name | endswith("macOS-arm64.dmg")) | .browser_download_url][0] // empty' <<<"$release_json")"
+          release_url="$(jq -r '.html_url // empty' <<<"$release_json")"
+
+          test -n "$version"
+          test -n "$dmg_url"
+          test -n "$release_url"
+
+          jq -n \
+            --arg version "$version" \
+            --arg dmg_url "$dmg_url" \
+            --arg release_url "$release_url" \
+            '{version: $version, dmgUrl: $dmg_url, releaseUrl: $release_url}' \
+            > site/release.json
 
       - name: Upload site artifact
         uses: actions/upload-pages-artifact@v3

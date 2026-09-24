@@ -831,8 +831,8 @@
         <a href="#trust">为什么放心</a>
         <a href="https://github.com/yororoA/Bye.DS_Store" target="_blank" rel="noreferrer">GitHub ↗</a>
       </div>
-      <a class="button button-primary" href="https://github.com/yororoA/Bye.DS_Store/releases/download/v1.0.6/Bye.DS_Store-v1.0.6-macOS-arm64.dmg">
-        下载 v1.0.6
+      <a class="button button-primary" data-release-download href="https://github.com/yororoA/Bye.DS_Store/releases/latest">
+        下载 <span data-release-version>最新版本</span>
       </a>
     </nav>
   </header>
@@ -849,7 +849,7 @@
             在后台清理不需要留下的 `.DS_Store`。
           </p>
           <div class="hero-actions">
-            <a class="button button-primary" href="https://github.com/yororoA/Bye.DS_Store/releases/download/v1.0.6/Bye.DS_Store-v1.0.6-macOS-arm64.dmg">
+            <a class="button button-primary" data-release-download href="https://github.com/yororoA/Bye.DS_Store/releases/latest">
               下载 macOS 应用 <span aria-hidden="true">↓</span>
             </a>
             <a class="button button-ghost" href="#how-it-works">了解工作方式 <span aria-hidden="true">↘</span></a>
@@ -1040,17 +1040,17 @@
           <h2>让 `.DS_Store`<br>退到背景里。</h2>
           <p>下载最新版本，在 macOS 菜单栏里开始使用 Bye.DS_Store。</p>
           <div class="download-meta">
-            <span>v1.0.6</span>
+            <span data-release-version>最新版本</span>
             <span>macOS 14+</span>
             <span>Apple Silicon</span>
             <span>MIT-style open source project</span>
           </div>
         </div>
         <div class="download-actions">
-          <a class="button button-primary" href="https://github.com/yororoA/Bye.DS_Store/releases/download/v1.0.6/Bye.DS_Store-v1.0.6-macOS-arm64.dmg">
+          <a class="button button-primary" data-release-download href="https://github.com/yororoA/Bye.DS_Store/releases/latest">
             下载 DMG <span aria-hidden="true">↓</span>
           </a>
-          <a class="button button-ghost" href="https://github.com/yororoA/Bye.DS_Store/releases/tag/v1.0.6" target="_blank" rel="noreferrer">
+          <a class="button button-ghost" data-release-page href="https://github.com/yororoA/Bye.DS_Store/releases/latest" target="_blank" rel="noreferrer">
             Release ↗
           </a>
         </div>
@@ -1072,6 +1072,42 @@
   <script>
     document.documentElement.classList.add("js");
     document.getElementById("year").textContent = new Date().getFullYear();
+
+    const latestReleaseUrl = "https://github.com/yororoA/Bye.DS_Store/releases/latest";
+    const releaseVersions = document.querySelectorAll("[data-release-version]");
+    const releaseDownloads = document.querySelectorAll("[data-release-download]");
+    const releasePages = document.querySelectorAll("[data-release-page]");
+
+    const useLatestReleasePage = () => {
+      releaseDownloads.forEach((link) => {
+        link.href = latestReleaseUrl;
+      });
+      releasePages.forEach((link) => {
+        link.href = latestReleaseUrl;
+      });
+    };
+
+    fetch("release.json", { cache: "no-store" })
+      .then((response) => {
+        if (!response.ok) throw new Error(`Release metadata request failed: ${response.status}`);
+        return response.json();
+      })
+      .then((release) => {
+        if (!release.version || !release.dmgUrl) throw new Error("Latest arm64 DMG is unavailable");
+
+        releaseVersions.forEach((element) => {
+          element.textContent = release.version;
+        });
+        releaseDownloads.forEach((link) => {
+          link.href = release.dmgUrl;
+        });
+        releasePages.forEach((link) => {
+          link.href = release.releaseUrl || latestReleaseUrl;
+        });
+      })
+      .catch(() => {
+        useLatestReleasePage();
+      });
 
     const revealItems = document.querySelectorAll(".reveal");
     const revealObserver = new IntersectionObserver((entries, observer) => {
