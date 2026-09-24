@@ -34,7 +34,7 @@ The full-disk scan is an explicit, user-triggered operation. It is not part of t
 - The status popover shows the last cleanup time, recent cleanup count, and shortcut.
 - Exclusion rules can be restored to defaults or cleared completely.
 - Full-disk scans can target the startup disk, external disks, network disks, or all mounted volumes.
-- The UI follows the macOS system language and supports Chinese and English.
+- The UI follows the macOS system language by default, or can be fixed to Chinese or English in Settings.
 
 ### Why Include the Parent Folder?
 
@@ -76,6 +76,16 @@ macOS exposes the active target of each Finder window, but does not reliably exp
 Press `⌘⌥B` to open the Bye.DS_Store control panel. This works even when the app is not in the foreground, and normally shows the panel beside the status item.
 
 The shortcut uses macOS's native global hot-key registration and does not require additional Accessibility permission.
+
+## Interface Language
+
+The Settings panel provides three choices:
+
+- System default
+- 中文
+- English
+
+The selection is persisted locally and immediately applies to the menu popover, Settings window, confirmation dialogs, and scan details.
 
 ## Requirements
 
