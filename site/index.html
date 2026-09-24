@@ -1,0 +1,859 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0d171c">
+  <meta name="description" content="Bye.DS_Store 是一个常驻 macOS 菜单栏的 .DS_Store 清理工具。">
+  <title>Bye.DS_Store — Keep Finder folders clean</title>
+  <style>
+    :root {
+      --ink: #0d171c;
+      --ink-soft: #23343b;
+      --paper: #f4f7f6;
+      --paper-strong: #ffffff;
+      --line: #d8e1e1;
+      --muted: #66767b;
+      --teal: #00a994;
+      --teal-dark: #007d70;
+      --amber: #f0aa3c;
+      --coral: #e66c5f;
+      --shadow: 0 20px 60px rgba(13, 23, 28, .14);
+      --radius: 12px;
+      --max: 1180px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--paper);
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text",
+        "Helvetica Neue", Arial, sans-serif;
+      line-height: 1.55;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    button, a { -webkit-tap-highlight-color: transparent; }
+
+    .site-header {
+      position: fixed;
+      z-index: 20;
+      top: 0;
+      right: 0;
+      left: 0;
+      color: #fff;
+      background: rgba(13, 23, 28, .92);
+      border-bottom: 1px solid rgba(255, 255, 255, .1);
+      backdrop-filter: blur(16px);
+    }
+
+    .nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: min(var(--max), calc(100% - 48px));
+      height: 68px;
+      margin: 0 auto;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 720;
+      letter-spacing: 0;
+    }
+
+    .brand-mark {
+      display: grid;
+      width: 28px;
+      height: 28px;
+      place-items: center;
+      color: var(--ink);
+      background: var(--teal);
+      border-radius: 8px;
+      font-size: 16px;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 28px;
+      color: #b8c7ca;
+      font-size: 14px;
+    }
+
+    .nav-links a { transition: color .2s ease; }
+    .nav-links a:hover { color: #fff; }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      min-height: 42px;
+      padding: 0 16px;
+      border: 1px solid transparent;
+      border-radius: 8px;
+      font: inherit;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform .2s ease, background .2s ease, border-color .2s ease;
+    }
+
+    .button:hover { transform: translateY(-2px); }
+    .button-primary { color: var(--ink); background: var(--teal); }
+    .button-primary:hover { background: #20c2ad; }
+    .button-light { color: var(--ink); background: #fff; }
+    .button-ghost { color: #fff; border-color: rgba(255, 255, 255, .28); }
+    .button-ghost:hover { background: rgba(255, 255, 255, .08); }
+
+    .hero {
+      min-height: 800px;
+      padding: 164px 0 84px;
+      color: #fff;
+      background: var(--ink);
+      overflow: hidden;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: minmax(0, .88fr) minmax(460px, 1.12fr);
+      align-items: center;
+      gap: 64px;
+      width: min(var(--max), calc(100% - 48px));
+      margin: 0 auto;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      margin: 0 0 24px;
+      color: #79d9ce;
+      font-size: 13px;
+      font-weight: 760;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    .eyebrow::before {
+      width: 24px;
+      height: 1px;
+      background: currentColor;
+      content: "";
+    }
+
+    h1, h2, h3, p { margin-top: 0; }
+
+    h1 {
+      max-width: 600px;
+      margin-bottom: 24px;
+      font-size: clamp(46px, 6vw, 78px);
+      font-weight: 780;
+      letter-spacing: -.045em;
+      line-height: .98;
+    }
+
+    .hero-copy {
+      max-width: 500px;
+      color: #aebdc0;
+      font-size: 18px;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 34px;
+    }
+
+    .hero-note {
+      margin-top: 20px;
+      color: #718287;
+      font-size: 12px;
+    }
+
+    .desktop-scene {
+      position: relative;
+      min-height: 520px;
+      padding: 20px 20px 0;
+    }
+
+    .desktop-scene::before {
+      position: absolute;
+      right: 8%;
+      bottom: 1px;
+      left: 8%;
+      height: 1px;
+      background: #617278;
+      content: "";
+    }
+
+    .desktop-window {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 620px;
+      margin: 0 auto;
+      overflow: hidden;
+      border: 1px solid #53666c;
+      border-radius: 13px;
+      background: #17262c;
+      box-shadow: 0 26px 60px rgba(0, 0, 0, .32);
+      transform: rotate(1deg);
+    }
+
+    .desktop-toolbar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      height: 42px;
+      padding: 0 14px;
+      background: #26383e;
+      border-bottom: 1px solid #3a4d52;
+    }
+
+    .traffic-lights { display: flex; gap: 6px; }
+    .traffic-lights i {
+      display: block;
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+    }
+    .traffic-lights i:nth-child(1) { background: #e77868; }
+    .traffic-lights i:nth-child(2) { background: #e9b24f; }
+    .traffic-lights i:nth-child(3) { background: #55bc76; }
+    .toolbar-title {
+      flex: 1;
+      color: #bdccce;
+      font-size: 12px;
+      text-align: center;
+    }
+
+    .finder-body {
+      display: grid;
+      grid-template-columns: 150px 1fr;
+      min-height: 350px;
+    }
+
+    .finder-sidebar {
+      padding: 24px 16px;
+      background: #1d3036;
+      border-right: 1px solid #3a4d52;
+    }
+
+    .sidebar-label {
+      margin-bottom: 16px;
+      color: #71888c;
+      font-size: 10px;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+    }
+
+    .sidebar-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 8px;
+      color: #aabec0;
+      font-size: 12px;
+      border-radius: 6px;
+    }
+    .sidebar-item.active { color: #fff; background: #2f4b50; }
+    .sidebar-icon { color: var(--teal); font-size: 13px; }
+
+    .finder-content { padding: 24px; }
+    .finder-content h3 {
+      margin-bottom: 6px;
+      color: #fff;
+      font-size: 17px;
+      letter-spacing: -.02em;
+    }
+    .finder-content p {
+      margin-bottom: 22px;
+      color: #81979a;
+      font-size: 11px;
+    }
+
+    .file-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+
+    .file {
+      min-height: 84px;
+      padding: 14px 10px;
+      color: #b8c9ca;
+      background: #20353b;
+      border: 1px solid #345158;
+      border-radius: 7px;
+      font-size: 10px;
+      text-align: center;
+    }
+    .file b { display: block; margin-bottom: 8px; color: #d8e5e4; font-size: 20px; }
+    .file.ds { color: #ffd49b; border-color: #8b6638; }
+
+    .menu-popover {
+      position: absolute;
+      z-index: 2;
+      top: 44px;
+      right: -34px;
+      width: 300px;
+      padding: 0;
+      color: var(--ink);
+      background: #fff;
+      border: 1px solid #d8e3e2;
+      border-radius: 10px;
+      box-shadow: 0 20px 45px rgba(0, 0, 0, .35);
+      transform: rotate(-1deg);
+    }
+
+    .menu-popover::before {
+      position: absolute;
+      top: -7px;
+      right: 62px;
+      width: 13px;
+      height: 13px;
+      background: #fff;
+      border-top: 1px solid #d8e3e2;
+      border-left: 1px solid #d8e3e2;
+      content: "";
+      transform: rotate(45deg);
+    }
+
+    .popover-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px;
+      border-bottom: 1px solid #e8eeee;
+    }
+    .popover-head strong { font-size: 14px; }
+    .popover-head small { display: block; margin-top: 3px; color: var(--muted); font-size: 10px; }
+    .toggle {
+      width: 32px;
+      height: 19px;
+      padding: 2px;
+      background: var(--teal);
+      border-radius: 99px;
+    }
+    .toggle::after {
+      display: block;
+      width: 15px;
+      height: 15px;
+      margin-left: 13px;
+      background: #fff;
+      border-radius: 50%;
+      content: "";
+    }
+    .popover-status {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 11px 16px;
+      color: var(--muted);
+      font-size: 10px;
+    }
+    .status-dot { width: 7px; height: 7px; background: var(--teal); border-radius: 50%; }
+
+    .folder-row {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 10px 16px;
+      border-top: 1px solid #edf2f2;
+    }
+    .folder-row > span:first-child { color: var(--teal-dark); font-size: 18px; }
+    .folder-row div { flex: 1; min-width: 0; }
+    .folder-row strong { display: block; font-size: 11px; }
+    .folder-row small {
+      display: block;
+      overflow: hidden;
+      color: #8a999c;
+      font-size: 9px;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .folder-state { color: var(--teal-dark); font-size: 9px; }
+    .popover-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+      border-top: 1px solid #e8eeee;
+    }
+    .popover-footer small { color: var(--muted); font-size: 9px; }
+    .popover-footer span { color: #7d8d90; font-size: 14px; }
+
+    .section {
+      padding: 112px 0;
+      border-bottom: 1px solid var(--line);
+    }
+    .section-dark { color: #fff; background: var(--ink); border-bottom-color: #26373c; }
+    .section-inner {
+      width: min(var(--max), calc(100% - 48px));
+      margin: 0 auto;
+    }
+    .section-kicker {
+      margin-bottom: 14px;
+      color: var(--teal-dark);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+    }
+    .section-dark .section-kicker { color: #78d8ce; }
+    h2 {
+      max-width: 680px;
+      margin-bottom: 18px;
+      font-size: clamp(32px, 4vw, 52px);
+      font-weight: 760;
+      letter-spacing: -.04em;
+      line-height: 1.02;
+    }
+    .section-intro {
+      max-width: 610px;
+      margin-bottom: 50px;
+      color: var(--muted);
+      font-size: 17px;
+    }
+    .section-dark .section-intro { color: #9eb0b3; }
+
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      overflow: hidden;
+      background: var(--line);
+      border: 1px solid var(--line);
+    }
+    .feature {
+      min-height: 250px;
+      padding: 28px;
+      background: var(--paper-strong);
+    }
+    .feature-number {
+      display: grid;
+      width: 36px;
+      height: 36px;
+      margin-bottom: 30px;
+      place-items: center;
+      color: var(--ink);
+      background: var(--amber);
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 800;
+    }
+    .feature:nth-child(2) .feature-number { background: var(--teal); }
+    .feature:nth-child(3) .feature-number { background: #b6c8e8; }
+    .feature h3 { margin-bottom: 9px; font-size: 19px; }
+    .feature p { margin-bottom: 0; color: var(--muted); font-size: 14px; }
+
+    .workflow {
+      display: grid;
+      grid-template-columns: 1fr 1.1fr;
+      gap: 84px;
+      align-items: center;
+    }
+    .timeline { border-left: 1px solid #53676c; }
+    .timeline-step {
+      position: relative;
+      padding: 0 0 32px 32px;
+    }
+    .timeline-step:last-child { padding-bottom: 0; }
+    .timeline-step::before {
+      position: absolute;
+      top: 3px;
+      left: -6px;
+      width: 11px;
+      height: 11px;
+      background: var(--ink);
+      border: 2px solid var(--teal);
+      border-radius: 50%;
+      content: "";
+    }
+    .timeline-step b { display: block; margin-bottom: 5px; color: #fff; font-size: 17px; }
+    .timeline-step p { margin-bottom: 0; color: #91a3a6; font-size: 14px; }
+
+    .scan-console {
+      padding: 24px;
+      background: #16272c;
+      border: 1px solid #395056;
+      border-radius: 10px;
+      box-shadow: var(--shadow);
+    }
+    .console-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-bottom: 20px;
+      border-bottom: 1px solid #33494e;
+    }
+    .console-top span { color: #a8b9bb; font-size: 12px; }
+    .console-top b { color: #75d9cb; font-size: 12px; }
+    .scan-metric {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      padding: 22px 0;
+    }
+    .metric {
+      padding: 16px;
+      background: #20363b;
+      border-radius: 7px;
+    }
+    .metric strong { display: block; color: #fff; font-size: 25px; letter-spacing: -.03em; }
+    .metric span { color: #92a7aa; font-size: 10px; }
+    .scan-rule {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 10px 0;
+      color: #a8b9bb;
+      border-top: 1px solid #33494e;
+      font-size: 12px;
+    }
+    .scan-rule i { color: var(--teal); font-style: normal; }
+
+    .safety-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1px;
+      background: var(--line);
+      border: 1px solid var(--line);
+    }
+    .safety-item { padding: 30px; background: var(--paper-strong); }
+    .safety-item h3 { margin-bottom: 9px; font-size: 18px; }
+    .safety-item p { margin-bottom: 0; color: var(--muted); font-size: 14px; }
+    .check {
+      display: inline-block;
+      margin-right: 9px;
+      color: var(--teal-dark);
+      font-weight: 800;
+    }
+
+    .download {
+      color: #fff;
+      background: #122128;
+      border-bottom: 0;
+    }
+    .download-grid {
+      display: grid;
+      grid-template-columns: 1.2fr .8fr;
+      gap: 60px;
+      align-items: end;
+    }
+    .download h2 { margin-bottom: 16px; }
+    .download p { max-width: 560px; color: #9eb0b3; }
+    .download-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 18px;
+      margin-top: 24px;
+      color: #71878b;
+      font-size: 12px;
+    }
+    .download-actions { display: flex; justify-content: flex-end; gap: 10px; }
+
+    footer {
+      padding: 28px 0;
+      color: #819194;
+      background: var(--ink);
+      font-size: 12px;
+    }
+    .footer-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: min(var(--max), calc(100% - 48px));
+      margin: 0 auto;
+    }
+    .footer-links { display: flex; gap: 18px; }
+    .footer-links a:hover { color: #fff; }
+
+    @media (max-width: 900px) {
+      .hero { min-height: auto; padding-top: 132px; }
+      .hero-grid, .workflow, .download-grid { grid-template-columns: 1fr; gap: 48px; }
+      .desktop-scene { min-height: 480px; padding: 0; }
+      .download-actions { justify-content: flex-start; }
+    }
+
+    @media (max-width: 640px) {
+      .nav, .section-inner, .footer-inner, .hero-grid { width: min(100% - 32px, var(--max)); }
+      .nav-links { display: none; }
+      .nav .button { min-height: 36px; padding: 0 11px; font-size: 12px; }
+      .hero { padding-bottom: 54px; }
+      h1 { font-size: 54px; }
+      .hero-copy { font-size: 16px; }
+      .desktop-scene { min-height: 405px; transform: scale(.93); transform-origin: top center; }
+      .menu-popover { right: -8px; width: 276px; }
+      .finder-body { grid-template-columns: 112px 1fr; }
+      .finder-sidebar { padding-right: 8px; padding-left: 8px; }
+      .finder-content { padding: 16px; }
+      .feature-grid, .safety-grid { grid-template-columns: 1fr; }
+      .feature { min-height: auto; }
+      .scan-metric { grid-template-columns: 1fr; }
+      .section { padding: 76px 0; }
+      .footer-inner { align-items: flex-start; flex-direction: column; gap: 12px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after { transition-duration: .01ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <nav class="nav" aria-label="主导航">
+      <a class="brand" href="#top">
+        <span class="brand-mark" aria-hidden="true">✦</span>
+        <span>Bye.DS_Store</span>
+      </a>
+      <div class="nav-links">
+        <a href="#how-it-works">工作方式</a>
+        <a href="#scan">全盘扫描</a>
+        <a href="#trust">为什么放心</a>
+        <a href="https://github.com/yororoA/Bye.DS_Store" target="_blank" rel="noreferrer">GitHub ↗</a>
+      </div>
+      <a class="button button-primary" href="https://github.com/yororoA/Bye.DS_Store/releases/download/v1.0.6/Bye.DS_Store-v1.0.6-macOS-arm64.dmg">
+        下载 v1.0.6
+      </a>
+    </nav>
+  </header>
+
+  <main id="top">
+    <section class="hero">
+      <div class="hero-grid">
+        <div>
+          <p class="eyebrow">A quieter Finder</p>
+          <h1>让杂乱的<br>文件夹安静下来。</h1>
+          <p class="hero-copy">
+            Bye.DS_Store 常驻 macOS 菜单栏，跟随你打开的 Finder 文件夹，
+            在后台清理不需要留下的 `.DS_Store`。
+          </p>
+          <div class="hero-actions">
+            <a class="button button-primary" href="https://github.com/yororoA/Bye.DS_Store/releases/download/v1.0.6/Bye.DS_Store-v1.0.6-macOS-arm64.dmg">
+              下载 macOS 应用 <span aria-hidden="true">↓</span>
+            </a>
+            <a class="button button-ghost" href="#how-it-works">了解工作方式 <span aria-hidden="true">↘</span></a>
+          </div>
+          <p class="hero-note">macOS 14+ · Apple Silicon · 菜单栏常驻 · 开源</p>
+        </div>
+
+        <div class="desktop-scene" aria-label="Bye.DS_Store 菜单栏面板预览">
+          <div class="desktop-window">
+            <div class="desktop-toolbar">
+              <div class="traffic-lights" aria-hidden="true"><i></i><i></i><i></i></div>
+              <div class="toolbar-title">Finder</div>
+              <span style="color:#9bb0b2;font-size:12px">⌘⌥B</span>
+            </div>
+            <div class="finder-body">
+              <aside class="finder-sidebar">
+                <div class="sidebar-label">Locations</div>
+                <div class="sidebar-item active"><span class="sidebar-icon">▣</span> Projects</div>
+                <div class="sidebar-item"><span class="sidebar-icon">◇</span> Desktop</div>
+                <div class="sidebar-item"><span class="sidebar-icon">◇</span> Downloads</div>
+              </aside>
+              <div class="finder-content">
+                <h3>Projects</h3>
+                <p>3 folders active · clean as you work</p>
+                <div class="file-grid">
+                  <div class="file"><b>▧</b>Bye.DS_Store</div>
+                  <div class="file ds"><b>◌</b>.DS_Store</div>
+                  <div class="file"><b>▧</b>packages</div>
+                  <div class="file"><b>▧</b>Sources</div>
+                  <div class="file"><b>▧</b>Tests</div>
+                  <div class="file"><b>▧</b>README</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="menu-popover">
+            <div class="popover-head">
+              <div><strong>Bye.DS_Store</strong><small>后台监控已开启</small></div>
+              <div class="toggle" aria-hidden="true"></div>
+            </div>
+            <div class="popover-status"><span class="status-dot"></span>正在监控 3 个文件夹 <span style="margin-left:auto">刚刚</span></div>
+            <div class="folder-row">
+              <span>▣</span>
+              <div><strong>Projects</strong><small>~/Work/Projects</small></div>
+              <span class="folder-state">打开</span>
+            </div>
+            <div class="folder-row">
+              <span>▣</span>
+              <div><strong>Bye.DS_Store</strong><small>~/Work/Projects/Bye.DS_Store</small></div>
+              <span class="folder-state">打开</span>
+            </div>
+            <div class="folder-row">
+              <span style="color:var(--amber)">◷</span>
+              <div><strong>Archive</strong><small>~/Work/Archive</small></div>
+              <span style="color:#b07a20;font-size:9px">42 sec</span>
+            </div>
+            <div class="popover-footer"><small>最近清理 12 个 · ⌘⌥B</small><span>↻　⌕　⚙</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-inner">
+        <p class="section-kicker">Quietly automatic</p>
+        <h2>你打开文件夹，<br>它处理剩下的事。</h2>
+        <p class="section-intro">
+          没有常驻 Dock 图标，没有复杂的工作流。Bye.DS_Store 在菜单栏里，
+          只在需要时出现，像一个安静但可靠的桌面工具。
+        </p>
+        <div class="feature-grid">
+          <article class="feature">
+            <span class="feature-number">01</span>
+            <h3>跟随 Finder</h3>
+            <p>实时读取当前打开的文件夹，多个窗口自动去重，不打扰你的工作节奏。</p>
+          </article>
+          <article class="feature">
+            <span class="feature-number">02</span>
+            <h3>延续一段时间</h3>
+            <p>文件夹关闭后仍会保留在清理范围内，给 Finder 写入元数据留出时间。</p>
+          </article>
+          <article class="feature">
+            <span class="feature-number">03</span>
+            <h3>适合你的规则</h3>
+            <p>扫描范围、排除目录、轮询间隔都可以在设置中按你的习惯调整。</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-dark" id="how-it-works">
+      <div class="section-inner workflow">
+        <div>
+          <p class="section-kicker">How it works</p>
+          <h2>从活跃到近期活跃，清理有自己的节奏。</h2>
+          <p class="section-intro">
+            `.DS_Store` 经常在你进入子文件夹时生成到原目录。
+            默认策略因此会关注当前文件夹和它的直接父文件夹。
+          </p>
+          <a class="button button-light" href="https://github.com/yororoA/Bye.DS_Store#readme" target="_blank" rel="noreferrer">
+            查看完整说明 ↗
+          </a>
+        </div>
+        <div class="timeline">
+          <div class="timeline-step">
+            <b>打开一个 Finder 文件夹</b>
+            <p>应用每 5 秒读取一次 Finder 当前窗口目标，记录活跃目录。</p>
+          </div>
+          <div class="timeline-step">
+            <b>进入它的子文件夹</b>
+            <p>清理当前目录和直接父目录，覆盖 macOS 常见的元数据写入位置。</p>
+          </div>
+          <div class="timeline-step">
+            <b>关闭窗口也不急着忘记</b>
+            <p>目录会在默认 60 秒的宽限期内继续参与清理，然后自然退出。</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="scan">
+      <div class="section-inner">
+        <p class="section-kicker">Manual when it matters</p>
+        <h2>全盘扫描，<br>把决定权交给你。</h2>
+        <p class="section-intro">
+          需要彻底整理时，手动启动一次全盘扫描。扫描前确认，
+          扫描中可停止，扫描后查看结果和失败路径。
+        </p>
+        <div class="scan-console">
+          <div class="console-top">
+            <span>全盘扫描 · 启动磁盘</span>
+            <b>已完成</b>
+          </div>
+          <div class="scan-metric">
+            <div class="metric"><strong>18,402</strong><span>扫描项目</span></div>
+            <div class="metric"><strong>286</strong><span>发现 .DS_Store</span></div>
+            <div class="metric"><strong>284</strong><span>已删除</span></div>
+          </div>
+          <div class="scan-rule"><i>✓</i> 跳过 node_modules、Pods、.venv 等排除目录</div>
+          <div class="scan-rule"><i>✓</i> 跳过符号链接，不重复进入外部路径</div>
+          <div class="scan-rule"><i>!</i> 2 个项目需要完整磁盘访问权限</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="trust">
+      <div class="section-inner">
+        <p class="section-kicker">Small, deliberate, transparent</p>
+        <h2>不扫描你没选择的地方。</h2>
+        <p class="section-intro">
+          Bye.DS_Store 把清理边界写清楚，也把控制权留在你的手里。
+        </p>
+        <div class="safety-grid">
+          <article class="safety-item">
+            <h3><span class="check">✓</span>默认只关注 Finder</h3>
+            <p>后台自动清理只处理通过 Finder 监听到的相关目录，全盘扫描必须手动确认。</p>
+          </article>
+          <article class="safety-item">
+            <h3><span class="check">✓</span>排除规则是标签</h3>
+            <p>输入 node_modules 或 lib/packages，回车添加；点击叉号即可移除，规则本地保存。</p>
+          </article>
+          <article class="safety-item">
+            <h3><span class="check">✓</span>跳过符号链接</h3>
+            <p>扫描不会沿着符号链接进入另一棵目录树，减少重复扫描和意外越界。</p>
+          </article>
+          <article class="safety-item">
+            <h3><span class="check">✓</span>完整结果可见</h3>
+            <p>扫描后展示发现、删除、失败数量，并提供失败路径和错误信息供复核。</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section download">
+      <div class="section-inner download-grid">
+        <div>
+          <p class="section-kicker">Ready for a cleaner Finder</p>
+          <h2>让 `.DS_Store`<br>退到背景里。</h2>
+          <p>下载最新版本，在 macOS 菜单栏里开始使用 Bye.DS_Store。</p>
+          <div class="download-meta">
+            <span>v1.0.6</span>
+            <span>macOS 14+</span>
+            <span>Apple Silicon</span>
+            <span>MIT-style open source project</span>
+          </div>
+        </div>
+        <div class="download-actions">
+          <a class="button button-primary" href="https://github.com/yororoA/Bye.DS_Store/releases/download/v1.0.6/Bye.DS_Store-v1.0.6-macOS-arm64.dmg">
+            下载 DMG <span aria-hidden="true">↓</span>
+          </a>
+          <a class="button button-ghost" href="https://github.com/yororoA/Bye.DS_Store/releases/tag/v1.0.6" target="_blank" rel="noreferrer">
+            Release ↗
+          </a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+      <span>© <span id="year"></span> Bye.DS_Store</span>
+      <div class="footer-links">
+        <a href="https://github.com/yororoA/Bye.DS_Store" target="_blank" rel="noreferrer">GitHub</a>
+        <a href="https://github.com/yororoA/Bye.DS_Store/releases" target="_blank" rel="noreferrer">Releases</a>
+        <a href="#top">回到顶部 ↑</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>

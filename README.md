@@ -2,7 +2,9 @@
 
 [English](README.en.md)
 
-最新版本：[v1.0.3](https://github.com/yororoA/Bye.DS_Store/releases/tag/v1.0.3)
+宣传页：[site/index.html](site/index.html)
+
+最新版本：[v1.0.6](https://github.com/yororoA/Bye.DS_Store/releases/tag/v1.0.6)
 
 一个常驻 macOS 菜单栏的轻量工具。它定时读取 Finder 当前打开的文件夹，并清理相关目录中的 `.DS_Store`。Finder 窗口关闭或切换到其他目录后，原目录会在设定的宽限期内继续参与清理。
 

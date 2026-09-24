@@ -2,7 +2,9 @@
 
 [中文](README.md)
 
-Latest release: [v1.0.3](https://github.com/yororoA/Bye.DS_Store/releases/tag/v1.0.3)
+Product page: [site/index.html](site/index.html)
+
+Latest release: [v1.0.6](https://github.com/yororoA/Bye.DS_Store/releases/tag/v1.0.6)
 
 Bye.DS_Store is a lightweight macOS menu bar utility that watches the folders currently open in Finder and periodically removes `.DS_Store` files from the relevant locations.
 
