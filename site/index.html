@@ -5,6 +5,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#0d171c">
   <meta name="description" content="Bye.DS_Store 是一个常驻 macOS 菜单栏的 .DS_Store 清理工具。">
+  <link rel="canonical" href="https://bye-dsstore.yororoice.top/">
+  <link rel="icon" type="image/png" href="assets/bye-dsstore-icon.png">
+  <link rel="apple-touch-icon" href="assets/bye-dsstore-icon.png">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://bye-dsstore.yororoice.top/">
+  <meta property="og:title" content="Bye.DS_Store — Keep Finder folders clean">
+  <meta property="og:description" content="常驻 macOS 菜单栏，跟随 Finder 文件夹，安静地清理 .DS_Store。">
+  <meta property="og:image" content="https://bye-dsstore.yororoice.top/assets/bye-dsstore-icon.png">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Bye.DS_Store — Keep Finder folders clean">
+  <meta name="twitter:description" content="常驻 macOS 菜单栏，跟随 Finder 文件夹，安静地清理 .DS_Store。">
+  <meta name="twitter:image" content="https://bye-dsstore.yororoice.top/assets/bye-dsstore-icon.png">
   <title>Bye.DS_Store — Keep Finder folders clean</title>
   <style>
     :root {
@@ -93,14 +105,11 @@
     }
 
     .brand-mark {
-      display: grid;
+      display: block;
       width: 28px;
       height: 28px;
-      place-items: center;
-      color: var(--ink);
-      background: var(--teal);
+      object-fit: cover;
       border-radius: 8px;
-      font-size: 16px;
     }
 
     .nav-links {
@@ -810,7 +819,7 @@
   <header class="site-header">
     <nav class="nav" aria-label="主导航">
       <a class="brand" href="#top">
-        <span class="brand-mark" aria-hidden="true">✦</span>
+        <img class="brand-mark" src="assets/bye-dsstore-icon.png" alt="" aria-hidden="true">
         <span>Bye.DS_Store</span>
       </a>
       <div class="nav-links">
