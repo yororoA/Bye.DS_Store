@@ -227,11 +227,29 @@ final class MenuBarController: NSObject, NSApplicationDelegate {
             window.contentViewController = NSHostingController(rootView: settingsView)
             window.title = AppStrings.text("Bye.DS_Store 设置", "Bye.DS_Store Settings")
             window.isReleasedWhenClosed = false
-            window.center()
             settingsWindow = window
         }
 
-        settingsWindow?.makeKeyAndOrderFront(nil)
+        if let settingsWindow {
+            positionSettingsWindow(settingsWindow)
+            settingsWindow.makeKeyAndOrderFront(nil)
+        }
+    }
+
+    private func positionSettingsWindow(_ window: NSWindow) {
+        let screen = statusItem?.button?.window?.screen ?? NSScreen.main
+        guard let screen else {
+            window.center()
+            return
+        }
+
+        let visibleFrame = screen.visibleFrame
+        let windowSize = window.frame.size
+        let origin = NSPoint(
+            x: visibleFrame.midX - windowSize.width / 2,
+            y: visibleFrame.midY - windowSize.height / 2
+        )
+        window.setFrameOrigin(origin)
     }
 
     private func updateStatusIcon() {
