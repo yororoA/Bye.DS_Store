@@ -121,9 +121,22 @@ The workflow will:
 
 1. Run the Swift test suite.
 2. Build and verify `Bye.DS_Store.app` on macOS.
-3. Package the app as a zip archive.
-4. Generate a SHA-256 checksum file.
-5. Create or update the GitHub Release for the pushed tag.
+3. Package the app as both a zip archive and a DMG.
+4. Generate SHA-256 checksum files for both installers.
+5. Sign with Developer ID and notarize the DMG when Apple Developer secrets are configured.
+6. Create or update the GitHub Release for the pushed tag.
+
+To enable signing and notarization, configure these GitHub Actions secrets:
+
+```text
+APPLE_CERTIFICATE_BASE64
+APPLE_CERTIFICATE_PASSWORD
+APPLE_KEYCHAIN_PASSWORD
+APPLE_DEVELOPER_IDENTITY
+APPLE_ID
+APPLE_TEAM_ID
+APPLE_APP_PASSWORD
+```
 
 The generated app is ad hoc signed for local distribution. It is not notarized with an Apple Developer certificate, so macOS may require users to approve the first launch manually.
 

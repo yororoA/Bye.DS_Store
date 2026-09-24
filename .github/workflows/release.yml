@@ -27,10 +27,42 @@ jobs:
           xcodebuild -version
           swift --version
 
+      - name: Import Developer ID certificate
+        if: ${{ secrets.APPLE_CERTIFICATE_BASE64 != '' }}
+        env:
+          APPLE_CERTIFICATE_BASE64: ${{ secrets.APPLE_CERTIFICATE_BASE64 }}
+          APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
+          KEYCHAIN_PASSWORD: ${{ secrets.APPLE_KEYCHAIN_PASSWORD }}
+        run: |
+          set -euo pipefail
+
+          certificate_path="$RUNNER_TEMP/developer-id.p12"
+          keychain_path="$RUNNER_TEMP/release.keychain-db"
+
+          echo "$APPLE_CERTIFICATE_BASE64" | base64 --decode > "$certificate_path"
+          security create-keychain -p "$KEYCHAIN_PASSWORD" "$keychain_path"
+          security set-keychain-settings -lut 21600 "$keychain_path"
+          security unlock-keychain -p "$KEYCHAIN_PASSWORD" "$keychain_path"
+          security import "$certificate_path" \
+            -P "$APPLE_CERTIFICATE_PASSWORD" \
+            -A \
+            -t cert \
+            -f pkcs12 \
+            -k "$keychain_path"
+          security list-keychains -d user -s "$keychain_path"
+          security default-keychain -s "$keychain_path"
+          security set-key-partition-list \
+            -S apple-tool:,apple: \
+            -s \
+            -k "$KEYCHAIN_PASSWORD" \
+            "$keychain_path"
+
       - name: Run tests
         run: swift test
 
       - name: Build application bundle
+        env:
+          CODESIGN_IDENTITY: ${{ secrets.APPLE_DEVELOPER_IDENTITY }}
         run: ./scripts/build-app.sh
 
       - name: Package release assets
@@ -43,7 +75,9 @@ jobs:
 
           architecture="$(uname -m)"
           archive_path="dist/Bye.DS_Store-${RELEASE_TAG}-macOS-${architecture}.zip"
+          dmg_path="dist/Bye.DS_Store-${RELEASE_TAG}-macOS-${architecture}.dmg"
           checksum_path="${archive_path}.sha256"
+          dmg_checksum_path="${dmg_path}.sha256"
 
           ditto \
             -c \
@@ -53,17 +87,47 @@ jobs:
             "dist/Bye.DS_Store.app" \
             "$archive_path"
 
+          hdiutil create \
+            -volname "Bye.DS_Store ${RELEASE_TAG}" \
+            -srcfolder "dist/Bye.DS_Store.app" \
+            -ov \
+            -format UDZO \
+            "$dmg_path"
+
           shasum -a 256 "$archive_path" > "$checksum_path"
+          shasum -a 256 "$dmg_path" > "$dmg_checksum_path"
 
           echo "archive=$archive_path" >> "$GITHUB_OUTPUT"
-          echo "checksum=$checksum_path" >> "$GITHUB_OUTPUT"
+          echo "archive_checksum=$checksum_path" >> "$GITHUB_OUTPUT"
+          echo "dmg=$dmg_path" >> "$GITHUB_OUTPUT"
+          echo "dmg_checksum=$dmg_checksum_path" >> "$GITHUB_OUTPUT"
+
+      - name: Notarize and staple DMG
+        if: ${{ secrets.APPLE_DEVELOPER_IDENTITY != '' && secrets.APPLE_ID != '' && secrets.APPLE_TEAM_ID != '' && secrets.APPLE_APP_PASSWORD != '' }}
+        env:
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          APPLE_APP_PASSWORD: ${{ secrets.APPLE_APP_PASSWORD }}
+          DMG_PATH: ${{ steps.package.outputs.dmg }}
+        run: |
+          set -euo pipefail
+
+          xcrun notarytool submit "$DMG_PATH" \
+            --apple-id "$APPLE_ID" \
+            --team-id "$APPLE_TEAM_ID" \
+            --password "$APPLE_APP_PASSWORD" \
+            --wait
+          xcrun stapler staple "$DMG_PATH"
+          xcrun stapler validate "$DMG_PATH"
 
       - name: Create or update GitHub Release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           RELEASE_TAG: ${{ github.ref_name }}
           ARCHIVE_PATH: ${{ steps.package.outputs.archive }}
-          CHECKSUM_PATH: ${{ steps.package.outputs.checksum }}
+          ARCHIVE_CHECKSUM_PATH: ${{ steps.package.outputs.archive_checksum }}
+          DMG_PATH: ${{ steps.package.outputs.dmg }}
+          DMG_CHECKSUM_PATH: ${{ steps.package.outputs.dmg_checksum }}
         run: |
           set -euo pipefail
 
@@ -71,13 +135,17 @@ jobs:
             gh release upload \
               "$RELEASE_TAG" \
               "$ARCHIVE_PATH" \
-              "$CHECKSUM_PATH" \
+              "$ARCHIVE_CHECKSUM_PATH" \
+              "$DMG_PATH" \
+              "$DMG_CHECKSUM_PATH" \
               --clobber
           else
             gh release create \
               "$RELEASE_TAG" \
               "$ARCHIVE_PATH" \
-              "$CHECKSUM_PATH" \
+              "$ARCHIVE_CHECKSUM_PATH" \
+              "$DMG_PATH" \
+              "$DMG_CHECKSUM_PATH" \
               --verify-tag \
               --generate-notes \
               --title "Bye.DS_Store $RELEASE_TAG"

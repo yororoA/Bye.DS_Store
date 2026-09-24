@@ -32,10 +32,18 @@ mkdir -p "$MACOS_DIR"
 cp "$BINARY_DIR/DSStoreSweeper" "$MACOS_DIR/DSStoreSweeper"
 cp "$ROOT_DIR/Support/Info.plist" "$CONTENTS_DIR/Info.plist"
 
-codesign \
-    --force \
-    --sign - \
-    "$APP_BUNDLE"
+if [[ -n "${CODESIGN_IDENTITY:-}" ]]; then
+    codesign \
+        --force \
+        --options runtime \
+        --sign "$CODESIGN_IDENTITY" \
+        "$APP_BUNDLE"
+else
+    codesign \
+        --force \
+        --sign - \
+        "$APP_BUNDLE"
+fi
 
 plutil -lint "$CONTENTS_DIR/Info.plist"
 codesign --verify --deep --strict "$APP_BUNDLE"

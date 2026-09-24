@@ -113,9 +113,22 @@ git push origin v1.0.0
 
 1. 执行 Swift 单元测试。
 2. 在 macOS 上构建并校验 `Bye.DS_Store.app`。
-3. 将应用打包为 zip 文件。
-4. 生成 SHA-256 校验文件。
-5. 创建或更新对应标签的 GitHub Release。
+3. 将应用打包为 zip 和 DMG 文件。
+4. 生成两个安装包的 SHA-256 校验文件。
+5. 如果配置 Apple Developer secrets，则使用 Developer ID 签名并 notarize DMG。
+6. 创建或更新对应标签的 GitHub Release。
+
+要启用签名和 notarization，需要在 GitHub Actions secrets 中配置：
+
+```text
+APPLE_CERTIFICATE_BASE64
+APPLE_CERTIFICATE_PASSWORD
+APPLE_KEYCHAIN_PASSWORD
+APPLE_DEVELOPER_IDENTITY
+APPLE_ID
+APPLE_TEAM_ID
+APPLE_APP_PASSWORD
+```
 
 构建产物使用 ad hoc 签名，未使用 Apple Developer 证书公证。首次运行时，macOS 可能要求用户手动确认打开。
 
