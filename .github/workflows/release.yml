@@ -28,13 +28,17 @@ jobs:
           swift --version
 
       - name: Import Developer ID certificate
-        if: ${{ secrets.APPLE_CERTIFICATE_BASE64 != '' }}
         env:
           APPLE_CERTIFICATE_BASE64: ${{ secrets.APPLE_CERTIFICATE_BASE64 }}
           APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
           KEYCHAIN_PASSWORD: ${{ secrets.APPLE_KEYCHAIN_PASSWORD }}
         run: |
           set -euo pipefail
+
+          if [[ -z "${APPLE_CERTIFICATE_BASE64:-}" ]]; then
+            echo "Apple Developer certificate is not configured; using ad hoc signing."
+            exit 0
+          fi
 
           certificate_path="$RUNNER_TEMP/developer-id.p12"
           keychain_path="$RUNNER_TEMP/release.keychain-db"
@@ -103,14 +107,19 @@ jobs:
           echo "dmg_checksum=$dmg_checksum_path" >> "$GITHUB_OUTPUT"
 
       - name: Notarize and staple DMG
-        if: ${{ secrets.APPLE_DEVELOPER_IDENTITY != '' && secrets.APPLE_ID != '' && secrets.APPLE_TEAM_ID != '' && secrets.APPLE_APP_PASSWORD != '' }}
         env:
+          APPLE_DEVELOPER_IDENTITY: ${{ secrets.APPLE_DEVELOPER_IDENTITY }}
           APPLE_ID: ${{ secrets.APPLE_ID }}
           APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
           APPLE_APP_PASSWORD: ${{ secrets.APPLE_APP_PASSWORD }}
           DMG_PATH: ${{ steps.package.outputs.dmg }}
         run: |
           set -euo pipefail
+
+          if [[ -z "${APPLE_DEVELOPER_IDENTITY:-}" || -z "${APPLE_ID:-}" || -z "${APPLE_TEAM_ID:-}" || -z "${APPLE_APP_PASSWORD:-}" ]]; then
+            echo "Apple notarization secrets are not fully configured; publishing an ad hoc signed DMG."
+            exit 0
+          fi
 
           xcrun notarytool submit "$DMG_PATH" \
             --apple-id "$APPLE_ID" \
