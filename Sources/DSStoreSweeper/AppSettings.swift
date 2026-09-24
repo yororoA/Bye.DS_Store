@@ -24,6 +24,7 @@ final class AppSettings: ObservableObject {
         static let cleanupScope = "cleanupScope"
         static let excludedFolderPatterns = "excludedFolderPatterns"
         static let diskScanScope = "diskScanScope"
+        static let language = "language"
     }
 
     @Published var isMonitoringEnabled: Bool {
@@ -62,6 +63,13 @@ final class AppSettings: ObservableObject {
         }
     }
 
+    @Published var language: AppLanguage {
+        didSet {
+            defaults.set(language.rawValue, forKey: Key.language)
+            AppStrings.preferredLanguage = language
+        }
+    }
+
     private let defaults: UserDefaults
 
     init(defaults: UserDefaults = .standard) {
@@ -96,6 +104,11 @@ final class AppSettings: ObservableObject {
         diskScanScope = DiskScanScope(
             rawValue: defaults.string(forKey: Key.diskScanScope) ?? ""
         ) ?? .startupDisk
+
+        language = AppLanguage(
+            rawValue: defaults.string(forKey: Key.language) ?? ""
+        ) ?? .system
+        AppStrings.preferredLanguage = language
     }
 
     @discardableResult

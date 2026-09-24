@@ -53,6 +53,16 @@ struct SettingsView: View {
                     }
                 }
 
+                Picker(
+                    AppStrings.text("界面语言", "Interface language"),
+                    selection: $settings.language
+                ) {
+                    ForEach(AppLanguage.allCases, id: \.self) { language in
+                        Text(language.title(using: settings.language))
+                            .tag(language)
+                    }
+                }
+
                 Text(AppStrings.text(
                     "经实机排查，.DS_Store 不会直接生成在被打开文件夹的根目录，而是主要在进入其子文件夹时生成在原目录。",
                     "In testing, .DS_Store was usually created in the original folder when entering one of its child folders, rather than directly in the opened folder."
