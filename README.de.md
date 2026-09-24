@@ -117,6 +117,10 @@ Release-Beschreibungen liegen unter:
 
 Die Produktseite wird über GitHub Pages unter [bye-dsstore.yororoice.top](https://bye-dsstore.yororoice.top/) veröffentlicht. Der Pages-Workflow liest beim Deployment den neuesten Release und aktualisiert Version sowie DMG-URL automatisch.
 
+## Lizenz
+
+Dieses Projekt steht unter der [MIT License](LICENSE).
+
 ## Projektstruktur
 
 ```text
@@ -128,4 +132,3 @@ scripts/                   Build- und Startskripte
 site/                      GitHub-Pages-Produktseite
 .github/workflows/         Release- und Pages-Automation
 ```
-

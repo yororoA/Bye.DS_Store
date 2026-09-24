@@ -117,6 +117,10 @@ Release 說明放在：
 
 宣傳頁透過 GitHub Pages 發布到 [bye-dsstore.yororoice.top](https://bye-dsstore.yororoice.top/)。Pages workflow 會在部署時讀取最新 Release，自動更新頁面版本和 DMG 下載位址。
 
+## 授權條款
+
+本專案採用 [MIT License](LICENSE)。
+
 ## 專案結構
 
 ```text
@@ -128,4 +132,3 @@ scripts/                   建置與啟動腳本
 site/                      GitHub Pages 宣傳頁
 .github/workflows/         Release 與 Pages 自動化
 ```
-

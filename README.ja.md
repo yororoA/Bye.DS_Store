@@ -117,6 +117,10 @@ Release の説明は次に保存します。
 
 製品ページは GitHub Pages の [bye-dsstore.yororoice.top](https://bye-dsstore.yororoice.top/) で公開されます。Pages workflow はデプロイ時に最新 Release を読み取り、表示するバージョンと DMG URL を更新します。
 
+## ライセンス
+
+このプロジェクトは [MIT License](LICENSE) で配布されます。
+
 ## プロジェクト構成
 
 ```text
@@ -128,4 +132,3 @@ scripts/                   ビルドと起動スクリプト
 site/                      GitHub Pages 製品ページ
 .github/workflows/         Release と Pages の自動化
 ```
-

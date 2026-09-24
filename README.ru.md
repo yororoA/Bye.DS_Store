@@ -117,6 +117,10 @@ Workflow запускает тесты, собирает приложение ma
 
 Страница продукта публикуется через GitHub Pages по адресу [bye-dsstore.yororoice.top](https://bye-dsstore.yororoice.top/). Pages workflow получает последний Release при деплое и автоматически обновляет версию и URL DMG.
 
+## Лицензия
+
+Проект распространяется по [лицензии MIT](LICENSE).
+
 ## Структура проекта
 
 ```text
@@ -128,4 +132,3 @@ scripts/                   Скрипты сборки и запуска
 site/                      Продуктовая страница GitHub Pages
 .github/workflows/         Автоматизация Release и Pages
 ```
-

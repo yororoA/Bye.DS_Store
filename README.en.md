@@ -117,6 +117,10 @@ Release descriptions are stored at:
 
 The product page is published through GitHub Pages at [bye-dsstore.yororoice.top](https://bye-dsstore.yororoice.top/). The Pages workflow reads the latest Release during deployment and updates the version label and DMG URL automatically.
 
+## License
+
+This project is distributed under the [MIT License](LICENSE).
+
 ## Project structure
 
 ```text

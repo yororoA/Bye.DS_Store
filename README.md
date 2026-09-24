@@ -117,6 +117,10 @@ git push origin vX.Y.Z
 
 宣传页通过 GitHub Pages 发布到 [bye-dsstore.yororoice.top](https://bye-dsstore.yororoice.top/)。Pages workflow 会在部署时读取最新 Release，自动更新页面上的版本号和 DMG 下载地址。
 
+## 许可证
+
+本项目采用 [MIT License](LICENSE)。
+
 ## 项目结构
 
 ```text
