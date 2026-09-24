@@ -1,176 +1,130 @@
 # Bye.DS_Store
 
-[English](README.en.md)
+> 让 Finder 文件夹保持干净，同时不打扰你的工作。
 
-宣传页：[site/index.html](site/index.html)
+[简体中文](README.md) · [繁體中文](README.zh-Hant.md) · [English](README.en.md) · [日本語](README.ja.md) · [Deutsch](README.de.md) · [Русский](README.ru.md)
 
-最新版本：[v1.0.6](https://github.com/yororoA/Bye.DS_Store/releases/tag/v1.0.6)
+[宣传页](https://bye-dsstore.yororoice.top/) · [最新 Release](https://github.com/yororoA/Bye.DS_Store/releases/latest) · [GitHub](https://github.com/yororoA/Bye.DS_Store)
 
-一个常驻 macOS 菜单栏的轻量工具。它定时读取 Finder 当前打开的文件夹，并清理相关目录中的 `.DS_Store`。Finder 窗口关闭或切换到其他目录后，原目录会在设定的宽限期内继续参与清理。
+![macOS 14+](https://img.shields.io/badge/macOS-14%2B-0d171c?logo=apple&logoColor=white)
+![Swift 6](https://img.shields.io/badge/Swift-6-00a994?logo=swift&logoColor=white)
+![GitHub release](https://img.shields.io/github/v/release/yororoA/Bye.DS_Store?display_name=tag&color=f0aa3c)
 
-## 项目目标
+Bye.DS_Store 是一款原生 macOS 菜单栏工具。它会读取 Finder 当前打开的文件夹，定期清理相关目录中的 `.DS_Store`，并在窗口关闭后继续保留一段时间的清理范围。
 
-- [x] 监听活跃文件夹
-- [x] 延期监听近期活跃文件夹
-- [x] 清理活跃文件夹中的 `.DS_Store`
-- [x] 扫描本机所有已有 `.DS_Store` 并清除
+## 核心能力
 
-全盘扫描是用户手动触发的一次性操作，不会加入活跃文件夹的定时轮询。
+| 能力 | 说明 |
+| --- | --- |
+| Finder 监听 | 读取当前 Finder 窗口目标，多窗口自动去重 |
+| 延续清理 | 文件夹关闭后默认继续清理 60 秒 |
+| 清理范围 | 默认处理被监控文件夹及其直接父文件夹，也可切换为仅处理当前文件夹 |
+| 全盘扫描 | 手动扫描启动盘、外接盘、网络盘或全部已挂载磁盘 |
+| 排除规则 | 用 `node_modules` 或 `lib/packages` 等名称/路径排除目录 |
+| 安全边界 | 扫描前确认、扫描中可停止、扫描后查看失败路径 |
+| 菜单栏体验 | 不占用 Dock，支持 `⌘⌥B` 全局快捷键 |
+| 多语言 | 系统自动识别，也可固定为简体中文、繁體中文、English、日本語、Deutsch 或 Русский |
 
-## 工作方式
+## 为什么默认包含父文件夹？
 
-- 默认每 5 秒读取一次 Finder 窗口。
-- 默认在文件夹关闭后继续清理 60 秒。
-- 默认清理被监控文件夹及其直接父文件夹中的 `.DS_Store`，也可以在设置中切换为仅清理被监控文件夹。
-- 清理范围不会向上递归到更高层父目录，也不会递归遍历子目录。
-- 同一个目录被多个窗口打开时只处理一次。
-- 暂停监控后不读取 Finder，也不删除文件。
-- 扫描间隔和关闭后的延续时间可在设置中调整。
-- 支持注册为 macOS 登录项。
-- 应用以 `Bye` 和状态图标常驻 macOS 顶部菜单栏，不占用 Dock 图标。
-- 可手动扫描整块磁盘，查找并清理已有的 `.DS_Store`。
-- 全盘扫描过程中可以停止操作。
-- 开始全盘扫描前会显示确认提示，避免误触直接删除。
-- 扫描结束后可查看扫描数量、删除数量和失败项目列表。
-- 全盘扫描支持添加文件夹排除规则，例如 `node_modules`、`lib/packages`。
-- 全局快捷键：按 `⌘⌥B`，可在状态栏项目被收起时打开控制面板。
-- 状态栏弹窗显示最近清理时间、本轮清理数量和快捷键提示。
-- 设置页支持恢复默认排除规则或清空全部规则。
-- 全盘扫描支持选择启动磁盘、外接磁盘、网络磁盘或所有已挂载磁盘。
-- UI 默认跟随 macOS 系统语言，也可以在设置中固定为中文或 English。
+实机测试发现，`.DS_Store` 经常在进入子文件夹时写入原始文件夹，而不是直接写入当前打开文件夹的根目录。因此默认清理范围包含：
 
-### 为什么包含父文件夹
+1. 当前被 Finder 监控的文件夹
+2. 它的直接父文件夹
 
-经实机排查，`.DS_Store` 不会直接生成在被打开文件夹的根目录，而是主要在进入其子文件夹时生成在原目录。因此默认清理范围包含被监控文件夹及其直接父文件夹。
+应用不会向更高层递归，也不会自动遍历子文件夹。
 
-### 全盘扫描
+## 全盘扫描与安全设置
 
-设置页和菜单栏都提供手动全盘扫描入口。扫描从 `/` 开始，包含隐藏文件和应用包内容，跳过符号链接，并显示扫描项目数、删除数量以及访问或删除失败数量。
+全盘扫描是一次明确的手动操作，不会加入后台轮询。扫描会：
 
-由于 macOS 会保护部分文件系统目录，全盘扫描可能需要“完整磁盘访问权限”。无法访问的目录会被记录并显示，不会导致整个扫描中断。
+- 跳过符号链接，避免重复进入外部目录树；
+- 跳过已配置的排除目录及其子目录；
+- 记录扫描项目、发现数量、删除数量和失败数量；
+- 在访问受保护目录时保留失败信息，而不是中断整个扫描。
 
-开始前会显示确认对话框，完成后可在“查看扫描详情”中查看失败路径和错误信息。
+部分系统目录可能需要在“隐私与安全性”中授予**完整磁盘访问权限**。
 
-扫描位置可以在设置中选择：
+## 排除规则
 
-- 仅启动磁盘
-- 启动磁盘和外接磁盘
-- 启动磁盘和网络磁盘
-- 所有已挂载磁盘
+在设置页输入文件夹名称或组合路径并按回车：
 
-### 扫描排除
+```text
+node_modules
+lib/packages
+```
 
-设置页会将排除规则保存为可移除的名称标签。输入 `node_modules` 这样的文件夹名称，或输入 `lib/packages` 这样的父文件夹/目标文件夹路径后按回车即可添加。扫描遇到匹配的文件夹时，会跳过该文件夹及其全部子目录。
-
-初始排除规则覆盖常见的依赖和生成目录：
+规则会变成可移除标签。初始规则包含常见依赖和构建目录：
 
 ```text
 node_modules、.venv、venv、__pycache__、vendor、Pods、target、.gradle
 ```
 
-## Finder 监听范围与限制
-
-macOS 的 Finder AppleScript 接口只公开每个 Finder 窗口当前标签页的目标目录，无法枚举同一窗口中未激活的标签页。本应用也不会尝试读取其他应用内部打开的目录。
-
-因此，未激活的 Finder 标签页可能要等到切换为当前标签页后才能被检测到。
-
-## 全局快捷键
-
-按下 `⌘⌥B`，即可打开 Bye.DS_Store 控制面板。该快捷键在应用不处于前台时也可使用，控制面板通常会显示在状态栏图标旁边。
-
-该快捷键使用 macOS 原生全局快捷键注册，不需要额外的辅助功能授权。
-
-## 界面语言
-
-设置页的“界面语言”提供三个选项：
-
-- 跟随系统
-- 中文
-- English
-
-语言选择会保存到本机，并立即应用到菜单栏弹窗、设置窗口、确认框和扫描详情。
-
-## 系统要求
+## 运行要求
 
 - macOS 14 或更高版本
 - Xcode 16 或更新版本
 - Swift 6 工具链
 
-## 构建与运行
+## 本地运行
 
 ```bash
 ./scripts/run-app.sh
 ```
 
-构建后的应用位于：
-
-```text
-dist/Bye.DS_Store.app
-```
-
-也可以只运行测试或只构建应用：
+仅构建：
 
 ```bash
-swift test --disable-index-store
 ./scripts/build-app.sh
 ```
 
+运行测试：
+
+```bash
+swift test --disable-index-store
+```
+
+构建产物位于 `dist/Bye.DS_Store.app`。
+
 ## 首次授权
 
-首次运行时，macOS 会询问是否允许应用控制 Finder。该权限用于读取 Finder 窗口当前所在目录。
+首次启动时，macOS 会询问是否允许 Bye.DS_Store 控制 Finder。该权限只用于读取 Finder 窗口当前目录。
 
-如果拒绝过授权，可在以下位置重新开启：
+如果之前拒绝过授权：
 
 ```text
 系统设置 > 隐私与安全性 > 自动化 > Bye.DS_Store > Finder
 ```
 
-删除桌面、文稿、下载或其他受保护位置中的文件时，macOS 还可能单独询问文件访问权限。全盘扫描可能需要“完整磁盘访问权限”。菜单中的橙色错误状态会显示无法删除的具体目录。
+删除桌面、文稿、下载等受保护位置中的文件时，系统还可能要求单独的文件访问权限。
 
-## GitHub Release
+## Release 与 GitHub Actions
 
-仓库包含 `.github/workflows/release.yml` 工作流。
-
-推送版本标签后，GitHub Actions 会自动测试、构建并发布 Release：
+推送版本标签即可触发自动发布：
 
 ```bash
-git tag v1.0.3
-git push origin v1.0.3
+git tag vX.Y.Z
+git push origin vX.Y.Z
 ```
 
-工作流会：
+工作流会运行测试、构建 macOS 应用、生成 zip/DMG 及 SHA-256 校验文件，并在配置 Apple Developer secrets 时执行 Developer ID 签名和 notarization。
 
-1. 执行 Swift 单元测试。
-2. 在 macOS 上构建并校验 `Bye.DS_Store.app`。
-3. 将应用打包为 zip 和 DMG 文件。
-4. 生成两个安装包的 SHA-256 校验文件。
-5. 如果配置 Apple Developer secrets，则使用 Developer ID 签名并 notarize DMG。
-6. 创建或更新对应标签的 GitHub Release。
-
-要启用签名和 notarization，需要在 GitHub Actions secrets 中配置：
+对应版本的 Release 说明放在：
 
 ```text
-APPLE_CERTIFICATE_BASE64
-APPLE_CERTIFICATE_PASSWORD
-APPLE_KEYCHAIN_PASSWORD
-APPLE_DEVELOPER_IDENTITY
-APPLE_ID
-APPLE_TEAM_ID
-APPLE_APP_PASSWORD
+.github/release-notes/<tag>.md
 ```
 
-如果仓库中存在 `.github/release-notes/<tag>.md`，工作流会使用该文件作为 Release 介绍；否则自动生成变更说明。
-
-构建产物使用 ad hoc 签名，未使用 Apple Developer 证书公证。首次运行时，macOS 可能要求用户手动确认打开。
+宣传页通过 GitHub Pages 发布到 [bye-dsstore.yororoice.top](https://bye-dsstore.yororoice.top/)。Pages workflow 会在部署时读取最新 Release，自动更新页面上的版本号和 DMG 下载地址。
 
 ## 项目结构
 
 ```text
-Sources/SweeperCore/       目录状态机与 .DS_Store 删除器
-Sources/DSStoreSweeper/    Finder 采集、菜单栏 UI 与应用生命周期
+Sources/SweeperCore/       文件夹状态、清理范围与 .DS_Store 删除逻辑
+Sources/DSStoreSweeper/    Finder 集成、菜单栏 UI、设置与应用生命周期
 Tests/SweeperCoreTests/    核心行为测试
 Support/Info.plist         macOS 应用包配置
-scripts/                   应用构建与启动脚本
-.github/workflows/         GitHub Release 自动发布工作流
-.github/release-notes/     按版本保存的 Release 介绍
+scripts/                   构建与启动脚本
+site/                      GitHub Pages 宣传页
+.github/workflows/         Release 与 Pages 自动化
 ```
