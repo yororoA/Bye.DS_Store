@@ -27,8 +27,14 @@ The full-disk scan is an explicit, user-triggered operation. It is not part of t
 - The app runs as a menu bar item and does not add a Dock icon.
 - A manual full-disk scan can recursively find and remove existing `.DS_Store` files.
 - Full-disk scans can be stopped while they are running.
+- A confirmation prompt appears before a full-disk scan starts.
+- Scan results include counts and a list of inaccessible or failed paths.
 - Full-disk scans support folder exclusion rules such as `node_modules` and `lib/packages`.
 - Global shortcut: press `⌘⌥B` to open the control panel when the status item is hidden.
+- The status popover shows the last cleanup time, recent cleanup count, and shortcut.
+- Exclusion rules can be restored to defaults or cleared completely.
+- Full-disk scans can target the startup disk, external disks, network disks, or all mounted volumes.
+- The UI follows the macOS system language and supports Chinese and English.
 
 ### Why Include the Parent Folder?
 
@@ -39,6 +45,15 @@ Practical testing on macOS showed that `.DS_Store` is often not created directly
 The Settings panel and menu bar both provide a manual full-disk scan. It starts at `/`, includes hidden files and package contents, skips symbolic links, and reports the number of scanned items, files removed, and access or deletion failures.
 
 Because macOS protects parts of the file system, a full-disk scan may require Full Disk Access. Inaccessible locations are reported instead of stopping the entire scan.
+
+The scan shows a confirmation dialog before starting. After it finishes, use “View scan details” to inspect failed paths and error messages.
+
+Scan locations can be selected in Settings:
+
+- Startup disk only
+- Startup and external disks
+- Startup and network disks
+- All mounted volumes
 
 ### Scan Exclusions
 
