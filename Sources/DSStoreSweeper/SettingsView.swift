@@ -7,6 +7,7 @@ struct SettingsView: View {
     @State private var exclusionInput = ""
     @State private var exclusionInputError = false
     @State private var isShowingFullDiskScanConfirmation = false
+    @State private var isShowingFullDiskScanDetails = false
 
     init(model: SweeperAppModel) {
         self.model = model
@@ -94,6 +95,10 @@ struct SettingsView: View {
                                 .lineLimit(3)
                                 .textSelection(.enabled)
                         }
+                    }
+
+                    Button("查看扫描详情") {
+                        isShowingFullDiskScanDetails = true
                     }
                 }
             }
@@ -186,6 +191,11 @@ struct SettingsView: View {
         } message: {
             Text("将递归扫描启动磁盘中的 .DS_Store 并直接删除。扫描可能耗时较长，也可能需要完整磁盘访问权限。")
         }
+        .sheet(isPresented: $isShowingFullDiskScanDetails) {
+            if let report = model.fullDiskScanReport {
+                FullDiskScanDetailView(report: report)
+            }
+        }
     }
 
     private func addExclusionPattern() {
@@ -233,6 +243,88 @@ struct SettingsView: View {
 
         let minutes = seconds / 60
         return "\(minutes) 分钟"
+    }
+}
+
+private struct FullDiskScanDetailView: View {
+    let report: FullDiskCleanupReport
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            HStack {
+                Label(
+                    report.wasCancelled ? "扫描已停止" : "扫描完成",
+                    systemImage: report.wasCancelled
+                        ? "stop.circle"
+                        : "checkmark.circle.fill"
+                )
+                .font(.title3.weight(.semibold))
+                .foregroundStyle(report.wasCancelled ? .orange : .green)
+
+                Spacer()
+
+                Button("完成") {
+                    dismiss()
+                }
+            }
+
+            Grid(alignment: .leading, horizontalSpacing: 28, verticalSpacing: 8) {
+                GridRow {
+                    Text("扫描项目").foregroundStyle(.secondary)
+                    Text("\(report.scannedItemCount)")
+                }
+                GridRow {
+                    Text("发现 .DS_Store").foregroundStyle(.secondary)
+                    Text("\(report.foundDSStoreCount)")
+                }
+                GridRow {
+                    Text("已删除").foregroundStyle(.secondary)
+                    Text("\(report.removedDSStoreCount)")
+                }
+                GridRow {
+                    Text("失败项目").foregroundStyle(.secondary)
+                    Text("\(report.failureCount)")
+                }
+            }
+
+            Divider()
+
+            Text("失败列表")
+                .font(.headline)
+
+            if report.failures.isEmpty {
+                Label("没有记录到失败项目", systemImage: "checkmark.circle")
+                    .foregroundStyle(.secondary)
+            } else {
+                ScrollView {
+                    LazyVStack(alignment: .leading, spacing: 10) {
+                        ForEach(Array(report.failures.enumerated()), id: \.offset) { _, failure in
+                            VStack(alignment: .leading, spacing: 3) {
+                                Text(failure.fileURL.path)
+                                    .font(.caption)
+                                    .textSelection(.enabled)
+                                Text(failure.message)
+                                    .font(.caption2)
+                                    .foregroundStyle(.secondary)
+                                    .textSelection(.enabled)
+                            }
+                            .frame(maxWidth: .infinity, alignment: .leading)
+
+                            Divider()
+                        }
+                    }
+                }
+            }
+
+            if report.failureCount > report.failures.count {
+                Text("仅显示前 \(report.failures.count) 条失败记录。")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+        }
+        .padding(20)
+        .frame(width: 620, height: 520)
     }
 }
 
