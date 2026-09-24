@@ -5,11 +5,15 @@ import SweeperCore
 struct SweeperMenuView: View {
     @ObservedObject var model: SweeperAppModel
     @ObservedObject private var settings: AppSettings
-    @Environment(\.openSettings) private var openSettings
+    private let onOpenSettings: () -> Void
 
-    init(model: SweeperAppModel) {
+    init(
+        model: SweeperAppModel,
+        onOpenSettings: @escaping () -> Void = {}
+    ) {
         self.model = model
         settings = model.settings
+        self.onOpenSettings = onOpenSettings
     }
 
     var body: some View {
@@ -154,8 +158,7 @@ struct SweeperMenuView: View {
             .accessibilityLabel(model.isFullDiskScanRunning ? "停止本机扫描" : "扫描本机并清理")
 
             Button {
-                NSApp.activate(ignoringOtherApps: true)
-                openSettings()
+                onOpenSettings()
             } label: {
                 Image(systemName: "gearshape")
                     .frame(width: 22, height: 22)

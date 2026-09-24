@@ -27,6 +27,7 @@
 - 可手动扫描整块磁盘，查找并清理已有的 `.DS_Store`。
 - 全盘扫描过程中可以停止操作。
 - 全盘扫描支持添加文件夹排除规则，例如 `node_modules`、`lib/packages`。
+- 全局快捷键：先按 `⌘Space`，再按 `B`，可在状态栏项目被收起时打开控制面板。
 
 ### 为什么包含父文件夹
 
@@ -53,6 +54,16 @@ node_modules、.venv、venv、__pycache__、vendor、Pods、target、.gradle
 macOS 的 Finder AppleScript 接口只公开每个 Finder 窗口当前标签页的目标目录，无法枚举同一窗口中未激活的标签页。本应用也不会尝试读取其他应用内部打开的目录。
 
 因此，未激活的 Finder 标签页可能要等到切换为当前标签页后才能被检测到。
+
+## 全局快捷键
+
+按下 `⌘Space` 后，在 1.2 秒内按 `B`，即可打开 Bye.DS_Store 控制面板。该快捷键在应用不处于前台时也可使用。
+
+由于 `⌘Space` 默认由 macOS Spotlight 使用，系统可能同时显示 Spotlight。若快捷键没有响应，请在以下位置允许 Bye.DS_Store 监听键盘事件：
+
+```text
+系统设置 > 隐私与安全性 > 辅助功能 > Bye.DS_Store
+```
 
 ## 系统要求
 
