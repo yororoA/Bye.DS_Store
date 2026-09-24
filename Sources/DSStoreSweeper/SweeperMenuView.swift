@@ -90,9 +90,15 @@ struct SweeperMenuView: View {
 
                 Spacer()
 
-                if let lastScanDate = model.lastScanDate {
-                    Text(lastScanDate, style: .relative)
-                        .font(.caption)
+                VStack(alignment: .trailing, spacing: 2) {
+                    if let lastCleanupDate = model.lastCleanupDate {
+                        Text(lastCleanupDate, style: .relative)
+                            .font(.caption)
+                            .foregroundStyle(.tertiary)
+                    }
+
+                    Text("最近清理 \(model.lastCleanupRemovedCount) 个")
+                        .font(.caption2)
                         .foregroundStyle(.tertiary)
                 }
             }
@@ -136,10 +142,13 @@ struct SweeperMenuView: View {
 
     private var footer: some View {
         HStack(spacing: 6) {
-            if model.totalRemovedCount > 0 {
-                Text("已清理 \(model.totalRemovedCount) 个")
+            VStack(alignment: .leading, spacing: 2) {
+                Text("累计清理 \(model.totalRemovedCount) 个")
                     .font(.caption)
                     .foregroundStyle(.secondary)
+                Text("快捷键 ⌘⌥B")
+                    .font(.caption2)
+                    .foregroundStyle(.tertiary)
             }
 
             Spacer()

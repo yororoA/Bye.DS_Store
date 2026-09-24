@@ -25,6 +25,8 @@ final class SweeperAppModel: ObservableObject {
     @Published private(set) var finderAccessState: FinderAccessState = .unknown
     @Published private(set) var isPolling = false
     @Published private(set) var lastScanDate: Date?
+    @Published private(set) var lastCleanupDate: Date?
+    @Published private(set) var lastCleanupRemovedCount = 0
     @Published private(set) var lastCleanupError: String?
     @Published private(set) var totalRemovedCount = 0
     @Published private(set) var launchAtLoginEnabled = false
@@ -193,6 +195,8 @@ final class SweeperAppModel: ObservableObject {
                 folderURLs: folderURLsForCleanup
             )
 
+            lastCleanupDate = Date()
+            lastCleanupRemovedCount = cleanupReport.removedFileURLs.count
             totalRemovedCount += cleanupReport.removedFileURLs.count
             lastCleanupError = cleanupReport.failures.first.map { failure in
                 "\(failure.folderURL.path): \(failure.message)"
