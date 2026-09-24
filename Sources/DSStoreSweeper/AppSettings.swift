@@ -23,6 +23,8 @@ final class AppSettings: ObservableObject {
         static let gracePeriod = "gracePeriod"
         static let cleanupScope = "cleanupScope"
         static let excludedFolderPatterns = "excludedFolderPatterns"
+        static let diskScanScope = "diskScanScope"
+        static let language = "language"
     }
 
     @Published var isMonitoringEnabled: Bool {
@@ -52,6 +54,19 @@ final class AppSettings: ObservableObject {
     @Published var excludedFolderPatterns: [String] {
         didSet {
             defaults.set(excludedFolderPatterns, forKey: Key.excludedFolderPatterns)
+        }
+    }
+
+    @Published var diskScanScope: DiskScanScope {
+        didSet {
+            defaults.set(diskScanScope.rawValue, forKey: Key.diskScanScope)
+        }
+    }
+
+    @Published var language: AppLanguage {
+        didSet {
+            defaults.set(language.rawValue, forKey: Key.language)
+            AppStrings.preferredLanguage = language
         }
     }
 
@@ -85,6 +100,15 @@ final class AppSettings: ObservableObject {
         ) as? [String]
         excludedFolderPatterns = (storedExcludedFolderPatterns ?? Self.defaultExcludedFolderPatterns)
             .compactMap { FolderExclusionPattern($0)?.value }
+
+        diskScanScope = DiskScanScope(
+            rawValue: defaults.string(forKey: Key.diskScanScope) ?? ""
+        ) ?? .startupDisk
+
+        language = AppLanguage(
+            rawValue: defaults.string(forKey: Key.language) ?? ""
+        ) ?? .system
+        AppStrings.preferredLanguage = language
     }
 
     @discardableResult
@@ -106,5 +130,13 @@ final class AppSettings: ObservableObject {
 
     func removeExcludedFolderPattern(_ pattern: String) {
         excludedFolderPatterns.removeAll { $0 == pattern }
+    }
+
+    func resetExcludedFolderPatterns() {
+        excludedFolderPatterns = Self.defaultExcludedFolderPatterns
+    }
+
+    func removeAllExcludedFolderPatterns() {
+        excludedFolderPatterns = []
     }
 }

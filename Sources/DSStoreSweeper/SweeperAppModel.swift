@@ -25,6 +25,8 @@ final class SweeperAppModel: ObservableObject {
     @Published private(set) var finderAccessState: FinderAccessState = .unknown
     @Published private(set) var isPolling = false
     @Published private(set) var lastScanDate: Date?
+    @Published private(set) var lastCleanupDate: Date?
+    @Published private(set) var lastCleanupRemovedCount = 0
     @Published private(set) var lastCleanupError: String?
     @Published private(set) var totalRemovedCount = 0
     @Published private(set) var launchAtLoginEnabled = false
@@ -38,6 +40,7 @@ final class SweeperAppModel: ObservableObject {
     private let cleanupWorker = CleanupWorker()
     private let cleanupTargetResolver = CleanupTargetResolver()
     private let fullDiskScanner = FullDiskScanner()
+    private let mountedVolumeResolver = MountedVolumeResolver()
     private var tracker = FolderTracker()
     private var monitoringTask: Task<Void, Never>?
     private var fullDiskScanTask: Task<Void, Never>?
@@ -114,7 +117,10 @@ final class SweeperAppModel: ObservableObject {
                 FolderExclusionPattern.init
             )
             let report = await self.fullDiskScanner.scanAndClean(
-                excluding: exclusions
+                excluding: exclusions,
+                skipping: self.mountedVolumeResolver.excludedVolumeURLs(
+                    for: self.settings.diskScanScope
+                )
             )
             self.fullDiskScanReport = report
             self.isFullDiskScanRunning = false
@@ -193,6 +199,8 @@ final class SweeperAppModel: ObservableObject {
                 folderURLs: folderURLsForCleanup
             )
 
+            lastCleanupDate = Date()
+            lastCleanupRemovedCount = cleanupReport.removedFileURLs.count
             totalRemovedCount += cleanupReport.removedFileURLs.count
             lastCleanupError = cleanupReport.failures.first.map { failure in
                 "\(failure.folderURL.path): \(failure.message)"

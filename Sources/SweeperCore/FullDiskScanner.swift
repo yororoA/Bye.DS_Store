@@ -42,13 +42,15 @@ public actor FullDiskScanner {
 
     public func scanAndClean(
         rootURL: URL = URL(fileURLWithPath: "/", isDirectory: true),
-        excluding exclusions: [FolderExclusionPattern] = []
+        excluding exclusions: [FolderExclusionPattern] = [],
+        skipping skippedURLs: [URL] = []
     ) async -> FullDiskCleanupReport {
         var scannedItemCount = 0
         var foundDSStoreCount = 0
         var removedDSStoreCount = 0
         var failureCount = 0
         var failures: [FullDiskScanFailure] = []
+        let skippedPaths = Set(skippedURLs.map { $0.standardizedFileURL.path })
 
         let resourceKeys: [URLResourceKey] = [
             .isDirectoryKey,
@@ -102,6 +104,11 @@ public actor FullDiskScanner {
             }
 
             scannedItemCount += 1
+
+            if skippedPaths.contains(fileURL.standardizedFileURL.path) {
+                enumerator.skipDescendants()
+                continue
+            }
 
             guard let resourceValues = try? fileURL.resourceValues(
                 forKeys: Set(resourceKeys)

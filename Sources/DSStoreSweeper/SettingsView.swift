@@ -6,6 +6,9 @@ struct SettingsView: View {
     @ObservedObject private var settings: AppSettings
     @State private var exclusionInput = ""
     @State private var exclusionInputError = false
+    @State private var isShowingFullDiskScanConfirmation = false
+    @State private var isShowingFullDiskScanDetails = false
+    @State private var isShowingClearExclusionsConfirmation = false
 
     init(model: SweeperAppModel) {
         self.model = model
@@ -14,73 +17,127 @@ struct SettingsView: View {
 
     var body: some View {
         Form {
-            Section("监控") {
-                Toggle("启用后台监控", isOn: $settings.isMonitoringEnabled)
+            Section(AppStrings.text("监控", "Monitoring")) {
+                Toggle(
+                    AppStrings.text("启用后台监控", "Enable background monitoring"),
+                    isOn: $settings.isMonitoringEnabled
+                )
 
-                Picker("扫描间隔", selection: $settings.pollingInterval) {
+                Picker(
+                    AppStrings.text("扫描间隔", "Polling interval"),
+                    selection: $settings.pollingInterval
+                ) {
                     ForEach(AppSettings.pollingIntervals, id: \.self) { interval in
-                        Text(durationLabel(interval))
+                        Text(AppStrings.duration(interval))
                             .tag(interval)
                     }
                 }
 
-                Picker("文件夹关闭后继续清理", selection: $settings.gracePeriod) {
+                Picker(
+                    AppStrings.text("文件夹关闭后继续清理", "Cleanup grace period"),
+                    selection: $settings.gracePeriod
+                ) {
                     ForEach(AppSettings.gracePeriods, id: \.self) { interval in
-                        Text(durationLabel(interval))
+                        Text(AppStrings.duration(interval))
                             .tag(interval)
                     }
                 }
 
-                Picker("清理范围", selection: $settings.cleanupScope) {
+                Picker(
+                    AppStrings.text("清理范围", "Cleanup scope"),
+                    selection: $settings.cleanupScope
+                ) {
                     ForEach(CleanupScope.allCases, id: \.self) { scope in
-                        Text(scope.title)
+                        Text(AppStrings.cleanupScopeTitle(scope))
                             .tag(scope)
                     }
                 }
 
-                Text("经实机排查，.DS_Store 不会直接生成在被打开文件夹的根目录，而是主要在进入其子文件夹时生成在原目录。")
+                Picker(
+                    AppStrings.text("界面语言", "Interface language"),
+                    selection: $settings.language
+                ) {
+                    ForEach(AppLanguage.allCases, id: \.self) { language in
+                        Text(language.title(using: settings.language))
+                            .tag(language)
+                    }
+                }
+
+                Text(AppStrings.text(
+                    "经实机排查，.DS_Store 不会直接生成在被打开文件夹的根目录，而是主要在进入其子文件夹时生成在原目录。",
+                    "In testing, .DS_Store was usually created in the original folder when entering one of its child folders, rather than directly in the opened folder."
+                ))
                     .font(.caption)
                     .foregroundStyle(.secondary)
                     .fixedSize(horizontal: false, vertical: true)
             }
 
-            Section("本机扫描") {
-                Text("手动递归扫描整个启动卷中的 .DS_Store。扫描可能耗时较长，并可能需要在系统设置中授予完整磁盘访问权限。")
+            Section(AppStrings.text("本机扫描", "Disk scan")) {
+                Text(AppStrings.text(
+                    "手动递归扫描磁盘中的 .DS_Store。扫描可能耗时较长，并可能需要在系统设置中授予完整磁盘访问权限。",
+                    "Manually scan the selected disks for .DS_Store files. This may take a while and may require Full Disk Access."
+                ))
                     .font(.caption)
                     .foregroundStyle(.secondary)
                     .fixedSize(horizontal: false, vertical: true)
+
+                Picker(
+                    AppStrings.text("扫描位置", "Scan locations"),
+                    selection: $settings.diskScanScope
+                ) {
+                    ForEach(DiskScanScope.allCases, id: \.self) { scope in
+                        Text(AppStrings.scanScopeTitle(scope))
+                            .tag(scope)
+                    }
+                }
 
                 if model.isFullDiskScanRunning {
                     HStack {
                         ProgressView()
                             .controlSize(.small)
-                        Text("正在扫描本机...")
+                        Text(AppStrings.scanInProgress)
                             .foregroundStyle(.secondary)
                         Spacer()
-                        Button("停止") {
+                        Button(AppStrings.text("停止", "Stop")) {
                             model.cancelFullDiskScan()
                         }
                     }
                 } else {
                     Button {
-                        model.startFullDiskScan()
+                        isShowingFullDiskScanConfirmation = true
                     } label: {
-                        Label("扫描本机并清理", systemImage: "magnifyingglass")
+                        Label(AppStrings.fullDiskScan, systemImage: "magnifyingglass")
                     }
                 }
 
                 if let report = model.fullDiskScanReport {
                     LabeledContent(
-                        report.wasCancelled ? "扫描状态" : "扫描完成",
-                        value: report.wasCancelled ? "已停止" : "已完成"
+                        report.wasCancelled
+                            ? AppStrings.text("扫描状态", "Scan status")
+                            : AppStrings.text("扫描完成", "Scan complete"),
+                        value: report.wasCancelled
+                            ? AppStrings.text("已停止", "Stopped")
+                            : AppStrings.text("已完成", "Complete")
                     )
-                    LabeledContent("扫描项目", value: "\(report.scannedItemCount)")
-                    LabeledContent("发现 .DS_Store", value: "\(report.foundDSStoreCount)")
-                    LabeledContent("已删除", value: "\(report.removedDSStoreCount)")
+                    LabeledContent(
+                        AppStrings.text("扫描项目", "Items scanned"),
+                        value: "\(report.scannedItemCount)"
+                    )
+                    LabeledContent(
+                        AppStrings.text("发现 .DS_Store", "Found .DS_Store"),
+                        value: "\(report.foundDSStoreCount)"
+                    )
+                    LabeledContent(
+                        AppStrings.text("已删除", "Removed"),
+                        value: "\(report.removedDSStoreCount)"
+                    )
 
                     if report.failureCount > 0 {
                         Label(
-                            "有 \(report.failureCount) 个项目无法访问或删除",
+                            AppStrings.text(
+                                "\(report.failureCount) 个项目无法访问或删除",
+                                "\(report.failureCount) item(s) could not be accessed or removed"
+                            ),
                             systemImage: "exclamationmark.triangle"
                         )
                         .font(.caption)
@@ -94,17 +151,27 @@ struct SettingsView: View {
                                 .textSelection(.enabled)
                         }
                     }
+
+                    Button(AppStrings.text("查看扫描详情", "View scan details")) {
+                        isShowingFullDiskScanDetails = true
+                    }
                 }
             }
 
-            Section("扫描排除") {
-                Text("输入文件夹名称，或输入“父文件夹/目标文件夹”路径。全盘扫描遇到匹配的文件夹时会跳过整个目录。")
+            Section(AppStrings.text("扫描排除", "Scan exclusions")) {
+                Text(AppStrings.text(
+                    "输入文件夹名称，或输入“父文件夹/目标文件夹”路径。全盘扫描遇到匹配的文件夹时会跳过整个目录。",
+                    "Enter a folder name or a parent/target path. Full-disk scans skip matching folders and all descendants."
+                ))
                     .font(.caption)
                     .foregroundStyle(.secondary)
                     .fixedSize(horizontal: false, vertical: true)
 
                 HStack(spacing: 8) {
-                    TextField("例如 node_modules 或 lib/packages", text: $exclusionInput)
+                    TextField(
+                        AppStrings.text("例如 node_modules 或 lib/packages", "e.g. node_modules or lib/packages"),
+                        text: $exclusionInput
+                    )
                         .textFieldStyle(.roundedBorder)
                         .onSubmit(addExclusionPattern)
 
@@ -114,12 +181,15 @@ struct SettingsView: View {
                     }
                     .buttonStyle(.borderless)
                     .disabled(exclusionInput.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
-                    .help("添加排除规则")
-                    .accessibilityLabel("添加排除规则")
+                    .help(AppStrings.text("添加排除规则", "Add exclusion"))
+                    .accessibilityLabel(AppStrings.text("添加排除规则", "Add exclusion"))
                 }
 
                 if exclusionInputError {
-                    Text("请输入有效的文件夹名称或路径，例如 node_modules、lib/packages。")
+                    Text(AppStrings.text(
+                        "请输入有效的文件夹名称或路径，例如 node_modules、lib/packages。",
+                        "Enter a valid folder name or path, such as node_modules or lib/packages."
+                    ))
                         .font(.caption2)
                         .foregroundStyle(.orange)
                 }
@@ -135,11 +205,25 @@ struct SettingsView: View {
                         }
                     }
                 }
+
+                HStack {
+                    Button(AppStrings.text("恢复默认规则", "Restore defaults")) {
+                        settings.resetExcludedFolderPatterns()
+                    }
+                    .disabled(settings.excludedFolderPatterns == AppSettings.defaultExcludedFolderPatterns)
+
+                    Spacer()
+
+                    Button(AppStrings.text("清空全部", "Clear all"), role: .destructive) {
+                        isShowingClearExclusionsConfirmation = true
+                    }
+                    .disabled(settings.excludedFolderPatterns.isEmpty)
+                }
             }
 
-            Section("系统") {
+            Section(AppStrings.text("系统", "System")) {
                 Toggle(
-                    "登录时启动",
+                    AppStrings.text("登录时启动", "Launch at login"),
                     isOn: Binding(
                         get: { model.launchAtLoginEnabled },
                         set: { model.setLaunchAtLogin($0) }
@@ -163,16 +247,59 @@ struct SettingsView: View {
                 }
             }
 
-            Section("统计") {
-                LabeledContent("当前打开", value: "\(model.openFolderCount)")
-                LabeledContent("延续清理", value: "\(model.gracePeriodFolderCount)")
-                LabeledContent("本次运行已删除", value: "\(model.totalRemovedCount)")
+            Section(AppStrings.text("统计", "Statistics")) {
+                LabeledContent(
+                    AppStrings.text("当前打开", "Currently open"),
+                    value: "\(model.openFolderCount)"
+                )
+                LabeledContent(
+                    AppStrings.text("延续清理", "Grace-period folders"),
+                    value: "\(model.gracePeriodFolderCount)"
+                )
+                LabeledContent(
+                    AppStrings.text("本次运行已删除", "Removed this run"),
+                    value: "\(model.totalRemovedCount)"
+                )
             }
         }
         .formStyle(.grouped)
+        .id(settings.language)
         .frame(width: 640, height: 720)
         .onAppear {
             model.refreshLaunchAtLoginState()
+        }
+        .alert(
+            AppStrings.text("扫描整个磁盘？", "Scan the selected disks?"),
+            isPresented: $isShowingFullDiskScanConfirmation
+        ) {
+            Button(AppStrings.text("扫描并清理", "Scan and clean"), role: .destructive) {
+                model.startFullDiskScan()
+            }
+            Button(AppStrings.text("取消", "Cancel"), role: .cancel) {}
+        } message: {
+            Text(AppStrings.text(
+                "将递归扫描所选磁盘中的 .DS_Store 并直接删除。扫描可能耗时较长，也可能需要完整磁盘访问权限。",
+                "This recursively scans and permanently deletes .DS_Store files on the selected disks. It may take a while and may require Full Disk Access."
+            ))
+        }
+        .alert(
+            AppStrings.text("清空全部排除规则？", "Clear all exclusion rules?"),
+            isPresented: $isShowingClearExclusionsConfirmation
+        ) {
+            Button(AppStrings.text("清空", "Clear"), role: .destructive) {
+                settings.removeAllExcludedFolderPatterns()
+            }
+            Button(AppStrings.text("取消", "Cancel"), role: .cancel) {}
+        } message: {
+            Text(AppStrings.text(
+                "全盘扫描将不再跳过任何已配置的文件夹。",
+                "Full-disk scans will no longer skip any configured folders."
+            ))
+        }
+        .sheet(isPresented: $isShowingFullDiskScanDetails) {
+            if let report = model.fullDiskScanReport {
+                FullDiskScanDetailView(report: report)
+            }
         }
     }
 
@@ -191,36 +318,122 @@ struct SettingsView: View {
     private var finderAccessRow: some View {
         switch model.finderAccessState {
         case .unknown:
-            LabeledContent("Finder 权限", value: "等待检测")
+            LabeledContent(
+                AppStrings.text("Finder 权限", "Finder permission"),
+                value: AppStrings.text("等待检测", "Waiting to check")
+            )
         case .allowed:
-            LabeledContent("Finder 权限") {
-                Label("已授权", systemImage: "checkmark.circle.fill")
+            LabeledContent(AppStrings.text("Finder 权限", "Finder permission")) {
+                Label(AppStrings.text("已授权", "Allowed"), systemImage: "checkmark.circle.fill")
                     .foregroundStyle(.green)
             }
         case .denied:
-            LabeledContent("Finder 权限") {
-                Button("打开系统设置") {
+            LabeledContent(AppStrings.text("Finder 权限", "Finder permission")) {
+                Button(AppStrings.text("打开系统设置", "Open System Settings")) {
                     model.openAutomationPrivacySettings()
                 }
             }
         case .failed(let message):
-            LabeledContent("Finder 状态") {
+            LabeledContent(AppStrings.text("Finder 状态", "Finder status")) {
                 Text(message)
                     .foregroundStyle(.orange)
                     .lineLimit(2)
             }
         }
     }
+}
 
-    private func durationLabel(_ interval: TimeInterval) -> String {
-        let seconds = Int(interval)
+private struct FullDiskScanDetailView: View {
+    let report: FullDiskCleanupReport
+    @Environment(\.dismiss) private var dismiss
 
-        if seconds < 60 {
-            return "\(seconds) 秒"
+    var body: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            HStack {
+            Label(
+                    report.wasCancelled
+                        ? AppStrings.text("扫描已停止", "Scan stopped")
+                        : AppStrings.text("扫描完成", "Scan complete"),
+                    systemImage: report.wasCancelled
+                        ? "stop.circle"
+                        : "checkmark.circle.fill"
+                )
+                .font(.title3.weight(.semibold))
+                .foregroundStyle(report.wasCancelled ? .orange : .green)
+
+                Spacer()
+
+                Button(AppStrings.text("完成", "Done")) {
+                    dismiss()
+                }
+            }
+
+            Grid(alignment: .leading, horizontalSpacing: 28, verticalSpacing: 8) {
+                GridRow {
+                    Text(AppStrings.text("扫描项目", "Items scanned"))
+                        .foregroundStyle(.secondary)
+                    Text("\(report.scannedItemCount)")
+                }
+                GridRow {
+                    Text(AppStrings.text("发现 .DS_Store", "Found .DS_Store"))
+                        .foregroundStyle(.secondary)
+                    Text("\(report.foundDSStoreCount)")
+                }
+                GridRow {
+                    Text(AppStrings.text("已删除", "Removed"))
+                        .foregroundStyle(.secondary)
+                    Text("\(report.removedDSStoreCount)")
+                }
+                GridRow {
+                    Text(AppStrings.text("失败项目", "Failed items"))
+                        .foregroundStyle(.secondary)
+                    Text("\(report.failureCount)")
+                }
+            }
+
+            Divider()
+
+            Text(AppStrings.text("失败列表", "Failures"))
+                .font(.headline)
+
+            if report.failures.isEmpty {
+                Label(
+                    AppStrings.text("没有记录到失败项目", "No failures recorded"),
+                    systemImage: "checkmark.circle"
+                )
+                    .foregroundStyle(.secondary)
+            } else {
+                ScrollView {
+                    LazyVStack(alignment: .leading, spacing: 10) {
+                        ForEach(Array(report.failures.enumerated()), id: \.offset) { _, failure in
+                            VStack(alignment: .leading, spacing: 3) {
+                                Text(failure.fileURL.path)
+                                    .font(.caption)
+                                    .textSelection(.enabled)
+                                Text(failure.message)
+                                    .font(.caption2)
+                                    .foregroundStyle(.secondary)
+                                    .textSelection(.enabled)
+                            }
+                            .frame(maxWidth: .infinity, alignment: .leading)
+
+                            Divider()
+                        }
+                    }
+                }
+            }
+
+            if report.failureCount > report.failures.count {
+                Text(AppStrings.text(
+                    "仅显示前 \(report.failures.count) 条失败记录。",
+                    "Showing the first \(report.failures.count) failure records."
+                ))
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
         }
-
-        let minutes = seconds / 60
-        return "\(minutes) 分钟"
+        .padding(20)
+        .frame(width: 620, height: 520)
     }
 }
 

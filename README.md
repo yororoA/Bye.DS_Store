@@ -28,7 +28,14 @@
 - 应用以 `Bye` 和状态图标常驻 macOS 顶部菜单栏，不占用 Dock 图标。
 - 可手动扫描整块磁盘，查找并清理已有的 `.DS_Store`。
 - 全盘扫描过程中可以停止操作。
+- 开始全盘扫描前会显示确认提示，避免误触直接删除。
+- 扫描结束后可查看扫描数量、删除数量和失败项目列表。
 - 全盘扫描支持添加文件夹排除规则，例如 `node_modules`、`lib/packages`。
+- 全局快捷键：按 `⌘⌥B`，可在状态栏项目被收起时打开控制面板。
+- 状态栏弹窗显示最近清理时间、本轮清理数量和快捷键提示。
+- 设置页支持恢复默认排除规则或清空全部规则。
+- 全盘扫描支持选择启动磁盘、外接磁盘、网络磁盘或所有已挂载磁盘。
+- UI 默认跟随 macOS 系统语言，也可以在设置中固定为中文或 English。
 
 ### 为什么包含父文件夹
 
@@ -39,6 +46,15 @@
 设置页和菜单栏都提供手动全盘扫描入口。扫描从 `/` 开始，包含隐藏文件和应用包内容，跳过符号链接，并显示扫描项目数、删除数量以及访问或删除失败数量。
 
 由于 macOS 会保护部分文件系统目录，全盘扫描可能需要“完整磁盘访问权限”。无法访问的目录会被记录并显示，不会导致整个扫描中断。
+
+开始前会显示确认对话框，完成后可在“查看扫描详情”中查看失败路径和错误信息。
+
+扫描位置可以在设置中选择：
+
+- 仅启动磁盘
+- 启动磁盘和外接磁盘
+- 启动磁盘和网络磁盘
+- 所有已挂载磁盘
 
 ### 扫描排除
 
@@ -55,6 +71,22 @@ node_modules、.venv、venv、__pycache__、vendor、Pods、target、.gradle
 macOS 的 Finder AppleScript 接口只公开每个 Finder 窗口当前标签页的目标目录，无法枚举同一窗口中未激活的标签页。本应用也不会尝试读取其他应用内部打开的目录。
 
 因此，未激活的 Finder 标签页可能要等到切换为当前标签页后才能被检测到。
+
+## 全局快捷键
+
+按下 `⌘⌥B`，即可打开 Bye.DS_Store 控制面板。该快捷键在应用不处于前台时也可使用，控制面板通常会显示在状态栏图标旁边。
+
+该快捷键使用 macOS 原生全局快捷键注册，不需要额外的辅助功能授权。
+
+## 界面语言
+
+设置页的“界面语言”提供三个选项：
+
+- 跟随系统
+- 中文
+- English
+
+语言选择会保存到本机，并立即应用到菜单栏弹窗、设置窗口、确认框和扫描详情。
 
 ## 系统要求
 
@@ -108,9 +140,22 @@ git push origin v1.0.3
 
 1. 执行 Swift 单元测试。
 2. 在 macOS 上构建并校验 `Bye.DS_Store.app`。
-3. 将应用打包为 zip 文件。
-4. 生成 SHA-256 校验文件。
-5. 创建或更新对应标签的 GitHub Release。
+3. 将应用打包为 zip 和 DMG 文件。
+4. 生成两个安装包的 SHA-256 校验文件。
+5. 如果配置 Apple Developer secrets，则使用 Developer ID 签名并 notarize DMG。
+6. 创建或更新对应标签的 GitHub Release。
+
+要启用签名和 notarization，需要在 GitHub Actions secrets 中配置：
+
+```text
+APPLE_CERTIFICATE_BASE64
+APPLE_CERTIFICATE_PASSWORD
+APPLE_KEYCHAIN_PASSWORD
+APPLE_DEVELOPER_IDENTITY
+APPLE_ID
+APPLE_TEAM_ID
+APPLE_APP_PASSWORD
+```
 
 如果仓库中存在 `.github/release-notes/<tag>.md`，工作流会使用该文件作为 Release 介绍；否则自动生成变更说明。
 
