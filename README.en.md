@@ -28,7 +28,7 @@ The full-disk scan is an explicit, user-triggered operation. It is not part of t
 - A manual full-disk scan can recursively find and remove existing `.DS_Store` files.
 - Full-disk scans can be stopped while they are running.
 - Full-disk scans support folder exclusion rules such as `node_modules` and `lib/packages`.
-- Global shortcut: press `⌘Space`, then `B` to open the control panel when the status item is hidden.
+- Global shortcut: press `⌘⌥B` to open the control panel when the status item is hidden.
 
 ### Why Include the Parent Folder?
 
@@ -58,9 +58,9 @@ macOS exposes the active target of each Finder window, but does not reliably exp
 
 ## Global Shortcut
 
-Press `⌘Space`, then press `B` within 1.2 seconds to open the Bye.DS_Store control panel. This works even when the app is not in the foreground.
+Press `⌘⌥B` to open the Bye.DS_Store control panel. This works even when the app is not in the foreground, and normally shows the panel beside the status item.
 
-Because macOS uses `⌘Space` for Spotlight by default, Spotlight may also appear. If the shortcut does not respond, allow Bye.DS_Store to monitor keyboard events here:
+If the shortcut does not respond, allow Bye.DS_Store to monitor keyboard events here:
 
 ```text
 System Settings > Privacy & Security > Accessibility > Bye.DS_Store

@@ -9,7 +9,9 @@ final class MenuBarController: NSObject, NSApplicationDelegate {
 
     private let shortcutMonitor = GlobalShortcutMonitor()
     private var statusItem: NSStatusItem?
-    private var panel: NSPanel?
+    private var popover: NSPopover?
+    private var fallbackPanel: NSPanel?
+    private var settingsWindow: NSWindow?
 
     override init() {
         model = SweeperAppModel()
@@ -18,11 +20,11 @@ final class MenuBarController: NSObject, NSApplicationDelegate {
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         configureStatusItem()
-        configurePanel()
+        configurePopover()
 
         requestAccessibilityPermission()
         shortcutMonitor.start { [weak self] in
-            self?.showPanelFromShortcut()
+            self?.showControlPanelFromShortcut()
         }
     }
 
@@ -39,12 +41,12 @@ final class MenuBarController: NSObject, NSApplicationDelegate {
         statusItem.button?.image?.isTemplate = true
         statusItem.button?.toolTip = "Bye.DS_Store"
         statusItem.button?.target = self
-        statusItem.button?.action = #selector(togglePanel)
+        statusItem.button?.action = #selector(togglePopover)
         self.statusItem = statusItem
         updateStatusIcon()
     }
 
-    private func configurePanel() {
+    private func configurePopover() {
         let rootView = SweeperMenuView(
             model: model,
             onOpenSettings: { [weak self] in
@@ -52,27 +54,21 @@ final class MenuBarController: NSObject, NSApplicationDelegate {
             }
         )
         let hostingController = NSHostingController(rootView: rootView)
-        let panel = NSPanel(
-            contentRect: NSRect(x: 0, y: 0, width: 360, height: 480),
-            styleMask: [.titled, .closable, .utilityWindow],
-            backing: .buffered,
-            defer: false
-        )
-
-        panel.contentViewController = hostingController
-        panel.title = "Bye.DS_Store"
-        panel.titleVisibility = .hidden
-        panel.titlebarAppearsTransparent = true
-        panel.isReleasedWhenClosed = false
-        panel.isFloatingPanel = true
-        panel.level = .floating
-        panel.hidesOnDeactivate = false
-        panel.collectionBehavior = [.moveToActiveSpace, .fullScreenAuxiliary]
-        panel.standardWindowButton(.zoomButton)?.isHidden = true
-        panel.standardWindowButton(.miniaturizeButton)?.isHidden = true
-        self.panel = panel
+        let popover = NSPopover()
+        popover.contentViewController = hostingController
+        popover.contentSize = NSSize(width: 360, height: 480)
+        popover.behavior = .transient
+        popover.animates = true
+        self.popover = popover
 
         model.$finderAccessState
+            .receive(on: RunLoop.main)
+            .sink { [weak self] _ in
+                self?.updateStatusIcon()
+            }
+            .store(in: &cancellables)
+
+        model.settings.$isMonitoringEnabled
             .receive(on: RunLoop.main)
             .sink { [weak self] _ in
                 self?.updateStatusIcon()
@@ -81,47 +77,105 @@ final class MenuBarController: NSObject, NSApplicationDelegate {
     }
 
     @objc
-    private func togglePanel() {
-        guard let panel else {
+    private func togglePopover() {
+        guard let popover,
+              let button = statusItem?.button else {
             return
         }
 
-        if panel.isVisible {
-            panel.orderOut(nil)
+        if popover.isShown {
+            popover.performClose(nil)
         } else {
-            showPanel(panel)
+            popover.show(
+                relativeTo: button.bounds,
+                of: button,
+                preferredEdge: .minY
+            )
         }
     }
 
-    private func showPanelFromShortcut() {
-        guard let panel else {
+    private func showControlPanelFromShortcut() {
+        NSApp.activate(ignoringOtherApps: true)
+
+        if let popover,
+           let button = statusItem?.button,
+           button.window != nil {
+            if !popover.isShown {
+                popover.show(
+                    relativeTo: button.bounds,
+                    of: button,
+                    preferredEdge: .minY
+                )
+            }
+        } else {
+            showFallbackPanel()
+        }
+    }
+
+    private func showFallbackPanel() {
+        if fallbackPanel == nil {
+            let rootView = SweeperMenuView(
+                model: model,
+                onOpenSettings: { [weak self] in
+                    self?.openSettings()
+                }
+            )
+            let panel = NSPanel(
+                contentRect: NSRect(x: 0, y: 0, width: 360, height: 480),
+                styleMask: [.titled, .closable, .utilityWindow],
+                backing: .buffered,
+                defer: false
+            )
+            panel.contentViewController = NSHostingController(rootView: rootView)
+            panel.title = "Bye.DS_Store"
+            panel.titleVisibility = .hidden
+            panel.titlebarAppearsTransparent = true
+            panel.isReleasedWhenClosed = false
+            panel.isFloatingPanel = true
+            panel.level = .floating
+            panel.hidesOnDeactivate = false
+            panel.collectionBehavior = [.moveToActiveSpace, .fullScreenAuxiliary]
+            panel.standardWindowButton(.zoomButton)?.isHidden = true
+            panel.standardWindowButton(.miniaturizeButton)?.isHidden = true
+            fallbackPanel = panel
+        }
+
+        guard let fallbackPanel else {
             return
         }
 
-        NSApp.activate(ignoringOtherApps: true)
-        showPanel(panel)
-    }
-
-    private func showPanel(_ panel: NSPanel) {
         if let screen = NSScreen.main {
-            let panelSize = panel.frame.size
+            let panelSize = fallbackPanel.frame.size
             let origin = NSPoint(
                 x: screen.visibleFrame.midX - panelSize.width / 2,
                 y: screen.visibleFrame.midY - panelSize.height / 2
             )
-            panel.setFrameOrigin(origin)
+            fallbackPanel.setFrameOrigin(origin)
         }
 
-        panel.makeKeyAndOrderFront(nil)
+        fallbackPanel.makeKeyAndOrderFront(nil)
     }
 
     private func openSettings() {
+        popover?.performClose(nil)
         NSApp.activate(ignoringOtherApps: true)
-        NSApp.sendAction(
-            Selector(("showSettingsWindow:")),
-            to: nil,
-            from: nil
-        )
+
+        if settingsWindow == nil {
+            let settingsView = SettingsView(model: model)
+            let window = NSWindow(
+                contentRect: NSRect(x: 0, y: 0, width: 640, height: 720),
+                styleMask: [.titled, .closable, .miniaturizable],
+                backing: .buffered,
+                defer: false
+            )
+            window.contentViewController = NSHostingController(rootView: settingsView)
+            window.title = "Bye.DS_Store 设置"
+            window.isReleasedWhenClosed = false
+            window.center()
+            settingsWindow = window
+        }
+
+        settingsWindow?.makeKeyAndOrderFront(nil)
     }
 
     private func requestAccessibilityPermission() {
