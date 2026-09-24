@@ -126,6 +126,37 @@
     .nav-links a { transition: color .2s ease; }
     .nav-links a:hover { color: #fff; }
 
+    .language-control {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+    }
+    .language-control select {
+      min-height: 34px;
+      padding: 0 28px 0 10px;
+      color: #d9e5e6;
+      background: #17282e;
+      border: 1px solid #3a5056;
+      border-radius: 6px;
+      font: inherit;
+      font-size: 12px;
+      cursor: pointer;
+    }
+    .language-control select:focus-visible {
+      outline: 2px solid var(--teal);
+      outline-offset: 2px;
+    }
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
     .button {
       display: inline-flex;
       align-items: center;
@@ -752,6 +783,7 @@
     @media (max-width: 640px) {
       .nav, .section-inner, .footer-inner, .hero-grid { width: min(100% - 32px, var(--max)); }
       .nav-links { display: none; }
+      .language-control select { max-width: 76px; padding-right: 7px; padding-left: 7px; }
       .nav .button { min-height: 36px; padding: 0 11px; font-size: 12px; }
       .hero { padding-bottom: 54px; }
       h1 { font-size: 54px; }
@@ -820,19 +852,30 @@
 </head>
 <body>
   <header class="site-header">
-    <nav class="nav" aria-label="主导航">
+    <nav class="nav" aria-label="主导航" data-i18n-attr="aria-label:nav.aria">
       <a class="brand" href="#top">
         <img class="brand-mark" src="assets/favicon-180.png" alt="" aria-hidden="true">
         <span>Bye.DS_Store</span>
       </a>
       <div class="nav-links">
-        <a href="#how-it-works">工作方式</a>
-        <a href="#scan">全盘扫描</a>
-        <a href="#trust">为什么放心</a>
+        <a href="#how-it-works" data-i18n="nav.work">工作方式</a>
+        <a href="#scan" data-i18n="nav.scan">全盘扫描</a>
+        <a href="#trust" data-i18n="nav.trust">为什么放心</a>
         <a href="https://github.com/yororoA/Bye.DS_Store" target="_blank" rel="noreferrer">GitHub ↗</a>
       </div>
+      <label class="language-control">
+        <span class="sr-only" data-i18n="language.label">语言</span>
+        <select id="language-select" aria-label="语言" data-i18n-attr="aria-label:language.label">
+          <option value="zh-Hans">简体中文</option>
+          <option value="zh-Hant">繁體中文</option>
+          <option value="en">English</option>
+          <option value="ja">日本語</option>
+          <option value="de">Deutsch</option>
+          <option value="ru">Русский</option>
+        </select>
+      </label>
       <a class="button button-primary" data-release-download href="https://github.com/yororoA/Bye.DS_Store/releases/latest">
-        下载 <span data-release-version>最新版本</span>
+        <span data-i18n="download.prefix">下载</span> <span data-release-version>最新版本</span>
       </a>
     </nav>
   </header>
@@ -842,27 +885,27 @@
     <section class="hero">
       <div class="hero-grid">
         <div>
-          <p class="eyebrow">A quieter Finder</p>
-          <h1>让杂乱的<br>文件夹安静下来。</h1>
-          <p class="hero-copy">
+          <p class="eyebrow" data-i18n="hero.eyebrow">A quieter Finder</p>
+          <h1 data-i18n-html="hero.title">让杂乱的<br>文件夹安静下来。</h1>
+          <p class="hero-copy" data-i18n="hero.copy">
             Bye.DS_Store 常驻 macOS 菜单栏，跟随你打开的 Finder 文件夹，
             在后台清理不需要留下的 `.DS_Store`。
           </p>
           <div class="hero-actions">
             <a class="button button-primary" data-release-download href="https://github.com/yororoA/Bye.DS_Store/releases/latest">
-              下载 macOS 应用 <span aria-hidden="true">↓</span>
+              <span data-i18n="hero.download">下载 macOS 应用</span> <span aria-hidden="true">↓</span>
             </a>
-            <a class="button button-ghost" href="#how-it-works">了解工作方式 <span aria-hidden="true">↘</span></a>
+            <a class="button button-ghost" href="#how-it-works"><span data-i18n="hero.learn">了解工作方式</span> <span aria-hidden="true">↘</span></a>
           </div>
-          <p class="hero-note">macOS 14+ · Apple Silicon · 菜单栏常驻 · 开源</p>
+          <p class="hero-note" data-i18n="hero.note">macOS 14+ · Apple Silicon · 菜单栏常驻 · 开源</p>
           <div class="hero-activity">
             <span class="activity-label">LIVE</span>
-            <span id="activity-text">Finder target detected / Projects</span>
+            <span id="activity-text" data-i18n="activity.0">Finder target detected / Projects</span>
             <span class="activity-cursor" aria-hidden="true"></span>
           </div>
         </div>
 
-        <div class="desktop-scene" aria-label="Bye.DS_Store 菜单栏面板预览">
+        <div class="desktop-scene" aria-label="Bye.DS_Store 菜单栏面板预览" data-i18n-attr="aria-label:hero.scene">
           <div class="desktop-window">
             <div class="desktop-toolbar">
               <div class="traffic-lights" aria-hidden="true"><i></i><i></i><i></i></div>
@@ -871,14 +914,14 @@
             </div>
             <div class="finder-body">
               <aside class="finder-sidebar">
-                <div class="sidebar-label">Locations</div>
+              <div class="sidebar-label" data-i18n="mock.locations">Locations</div>
                 <div class="sidebar-item active"><span class="sidebar-icon">▣</span> Projects</div>
                 <div class="sidebar-item"><span class="sidebar-icon">◇</span> Desktop</div>
                 <div class="sidebar-item"><span class="sidebar-icon">◇</span> Downloads</div>
               </aside>
               <div class="finder-content">
                 <h3>Projects</h3>
-                <p>3 folders active · clean as you work</p>
+                <p data-i18n="mock.finderSummary">3 folders active · clean as you work</p>
                 <div class="file-grid">
                   <div class="file"><b>▧</b>Bye.DS_Store</div>
                   <div class="file ds"><b>◌</b>.DS_Store</div>
@@ -893,26 +936,26 @@
 
           <div class="menu-popover">
             <div class="popover-head">
-              <div><strong>Bye.DS_Store</strong><small>后台监控已开启</small></div>
+              <div><strong>Bye.DS_Store</strong><small data-i18n="mock.monitoringEnabled">后台监控已开启</small></div>
               <div class="toggle" aria-hidden="true"></div>
             </div>
-            <div class="popover-status"><span class="status-dot"></span>正在监控 3 个文件夹 <span style="margin-left:auto">刚刚</span></div>
+            <div class="popover-status"><span class="status-dot"></span><span data-i18n="mock.monitoringFolders">正在监控 3 个文件夹</span> <span style="margin-left:auto" data-i18n="mock.justNow">刚刚</span></div>
             <div class="folder-row">
               <span>▣</span>
               <div><strong>Projects</strong><small>~/Work/Projects</small></div>
-              <span class="folder-state">打开</span>
+              <span class="folder-state" data-i18n="mock.open">打开</span>
             </div>
             <div class="folder-row">
               <span>▣</span>
               <div><strong>Bye.DS_Store</strong><small>~/Work/Projects/Bye.DS_Store</small></div>
-              <span class="folder-state">打开</span>
+              <span class="folder-state" data-i18n="mock.open">打开</span>
             </div>
             <div class="folder-row">
               <span style="color:var(--amber)">◷</span>
               <div><strong>Archive</strong><small>~/Work/Archive</small></div>
               <span style="color:#b07a20;font-size:9px">42 sec</span>
             </div>
-            <div class="popover-footer"><small>最近清理 12 个 · ⌘⌥B</small><span>↻　⌕　⚙</span></div>
+            <div class="popover-footer"><small data-i18n="mock.recentCleanup">最近清理 12 个 · ⌘⌥B</small><span>↻　⌕　⚙</span></div>
           </div>
         </div>
       </div>
@@ -920,27 +963,27 @@
 
     <section class="section">
       <div class="section-inner reveal">
-        <p class="section-kicker">Quietly automatic</p>
-        <h2>你打开文件夹，<br>它处理剩下的事。</h2>
-        <p class="section-intro">
+        <p class="section-kicker" data-i18n="automatic.kicker">Quietly automatic</p>
+        <h2 data-i18n-html="automatic.title">你打开文件夹，<br>它处理剩下的事。</h2>
+        <p class="section-intro" data-i18n="automatic.copy">
           没有常驻 Dock 图标，没有复杂的工作流。Bye.DS_Store 在菜单栏里，
           只在需要时出现，像一个安静但可靠的桌面工具。
         </p>
         <div class="feature-grid">
           <article class="feature reveal reveal-delay-1">
             <span class="feature-number">01</span>
-            <h3>跟随 Finder</h3>
-            <p>实时读取当前打开的文件夹，多个窗口自动去重，不打扰你的工作节奏。</p>
+            <h3 data-i18n="automatic.feature1.title">跟随 Finder</h3>
+            <p data-i18n="automatic.feature1.copy">实时读取当前打开的文件夹，多个窗口自动去重，不打扰你的工作节奏。</p>
           </article>
           <article class="feature reveal reveal-delay-2">
             <span class="feature-number">02</span>
-            <h3>延续一段时间</h3>
-            <p>文件夹关闭后仍会保留在清理范围内，给 Finder 写入元数据留出时间。</p>
+            <h3 data-i18n="automatic.feature2.title">延续一段时间</h3>
+            <p data-i18n="automatic.feature2.copy">文件夹关闭后仍会保留在清理范围内，给 Finder 写入元数据留出时间。</p>
           </article>
           <article class="feature reveal reveal-delay-3">
             <span class="feature-number">03</span>
-            <h3>适合你的规则</h3>
-            <p>扫描范围、排除目录、轮询间隔都可以在设置中按你的习惯调整。</p>
+            <h3 data-i18n="automatic.feature3.title">适合你的规则</h3>
+            <p data-i18n="automatic.feature3.copy">扫描范围、排除目录、轮询间隔都可以在设置中按你的习惯调整。</p>
           </article>
         </div>
       </div>
@@ -949,28 +992,28 @@
     <section class="section section-dark" id="how-it-works">
       <div class="section-inner workflow reveal">
         <div class="reveal">
-          <p class="section-kicker">How it works</p>
-          <h2>从活跃到近期活跃，清理有自己的节奏。</h2>
-          <p class="section-intro">
+          <p class="section-kicker" data-i18n="workflow.kicker">How it works</p>
+          <h2 data-i18n="workflow.title">从活跃到近期活跃，清理有自己的节奏。</h2>
+          <p class="section-intro" data-i18n="workflow.copy">
             `.DS_Store` 经常在你进入子文件夹时生成到原目录。
             默认策略因此会关注当前文件夹和它的直接父文件夹。
           </p>
           <a class="button button-light" href="https://github.com/yororoA/Bye.DS_Store#readme" target="_blank" rel="noreferrer">
-            查看完整说明 ↗
+            <span data-i18n="workflow.readme">查看完整说明</span> ↗
           </a>
         </div>
         <div class="timeline">
           <div class="timeline-step reveal reveal-delay-1">
-            <b>打开一个 Finder 文件夹</b>
-            <p>应用每 5 秒读取一次 Finder 当前窗口目标，记录活跃目录。</p>
+            <b data-i18n="workflow.step1.title">打开一个 Finder 文件夹</b>
+            <p data-i18n="workflow.step1.copy">应用每 5 秒读取一次 Finder 当前窗口目标，记录活跃目录。</p>
           </div>
           <div class="timeline-step reveal reveal-delay-2">
-            <b>进入它的子文件夹</b>
-            <p>清理当前目录和直接父目录，覆盖 macOS 常见的元数据写入位置。</p>
+            <b data-i18n="workflow.step2.title">进入它的子文件夹</b>
+            <p data-i18n="workflow.step2.copy">清理当前目录和直接父目录，覆盖 macOS 常见的元数据写入位置。</p>
           </div>
           <div class="timeline-step reveal reveal-delay-3">
-            <b>关闭窗口也不急着忘记</b>
-            <p>目录会在默认 60 秒的宽限期内继续参与清理，然后自然退出。</p>
+            <b data-i18n="workflow.step3.title">关闭窗口也不急着忘记</b>
+            <p data-i18n="workflow.step3.copy">目录会在默认 60 秒的宽限期内继续参与清理，然后自然退出。</p>
           </div>
         </div>
       </div>
@@ -978,56 +1021,56 @@
 
     <section class="section" id="scan">
       <div class="section-inner reveal">
-        <p class="section-kicker">Manual when it matters</p>
-        <h2>全盘扫描，<br>把决定权交给你。</h2>
-        <p class="section-intro">
+        <p class="section-kicker" data-i18n="scan.kicker">Manual when it matters</p>
+        <h2 data-i18n-html="scan.title">全盘扫描，<br>把决定权交给你。</h2>
+        <p class="section-intro" data-i18n="scan.copy">
           需要彻底整理时，手动启动一次全盘扫描。扫描前确认，
           扫描中可停止，扫描后查看结果和失败路径。
         </p>
         <div class="scan-console">
           <div class="console-top">
-            <span>全盘扫描 · 启动磁盘</span>
+            <span data-i18n="scan.console.title">全盘扫描 · 启动磁盘</span>
             <div class="console-actions">
-              <b id="scan-state">已完成</b>
-              <button class="demo-scan-button" id="demo-scan" type="button">再次模拟</button>
+              <b id="scan-state" data-i18n="scan.complete">已完成</b>
+              <button class="demo-scan-button" id="demo-scan" type="button" data-i18n="scan.demo">再次模拟</button>
             </div>
           </div>
           <div class="scan-progress" aria-hidden="true"><i></i></div>
           <div class="scan-metric">
-            <div class="metric"><strong id="metric-scanned">18,402</strong><span>扫描项目</span></div>
-            <div class="metric"><strong id="metric-found">286</strong><span>发现 .DS_Store</span></div>
-            <div class="metric"><strong id="metric-removed">284</strong><span>已删除</span></div>
+            <div class="metric"><strong id="metric-scanned">18,402</strong><span data-i18n="scan.metric.scanned">扫描项目</span></div>
+            <div class="metric"><strong id="metric-found">286</strong><span data-i18n="scan.metric.found">发现 .DS_Store</span></div>
+            <div class="metric"><strong id="metric-removed">284</strong><span data-i18n="scan.metric.removed">已删除</span></div>
           </div>
-          <div class="scan-rule"><i>✓</i> 跳过 node_modules、Pods、.venv 等排除目录</div>
-          <div class="scan-rule"><i>✓</i> 跳过符号链接，不重复进入外部路径</div>
-          <div class="scan-rule"><i>!</i> 2 个项目需要完整磁盘访问权限</div>
+          <div class="scan-rule"><i>✓</i> <span data-i18n="scan.rule.exclusions">跳过 node_modules、Pods、.venv 等排除目录</span></div>
+          <div class="scan-rule"><i>✓</i> <span data-i18n="scan.rule.symlinks">跳过符号链接，不重复进入外部路径</span></div>
+          <div class="scan-rule"><i>!</i> <span data-i18n="scan.rule.permissions">2 个项目需要完整磁盘访问权限</span></div>
         </div>
       </div>
     </section>
 
     <section class="section" id="trust">
       <div class="section-inner reveal">
-        <p class="section-kicker">Small, deliberate, transparent</p>
-        <h2>不扫描你没选择的地方。</h2>
-        <p class="section-intro">
+        <p class="section-kicker" data-i18n="trust.kicker">Small, deliberate, transparent</p>
+        <h2 data-i18n="trust.title">不扫描你没选择的地方。</h2>
+        <p class="section-intro" data-i18n="trust.copy">
           Bye.DS_Store 把清理边界写清楚，也把控制权留在你的手里。
         </p>
         <div class="safety-grid">
           <article class="safety-item reveal reveal-delay-1">
-            <h3><span class="check">✓</span>默认只关注 Finder</h3>
-            <p>后台自动清理只处理通过 Finder 监听到的相关目录，全盘扫描必须手动确认。</p>
+            <h3><span class="check">✓</span><span data-i18n="trust.item1.title">默认只关注 Finder</span></h3>
+            <p data-i18n="trust.item1.copy">后台自动清理只处理通过 Finder 监听到的相关目录，全盘扫描必须手动确认。</p>
           </article>
           <article class="safety-item reveal reveal-delay-2">
-            <h3><span class="check">✓</span>排除规则是标签</h3>
-            <p>输入 node_modules 或 lib/packages，回车添加；点击叉号即可移除，规则本地保存。</p>
+            <h3><span class="check">✓</span><span data-i18n="trust.item2.title">排除规则是标签</span></h3>
+            <p data-i18n="trust.item2.copy">输入 node_modules 或 lib/packages，回车添加；点击叉号即可移除，规则本地保存。</p>
           </article>
           <article class="safety-item reveal reveal-delay-3">
-            <h3><span class="check">✓</span>跳过符号链接</h3>
-            <p>扫描不会沿着符号链接进入另一棵目录树，减少重复扫描和意外越界。</p>
+            <h3><span class="check">✓</span><span data-i18n="trust.item3.title">跳过符号链接</span></h3>
+            <p data-i18n="trust.item3.copy">扫描不会沿着符号链接进入另一棵目录树，减少重复扫描和意外越界。</p>
           </article>
           <article class="safety-item reveal reveal-delay-1">
-            <h3><span class="check">✓</span>完整结果可见</h3>
-            <p>扫描后展示发现、删除、失败数量，并提供失败路径和错误信息供复核。</p>
+            <h3><span class="check">✓</span><span data-i18n="trust.item4.title">完整结果可见</span></h3>
+            <p data-i18n="trust.item4.copy">扫描后展示发现、删除、失败数量，并提供失败路径和错误信息供复核。</p>
           </article>
         </div>
       </div>
@@ -1036,22 +1079,22 @@
     <section class="section download">
       <div class="section-inner download-grid">
         <div>
-          <p class="section-kicker">Ready for a cleaner Finder</p>
-          <h2>让 `.DS_Store`<br>退到背景里。</h2>
-          <p>下载最新版本，在 macOS 菜单栏里开始使用 Bye.DS_Store。</p>
+          <p class="section-kicker" data-i18n="download.kicker">Ready for a cleaner Finder</p>
+          <h2 data-i18n-html="download.title">让 `.DS_Store`<br>退到背景里。</h2>
+          <p data-i18n="download.copy">下载最新版本，在 macOS 菜单栏里开始使用 Bye.DS_Store。</p>
           <div class="download-meta">
             <span data-release-version>最新版本</span>
-            <span>macOS 14+</span>
-            <span>Apple Silicon</span>
-            <span>MIT-style open source project</span>
+            <span data-i18n="download.macos">macOS 14+</span>
+            <span data-i18n="download.arch">Apple Silicon</span>
+            <span data-i18n="download.license">MIT-style open source project</span>
           </div>
         </div>
         <div class="download-actions">
           <a class="button button-primary" data-release-download href="https://github.com/yororoA/Bye.DS_Store/releases/latest">
-            下载 DMG <span aria-hidden="true">↓</span>
+            <span data-i18n="download.dmg">下载 DMG</span> <span aria-hidden="true">↓</span>
           </a>
           <a class="button button-ghost" data-release-page href="https://github.com/yororoA/Bye.DS_Store/releases/latest" target="_blank" rel="noreferrer">
-            Release ↗
+            <span data-i18n="download.release">Release</span> ↗
           </a>
         </div>
       </div>
@@ -1064,7 +1107,7 @@
       <div class="footer-links">
         <a href="https://github.com/yororoA/Bye.DS_Store" target="_blank" rel="noreferrer">GitHub</a>
         <a href="https://github.com/yororoA/Bye.DS_Store/releases" target="_blank" rel="noreferrer">Releases</a>
-        <a href="#top">回到顶部 ↑</a>
+        <a href="#top"><span data-i18n="footer.top">回到顶部</span> ↑</a>
       </div>
     </div>
   </footer>
@@ -1072,6 +1115,506 @@
   <script>
     document.documentElement.classList.add("js");
     document.getElementById("year").textContent = new Date().getFullYear();
+
+    const pageTranslations = {
+      "zh-Hant": {
+        "nav.aria": "主導覽",
+        "nav.work": "工作方式",
+        "nav.scan": "全磁碟掃描",
+        "nav.trust": "為什麼放心",
+        "language.label": "語言",
+        "download.prefix": "下載",
+        "hero.eyebrow": "更安靜的 Finder",
+        "hero.title": "讓雜亂的<br>資料夾安靜下來。",
+        "hero.copy": "Bye.DS_Store 常駐 macOS 選單列，跟隨你開啟的 Finder 資料夾，在背景清理不需要留下的 `.DS_Store`。",
+        "hero.download": "下載 macOS 應用程式",
+        "hero.learn": "了解工作方式",
+        "hero.note": "macOS 14+ · Apple Silicon · 選單列常駐 · 開源",
+        "hero.scene": "Bye.DS_Store 選單列面板預覽",
+        "mock.locations": "位置",
+        "mock.finderSummary": "3 個資料夾使用中 · 工作時自動清理",
+        "mock.monitoringEnabled": "背景監控已開啟",
+        "mock.monitoringFolders": "正在監控 3 個資料夾",
+        "mock.justNow": "剛剛",
+        "mock.open": "開啟",
+        "mock.recentCleanup": "最近清理 12 個 · ⌘⌥B",
+        "automatic.kicker": "安靜地自動運作",
+        "automatic.title": "你開啟資料夾，<br>剩下的交給它。",
+        "automatic.copy": "沒有常駐 Dock 圖示，也沒有複雜流程。Bye.DS_Store 位於選單列，只在需要時出現，像一個安靜但可靠的桌面工具。",
+        "automatic.feature1.title": "跟隨 Finder",
+        "automatic.feature1.copy": "即時讀取目前開啟的資料夾，多個視窗自動去重，不打擾你的工作節奏。",
+        "automatic.feature2.title": "延續一段時間",
+        "automatic.feature2.copy": "資料夾關閉後仍會保留在清理範圍內，為 Finder 寫入中繼資料留出時間。",
+        "automatic.feature3.title": "符合你的規則",
+        "automatic.feature3.copy": "掃描範圍、排除目錄和輪詢間隔，都能在設定中依照習慣調整。",
+        "workflow.kicker": "工作方式",
+        "workflow.title": "從活躍到近期活躍，清理有自己的節奏。",
+        "workflow.copy": "`.DS_Store` 經常在你進入子資料夾時寫入原始資料夾，因此預設策略會關注目前資料夾和它的直接父資料夾。",
+        "workflow.readme": "查看完整說明",
+        "workflow.step1.title": "開啟 Finder 資料夾",
+        "workflow.step1.copy": "應用程式每 5 秒讀取一次 Finder 目前視窗的目標，記錄活躍目錄。",
+        "workflow.step2.title": "進入它的子資料夾",
+        "workflow.step2.copy": "清理目前目錄和直接父目錄，涵蓋 macOS 常見的中繼資料寫入位置。",
+        "workflow.step3.title": "關閉視窗也不急著忘記",
+        "workflow.step3.copy": "目錄會在預設 60 秒的寬限期內繼續參與清理，之後自然退出。",
+        "scan.kicker": "需要時手動處理",
+        "scan.title": "全磁碟掃描，<br>決定權交給你。",
+        "scan.copy": "需要徹底整理時，手動啟動一次全磁碟掃描。掃描前確認，掃描中可停止，掃描後檢視結果和失敗路徑。",
+        "scan.console.title": "全磁碟掃描 · 啟動磁碟",
+        "scan.complete": "已完成",
+        "scan.scanning": "掃描中",
+        "scan.demo": "再次模擬",
+        "scan.metric.scanned": "掃描項目",
+        "scan.metric.found": "發現 .DS_Store",
+        "scan.metric.removed": "已刪除",
+        "scan.rule.exclusions": "跳過 node_modules、Pods、.venv 等排除目錄",
+        "scan.rule.symlinks": "跳過符號連結，不重複進入外部路徑",
+        "scan.rule.permissions": "2 個項目需要完整磁碟存取權限",
+        "trust.kicker": "小心、克制、透明",
+        "trust.title": "不掃描你沒有選擇的地方。",
+        "trust.copy": "Bye.DS_Store 把清理邊界寫清楚，也把控制權留在你的手中。",
+        "trust.item1.title": "預設只關注 Finder",
+        "trust.item1.copy": "背景自動清理只處理透過 Finder 監聽到的相關目錄，全磁碟掃描必須手動確認。",
+        "trust.item2.title": "排除規則是標籤",
+        "trust.item2.copy": "輸入 node_modules 或 lib/packages，按下 Return 新增；點擊叉號即可移除，規則儲存在本機。",
+        "trust.item3.title": "跳過符號連結",
+        "trust.item3.copy": "掃描不會沿著符號連結進入另一棵目錄樹，減少重複掃描和意外越界。",
+        "trust.item4.title": "完整結果可見",
+        "trust.item4.copy": "掃描後展示發現、刪除和失敗數量，並提供失敗路徑與錯誤資訊供複核。",
+        "download.kicker": "準備好讓 Finder 更乾淨",
+        "download.title": "讓 `.DS_Store`<br>退到背景裡。",
+        "download.copy": "下載最新版本，在 macOS 選單列開始使用 Bye.DS_Store。",
+        "download.macos": "macOS 14+",
+        "download.arch": "Apple Silicon",
+        "download.license": "MIT 風格開源專案",
+        "download.dmg": "下載 DMG",
+        "download.release": "Release",
+        "footer.top": "回到頂端"
+      },
+      "en": {
+        "nav.aria": "Main navigation",
+        "nav.work": "How it works",
+        "nav.scan": "Full-disk scan",
+        "nav.trust": "Why trust it",
+        "language.label": "Language",
+        "download.prefix": "Download",
+        "hero.eyebrow": "A quieter Finder",
+        "hero.title": "Let your<br>folders breathe.",
+        "hero.copy": "Bye.DS_Store lives in the macOS menu bar, follows the Finder folders you open, and quietly removes `.DS_Store` files in the background.",
+        "hero.download": "Download for macOS",
+        "hero.learn": "How it works",
+        "hero.note": "macOS 14+ · Apple Silicon · Menu bar utility · Open source",
+        "hero.scene": "Bye.DS_Store menu bar panel preview",
+        "mock.locations": "Locations",
+        "mock.finderSummary": "3 folders active · clean as you work",
+        "mock.monitoringEnabled": "Monitoring enabled",
+        "mock.monitoringFolders": "Monitoring 3 folders",
+        "mock.justNow": "just now",
+        "mock.open": "Open",
+        "mock.recentCleanup": "Last cleanup 12 · ⌘⌥B",
+        "automatic.kicker": "Quietly automatic",
+        "automatic.title": "You open a folder,<br>it handles the rest.",
+        "automatic.copy": "No Dock icon to manage and no complicated workflow. Bye.DS_Store stays in the menu bar and appears only when you need it.",
+        "automatic.feature1.title": "Follow Finder",
+        "automatic.feature1.copy": "Read the folders currently open in Finder, deduplicate multiple windows, and keep your workflow quiet.",
+        "automatic.feature2.title": "Stay on briefly",
+        "automatic.feature2.copy": "Keep a closed folder in the cleanup set long enough for Finder to finish writing metadata.",
+        "automatic.feature3.title": "Fit your rules",
+        "automatic.feature3.copy": "Adjust scan locations, exclusions, and polling intervals to match the way you work.",
+        "workflow.kicker": "How it works",
+        "workflow.title": "Cleanup has a rhythm, from active to recently active.",
+        "workflow.copy": "`.DS_Store` files are often written to the original folder when you enter a child folder, so the default scope covers the current folder and its direct parent.",
+        "workflow.readme": "Read the full guide",
+        "workflow.step1.title": "Open a Finder folder",
+        "workflow.step1.copy": "The app reads the current Finder window targets every 5 seconds and records active directories.",
+        "workflow.step2.title": "Enter a child folder",
+        "workflow.step2.copy": "Clean the current folder and its direct parent to cover common macOS metadata locations.",
+        "workflow.step3.title": "Closing a window is not a hard stop",
+        "workflow.step3.copy": "The folder stays in the cleanup set for a default 60-second grace period, then leaves naturally.",
+        "scan.kicker": "Manual when it matters",
+        "scan.title": "Full-disk scan,<br>on your terms.",
+        "scan.copy": "When you need a deeper reset, start a full-disk scan manually. Confirm before it starts, stop it while running, and inspect results afterward.",
+        "scan.console.title": "Full-disk scan · Startup disk",
+        "scan.complete": "Complete",
+        "scan.scanning": "Scanning",
+        "scan.demo": "Run again",
+        "scan.metric.scanned": "Items scanned",
+        "scan.metric.found": "Found .DS_Store",
+        "scan.metric.removed": "Removed",
+        "scan.rule.exclusions": "Skip node_modules, Pods, .venv, and other exclusions",
+        "scan.rule.symlinks": "Skip symbolic links and avoid entering external paths twice",
+        "scan.rule.permissions": "2 items need Full Disk Access",
+        "trust.kicker": "Small, deliberate, transparent",
+        "trust.title": "It does not scan what you did not choose.",
+        "trust.copy": "Bye.DS_Store makes the cleanup boundary clear and keeps control in your hands.",
+        "trust.item1.title": "Finder by default",
+        "trust.item1.copy": "Background cleanup only handles directories found through Finder monitoring. Full-disk scans always require a manual confirmation.",
+        "trust.item2.title": "Exclusions are tags",
+        "trust.item2.copy": "Enter node_modules or lib/packages, press Return to add it, and click the x to remove it. Rules stay local.",
+        "trust.item3.title": "Skip symbolic links",
+        "trust.item3.copy": "The scanner does not follow symbolic links into another directory tree, reducing duplicates and surprises.",
+        "trust.item4.title": "Full results",
+        "trust.item4.copy": "Review found, removed, and failed counts, along with failed paths and error messages.",
+        "download.kicker": "Ready for a cleaner Finder",
+        "download.title": "Let `.DS_Store`<br>fade into the background.",
+        "download.copy": "Download the latest release and start using Bye.DS_Store from your macOS menu bar.",
+        "download.macos": "macOS 14+",
+        "download.arch": "Apple Silicon",
+        "download.license": "MIT-style open source project",
+        "download.dmg": "Download DMG",
+        "download.release": "Release",
+        "footer.top": "Back to top"
+      },
+      "ja": {
+        "nav.aria": "メインナビゲーション",
+        "nav.work": "仕組み",
+        "nav.scan": "ディスク全体をスキャン",
+        "nav.trust": "安心して使える理由",
+        "language.label": "言語",
+        "download.prefix": "ダウンロード",
+        "hero.eyebrow": "静かな Finder",
+        "hero.title": "散らかった<br>フォルダを静かに。",
+        "hero.copy": "Bye.DS_Store は macOS のメニューバーに常駐し、開いている Finder のフォルダに合わせて `.DS_Store` を静かに削除します。",
+        "hero.download": "macOS 版をダウンロード",
+        "hero.learn": "仕組みを見る",
+        "hero.note": "macOS 14+ · Apple Silicon · メニューバー常駐 · オープンソース",
+        "hero.scene": "Bye.DS_Store メニューバーパネルのプレビュー",
+        "mock.locations": "場所",
+        "mock.finderSummary": "3 フォルダがアクティブ · 作業中に整理",
+        "mock.monitoringEnabled": "監視を有効にしました",
+        "mock.monitoringFolders": "3 フォルダを監視中",
+        "mock.justNow": "たった今",
+        "mock.open": "開く",
+        "mock.recentCleanup": "最近削除した数 12 · ⌘⌥B",
+        "automatic.kicker": "静かに自動化",
+        "automatic.title": "フォルダを開けば、<br>あとはおまかせ。",
+        "automatic.copy": "Dock のアイコンも複雑な操作も不要です。Bye.DS_Store はメニューバーに常駐し、必要なときだけ現れます。",
+        "automatic.feature1.title": "Finder に追従",
+        "automatic.feature1.copy": "Finder で開いているフォルダを読み取り、複数ウィンドウは自動で重複排除します。",
+        "automatic.feature2.title": "少しだけ見守る",
+        "automatic.feature2.copy": "ウィンドウを閉じた後も一定時間フォルダを対象に残し、Finder のメタデータ書き込みを待ちます。",
+        "automatic.feature3.title": "ルールを調整",
+        "automatic.feature3.copy": "スキャン場所、除外フォルダ、確認間隔を自分の使い方に合わせて設定できます。",
+        "workflow.kicker": "仕組み",
+        "workflow.title": "アクティブなフォルダを、必要な間だけ整理。",
+        "workflow.copy": "`.DS_Store` は子フォルダに入ったとき元のフォルダへ書き込まれることが多いため、標準では現在のフォルダと直接の親フォルダを対象にします。",
+        "workflow.readme": "詳しい説明を見る",
+        "workflow.step1.title": "Finder フォルダを開く",
+        "workflow.step1.copy": "5 秒ごとに Finder の現在のウィンドウを読み取り、アクティブなフォルダを記録します。",
+        "workflow.step2.title": "子フォルダへ入る",
+        "workflow.step2.copy": "現在のフォルダと直接の親フォルダを整理し、macOS の一般的な書き込み先をカバーします。",
+        "workflow.step3.title": "閉じてもすぐには忘れない",
+        "workflow.step3.copy": "フォルダは標準で 60 秒間対象に残り、その後自然に外れます。",
+        "scan.kicker": "必要なときだけ手動で",
+        "scan.title": "ディスク全体をスキャン、<br>決めるのはあなた。",
+        "scan.copy": "徹底的に整理したいときは、手動でスキャンを開始します。開始前に確認でき、実行中は停止でき、結果も確認できます。",
+        "scan.console.title": "ディスク全体のスキャン · 起動ディスク",
+        "scan.complete": "完了",
+        "scan.scanning": "スキャン中",
+        "scan.demo": "もう一度試す",
+        "scan.metric.scanned": "スキャン項目",
+        "scan.metric.found": "検出した .DS_Store",
+        "scan.metric.removed": "削除済み",
+        "scan.rule.exclusions": "node_modules、Pods、.venv などの除外フォルダをスキップ",
+        "scan.rule.symlinks": "シンボリックリンクをスキップし、外部パスへの重複進入を防止",
+        "scan.rule.permissions": "2 件にフルディスクアクセスが必要",
+        "trust.kicker": "小さく、慎重に、透明に",
+        "trust.title": "選択していない場所はスキャンしません。",
+        "trust.copy": "Bye.DS_Store は境界を明確にし、操作の主導権をあなたに残します。",
+        "trust.item1.title": "Finder だけを標準対象に",
+        "trust.item1.copy": "バックグラウンドでは Finder から検出した関連フォルダだけを整理します。ディスク全体のスキャンは手動確認が必要です。",
+        "trust.item2.title": "除外ルールはタグで管理",
+        "trust.item2.copy": "node_modules や lib/packages を入力して Return。タグの x で削除でき、ルールはローカルに保存されます。",
+        "trust.item3.title": "シンボリックリンクをスキップ",
+        "trust.item3.copy": "別のディレクトリツリーへリンクをたどらないため、重複スキャンや意図しない越境を減らせます。",
+        "trust.item4.title": "結果をすべて確認",
+        "trust.item4.copy": "検出、削除、失敗の数と、失敗したパスやエラー内容を確認できます。",
+        "download.kicker": "Finder をもっときれいに",
+        "download.title": "`.DS_Store` を<br>背景へ。",
+        "download.copy": "最新版をダウンロードして、macOS のメニューバーで Bye.DS_Store を始めましょう。",
+        "download.macos": "macOS 14+",
+        "download.arch": "Apple Silicon",
+        "download.license": "MIT スタイルのオープンソース",
+        "download.dmg": "DMG をダウンロード",
+        "download.release": "Release",
+        "footer.top": "トップへ戻る"
+      },
+      "de": {
+        "nav.aria": "Hauptnavigation",
+        "nav.work": "So funktioniert es",
+        "nav.scan": "Gesamten Datenträger scannen",
+        "nav.trust": "Warum vertrauen",
+        "language.label": "Sprache",
+        "download.prefix": "Download",
+        "hero.eyebrow": "Ein ruhigerer Finder",
+        "hero.title": "Mehr Ruhe für<br>deine Ordner.",
+        "hero.copy": "Bye.DS_Store bleibt in der macOS-Menüleiste, folgt deinen geöffneten Finder-Ordnern und entfernt `.DS_Store`-Dateien leise im Hintergrund.",
+        "hero.download": "macOS-App herunterladen",
+        "hero.learn": "So funktioniert es",
+        "hero.note": "macOS 14+ · Apple Silicon · Menüleisten-App · Open Source",
+        "hero.scene": "Vorschau des Bye.DS_Store-Menüleistenfensters",
+        "mock.locations": "Orte",
+        "mock.finderSummary": "3 Ordner aktiv · Bereinigung beim Arbeiten",
+        "mock.monitoringEnabled": "Überwachung aktiviert",
+        "mock.monitoringFolders": "3 Ordner werden überwacht",
+        "mock.justNow": "gerade eben",
+        "mock.open": "Offen",
+        "mock.recentCleanup": "Zuletzt bereinigt: 12 · ⌘⌥B",
+        "automatic.kicker": "Leise automatisch",
+        "automatic.title": "Du öffnest einen Ordner,<br>den Rest erledigt es.",
+        "automatic.copy": "Kein Dock-Symbol und kein komplizierter Ablauf. Bye.DS_Store bleibt in der Menüleiste und erscheint nur, wenn du es brauchst.",
+        "automatic.feature1.title": "Finder folgen",
+        "automatic.feature1.copy": "Aktuell geöffnete Finder-Ordner werden gelesen, mehrere Fenster automatisch zusammengeführt.",
+        "automatic.feature2.title": "Kurz weiter beobachten",
+        "automatic.feature2.copy": "Geschlossene Ordner bleiben noch kurz im Bereinigungsbereich, damit Finder Metadaten fertig schreiben kann.",
+        "automatic.feature3.title": "Deine Regeln",
+        "automatic.feature3.copy": "Scanorte, Ausschlüsse und Abfrageintervalle lassen sich passend zu deinem Arbeitsstil einstellen.",
+        "workflow.kicker": "So funktioniert es",
+        "workflow.title": "Bereinigung folgt einem Rhythmus: aktiv bis kürzlich aktiv.",
+        "workflow.copy": "`.DS_Store` wird beim Öffnen eines Unterordners oft im ursprünglichen Ordner geschrieben. Deshalb umfasst der Standardbereich den aktuellen Ordner und seinen direkten Elternordner.",
+        "workflow.readme": "Vollständige Anleitung",
+        "workflow.step1.title": "Finder-Ordner öffnen",
+        "workflow.step1.copy": "Alle 5 Sekunden werden die aktuellen Finder-Fenster gelesen und aktive Verzeichnisse erfasst.",
+        "workflow.step2.title": "Unterordner öffnen",
+        "workflow.step2.copy": "Der aktuelle Ordner und sein direkter Elternordner werden bereinigt.",
+        "workflow.step3.title": "Beim Schließen nicht sofort vergessen",
+        "workflow.step3.copy": "Der Ordner bleibt standardmäßig 60 Sekunden im Bereich und wird danach entfernt.",
+        "scan.kicker": "Manuell, wenn es zählt",
+        "scan.title": "Gesamten Datenträger scannen,<br>du entscheidest.",
+        "scan.copy": "Für eine gründliche Bereinigung startest du einen Scan manuell. Vorher bestätigen, währenddessen stoppen und danach Ergebnisse prüfen.",
+        "scan.console.title": "Gesamter Datenträger · Startvolume",
+        "scan.complete": "Abgeschlossen",
+        "scan.scanning": "Wird gescannt",
+        "scan.demo": "Erneut simulieren",
+        "scan.metric.scanned": "Gescannte Elemente",
+        "scan.metric.found": ".DS_Store gefunden",
+        "scan.metric.removed": "Entfernt",
+        "scan.rule.exclusions": "node_modules, Pods, .venv und andere Ausschlüsse überspringen",
+        "scan.rule.symlinks": "Symbolische Links überspringen und externe Pfade nicht doppelt betreten",
+        "scan.rule.permissions": "2 Elemente benötigen vollständigen Festplattenzugriff",
+        "trust.kicker": "Klein, bewusst, transparent",
+        "trust.title": "Es scannt nicht, was du nicht ausgewählt hast.",
+        "trust.copy": "Bye.DS_Store hält die Bereinigungsgrenzen klar und die Kontrolle bei dir.",
+        "trust.item1.title": "Standardmäßig nur Finder",
+        "trust.item1.copy": "Die automatische Bereinigung verarbeitet nur Verzeichnisse, die über Finder erkannt wurden. Ein Gesamtscan braucht immer eine Bestätigung.",
+        "trust.item2.title": "Ausschlüsse als Tags",
+        "trust.item2.copy": "node_modules oder lib/packages eingeben, Return drücken und mit dem x entfernen. Regeln bleiben lokal.",
+        "trust.item3.title": "Symbolische Links überspringen",
+        "trust.item3.copy": "Der Scan folgt keinen symbolischen Links in andere Verzeichnisbäume und reduziert Duplikate.",
+        "trust.item4.title": "Vollständige Ergebnisse",
+        "trust.item4.copy": "Gefundene, entfernte und fehlgeschlagene Elemente sowie Pfade und Fehlermeldungen bleiben sichtbar.",
+        "download.kicker": "Bereit für einen saubereren Finder",
+        "download.title": "`.DS_Store`<br>in den Hintergrund.",
+        "download.copy": "Lade die neueste Version herunter und starte Bye.DS_Store in deiner macOS-Menüleiste.",
+        "download.macos": "macOS 14+",
+        "download.arch": "Apple Silicon",
+        "download.license": "Open-Source-Projekt im MIT-Stil",
+        "download.dmg": "DMG herunterladen",
+        "download.release": "Release",
+        "footer.top": "Nach oben"
+      },
+      "ru": {
+        "nav.aria": "Основная навигация",
+        "nav.work": "Как это работает",
+        "nav.scan": "Полное сканирование диска",
+        "nav.trust": "Почему это безопасно",
+        "language.label": "Язык",
+        "download.prefix": "Скачать",
+        "hero.eyebrow": "Тихий Finder",
+        "hero.title": "Пусть в папках<br>будет порядок.",
+        "hero.copy": "Bye.DS_Store живёт в строке меню macOS, следит за открытыми папками Finder и незаметно удаляет `.DS_Store` в фоне.",
+        "hero.download": "Скачать для macOS",
+        "hero.learn": "Как это работает",
+        "hero.note": "macOS 14+ · Apple Silicon · В строке меню · Открытый исходный код",
+        "hero.scene": "Предпросмотр панели Bye.DS_Store в строке меню",
+        "mock.locations": "Места",
+        "mock.finderSummary": "Активны 3 папки · очистка во время работы",
+        "mock.monitoringEnabled": "Мониторинг включён",
+        "mock.monitoringFolders": "Отслеживается 3 папки",
+        "mock.justNow": "только что",
+        "mock.open": "Открыта",
+        "mock.recentCleanup": "Последняя очистка: 12 · ⌘⌥B",
+        "automatic.kicker": "Тихая автоматизация",
+        "automatic.title": "Вы открываете папку,<br>остальное сделает приложение.",
+        "automatic.copy": "Никаких значков в Dock и сложных сценариев. Bye.DS_Store остаётся в строке меню и появляется только тогда, когда нужен.",
+        "automatic.feature1.title": "Следит за Finder",
+        "automatic.feature1.copy": "Читает открытые в Finder папки и автоматически убирает дубликаты между окнами.",
+        "automatic.feature2.title": "Даёт время",
+        "automatic.feature2.copy": "После закрытия папка ещё некоторое время остаётся в области очистки, чтобы Finder успел записать метаданные.",
+        "automatic.feature3.title": "Ваши правила",
+        "automatic.feature3.copy": "Настройте места сканирования, исключения и интервалы опроса под свой рабочий процесс.",
+        "workflow.kicker": "Как это работает",
+        "workflow.title": "Очистка идёт своим ритмом: от активных папок к недавно активным.",
+        "workflow.copy": "`.DS_Store` часто записывается в исходную папку при входе во вложенную, поэтому по умолчанию очищается текущая папка и её непосредственная родительская папка.",
+        "workflow.readme": "Полное описание",
+        "workflow.step1.title": "Откройте папку в Finder",
+        "workflow.step1.copy": "Приложение каждые 5 секунд читает текущие окна Finder и запоминает активные каталоги.",
+        "workflow.step2.title": "Войдите во вложенную папку",
+        "workflow.step2.copy": "Очищаются текущая папка и её непосредственная родительская папка.",
+        "workflow.step3.title": "Закрытие окна — не сразу забыть",
+        "workflow.step3.copy": "Папка остаётся в области очистки 60 секунд по умолчанию, а затем удаляется из списка.",
+        "scan.kicker": "Вручную, когда нужно",
+        "scan.title": "Полное сканирование диска,<br>решать вам.",
+        "scan.copy": "Для глубокой очистки запустите сканирование вручную. Подтвердите запуск, остановите процесс при необходимости и проверьте результат.",
+        "scan.console.title": "Полное сканирование · Загрузочный диск",
+        "scan.complete": "Завершено",
+        "scan.scanning": "Сканирование",
+        "scan.demo": "Запустить снова",
+        "scan.metric.scanned": "Просканировано",
+        "scan.metric.found": "Найдено .DS_Store",
+        "scan.metric.removed": "Удалено",
+        "scan.rule.exclusions": "Пропускать node_modules, Pods, .venv и другие исключения",
+        "scan.rule.symlinks": "Пропускать символические ссылки и не заходить во внешние пути повторно",
+        "scan.rule.permissions": "Для 2 элементов нужен полный доступ к диску",
+        "trust.kicker": "Небольшой, продуманный, прозрачный",
+        "trust.title": "Не сканирует то, что вы не выбрали.",
+        "trust.copy": "Bye.DS_Store чётко обозначает границы очистки и оставляет контроль у вас.",
+        "trust.item1.title": "По умолчанию только Finder",
+        "trust.item1.copy": "Фоновая очистка работает только с каталогами, найденными через Finder. Полное сканирование требует ручного подтверждения.",
+        "trust.item2.title": "Исключения — это теги",
+        "trust.item2.copy": "Введите node_modules или lib/packages, нажмите Return, а для удаления нажмите x. Правила хранятся локально.",
+        "trust.item3.title": "Пропускать символические ссылки",
+        "trust.item3.copy": "Сканер не переходит по ссылкам в другое дерево каталогов, уменьшая дубли и неожиданный выход за границы.",
+        "trust.item4.title": "Результат полностью виден",
+        "trust.item4.copy": "Показываются найденные, удалённые и ошибочные элементы, пути и сообщения об ошибках.",
+        "download.kicker": "Готовы к более чистому Finder",
+        "download.title": "Пусть `.DS_Store`<br>останется в фоне.",
+        "download.copy": "Скачайте последнюю версию и начните использовать Bye.DS_Store в строке меню macOS.",
+        "download.macos": "macOS 14+",
+        "download.arch": "Apple Silicon",
+        "download.license": "Проект с открытым исходным кодом в стиле MIT",
+        "download.dmg": "Скачать DMG",
+        "download.release": "Release",
+        "footer.top": "Наверх"
+      }
+    };
+
+    const pageTextFallbacks = {
+      "scan.scanning": "扫描中"
+    };
+    const languageSelect = document.getElementById("language-select");
+    const activityText = document.getElementById("activity-text");
+    const supportedLanguages = ["zh-Hans", "zh-Hant", "en", "ja", "de", "ru"];
+    const defaultTextByKey = new Map();
+    const defaultHTMLByKey = new Map();
+    const defaultAttributesByKey = new Map();
+    let activeLanguage = "zh-Hans";
+    let activityIndex = 0;
+
+    document.querySelectorAll("[data-i18n]").forEach((element) => {
+      defaultTextByKey.set(element.dataset.i18n, element.textContent.trim());
+    });
+    document.querySelectorAll("[data-i18n-html]").forEach((element) => {
+      defaultHTMLByKey.set(element.dataset.i18nHtml, element.innerHTML);
+    });
+    document.querySelectorAll("[data-i18n-attr]").forEach((element) => {
+      const [attribute, key] = element.dataset.i18nAttr.split(":");
+      defaultAttributesByKey.set(`${attribute}:${key}`, element.getAttribute(attribute) || "");
+    });
+
+    const pageText = (key) => pageTranslations[activeLanguage]?.[key]
+      || defaultTextByKey.get(key)
+      || pageTextFallbacks[key]
+      || "";
+
+    const pageActivities = {
+      "zh-Hans": [
+        "Finder target detected / Projects",
+        "Cleaning metadata / 12 files",
+        "Grace period active / Archive",
+        "Ready for the next folder"
+      ],
+      "zh-Hant": [
+        "Finder 目標已偵測 / Projects",
+        "正在清理中繼資料 / 12 個檔案",
+        "寬限期啟用 / Archive",
+        "準備好迎接下一個資料夾"
+      ],
+      en: [
+        "Finder target detected / Projects",
+        "Cleaning metadata / 12 files",
+        "Grace period active / Archive",
+        "Ready for the next folder"
+      ],
+      ja: [
+        "Finder の対象を検出 / Projects",
+        "メタデータを整理中 / 12 ファイル",
+        "猶予期間中 / Archive",
+        "次のフォルダを待機中"
+      ],
+      de: [
+        "Finder-Ziel erkannt / Projects",
+        "Metadaten werden bereinigt / 12 Dateien",
+        "Schonfrist aktiv / Archive",
+        "Bereit für den nächsten Ordner"
+      ],
+      ru: [
+        "Цель Finder обнаружена / Projects",
+        "Очистка метаданных / 12 файлов",
+        "Отсроченная очистка / Archive",
+        "Готово к следующей папке"
+      ]
+    };
+
+    const detectedLanguage = () => {
+      let storedLanguage = null;
+      try {
+        storedLanguage = window.localStorage.getItem("bye-dsstore-site-language");
+      } catch {}
+      if (supportedLanguages.includes(storedLanguage)) return storedLanguage;
+
+      const browserLanguage = (navigator.language || "").toLowerCase();
+      if (browserLanguage.startsWith("zh-tw") || browserLanguage.startsWith("zh-hk")
+        || browserLanguage.includes("hant")) return "zh-Hant";
+      if (browserLanguage.startsWith("ja")) return "ja";
+      if (browserLanguage.startsWith("de")) return "de";
+      if (browserLanguage.startsWith("ru")) return "ru";
+      if (browserLanguage.startsWith("en")) return "en";
+      return "zh-Hans";
+    };
+
+    const applyLanguage = (language) => {
+      activeLanguage = supportedLanguages.includes(language) ? language : "zh-Hans";
+      const languagePack = pageTranslations[activeLanguage] || {};
+      document.documentElement.lang = {
+        "zh-Hans": "zh-CN",
+        "zh-Hant": "zh-TW",
+        en: "en",
+        ja: "ja",
+        de: "de",
+        ru: "ru"
+      }[activeLanguage];
+
+      document.querySelectorAll("[data-i18n]").forEach((element) => {
+        element.textContent = languagePack[element.dataset.i18n]
+          || defaultTextByKey.get(element.dataset.i18n)
+          || "";
+      });
+      document.querySelectorAll("[data-i18n-html]").forEach((element) => {
+        element.innerHTML = languagePack[element.dataset.i18nHtml]
+          || defaultHTMLByKey.get(element.dataset.i18nHtml)
+          || "";
+      });
+      document.querySelectorAll("[data-i18n-attr]").forEach((element) => {
+        const [attribute, key] = element.dataset.i18nAttr.split(":");
+        element.setAttribute(
+          attribute,
+          languagePack[key] || defaultAttributesByKey.get(`${attribute}:${key}`) || ""
+        );
+      });
+
+      languageSelect.value = activeLanguage;
+      activityIndex = 0;
+      activityText.textContent = pageActivities[activeLanguage][0];
+      try {
+        window.localStorage.setItem("bye-dsstore-site-language", activeLanguage);
+      } catch {}
+    };
+
+    languageSelect.addEventListener("change", (event) => {
+      applyLanguage(event.target.value);
+    });
+    applyLanguage(detectedLanguage());
 
     const latestReleaseUrl = "https://github.com/yororoA/Bye.DS_Store/releases/latest";
     const releaseVersions = document.querySelectorAll("[data-release-version]");
@@ -1087,27 +1630,29 @@
       });
     };
 
-    fetch("release.json", { cache: "no-store" })
-      .then((response) => {
-        if (!response.ok) throw new Error(`Release metadata request failed: ${response.status}`);
-        return response.json();
-      })
-      .then((release) => {
-        if (!release.version || !release.dmgUrl) throw new Error("Latest arm64 DMG is unavailable");
+    if (window.location.protocol !== "file:") {
+      fetch("release.json", { cache: "no-store" })
+        .then((response) => {
+          if (!response.ok) throw new Error(`Release metadata request failed: ${response.status}`);
+          return response.json();
+        })
+        .then((release) => {
+          if (!release.version || !release.dmgUrl) throw new Error("Latest arm64 DMG is unavailable");
 
-        releaseVersions.forEach((element) => {
-          element.textContent = release.version;
+          releaseVersions.forEach((element) => {
+            element.textContent = release.version;
+          });
+          releaseDownloads.forEach((link) => {
+            link.href = release.dmgUrl;
+          });
+          releasePages.forEach((link) => {
+            link.href = release.releaseUrl || latestReleaseUrl;
+          });
+        })
+        .catch(() => {
+          useLatestReleasePage();
         });
-        releaseDownloads.forEach((link) => {
-          link.href = release.dmgUrl;
-        });
-        releasePages.forEach((link) => {
-          link.href = release.releaseUrl || latestReleaseUrl;
-        });
-      })
-      .catch(() => {
-        useLatestReleasePage();
-      });
+    }
 
     const revealItems = document.querySelectorAll(".reveal");
     const revealObserver = new IntersectionObserver((entries, observer) => {
@@ -1154,20 +1699,13 @@
       });
     }
 
-    const activityText = document.getElementById("activity-text");
-    const activities = [
-      "Finder target detected / Projects",
-      "Cleaning metadata / 12 files",
-      "Grace period active / Archive",
-      "Ready for the next folder"
-    ];
-    let activityIndex = 0;
     if (!reduceMotion) {
       window.setInterval(() => {
-        activityIndex = (activityIndex + 1) % activities.length;
+        const currentActivities = pageActivities[activeLanguage];
+        activityIndex = (activityIndex + 1) % currentActivities.length;
         activityText.style.opacity = "0";
         window.setTimeout(() => {
-          activityText.textContent = activities[activityIndex];
+          activityText.textContent = pageActivities[activeLanguage][activityIndex];
           activityText.style.opacity = "1";
         }, 180);
       }, 2600);
@@ -1195,13 +1733,13 @@
     scanButton.addEventListener("click", () => {
       scanButton.disabled = true;
       scanConsole.classList.add("is-scanning");
-      scanState.textContent = "扫描中";
+      scanState.textContent = pageText("scan.scanning");
       setTimeout(() => {
         animateMetric(scannedMetric, 19328);
         animateMetric(foundMetric, 301);
         animateMetric(removedMetric, 299);
         scanConsole.classList.remove("is-scanning");
-        scanState.textContent = "已完成";
+        scanState.textContent = pageText("scan.complete");
         scanButton.disabled = false;
       }, 1300);
     });

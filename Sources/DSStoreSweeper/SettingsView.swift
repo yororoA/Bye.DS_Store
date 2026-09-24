@@ -134,9 +134,9 @@ struct SettingsView: View {
 
                     if report.failureCount > 0 {
                         Label(
-                            AppStrings.text(
-                                "\(report.failureCount) 个项目无法访问或删除",
-                                "\(report.failureCount) item(s) could not be accessed or removed"
+                            AppStrings.failureSummary(
+                                report.failureCount,
+                                language: settings.language
                             ),
                             systemImage: "exclamationmark.triangle"
                         )
@@ -424,9 +424,8 @@ private struct FullDiskScanDetailView: View {
             }
 
             if report.failureCount > report.failures.count {
-                Text(AppStrings.text(
-                    "仅显示前 \(report.failures.count) 条失败记录。",
-                    "Showing the first \(report.failures.count) failure records."
+                Text(AppStrings.failureRecordsSummary(
+                    report.failures.count
                 ))
                     .font(.caption)
                     .foregroundStyle(.secondary)
