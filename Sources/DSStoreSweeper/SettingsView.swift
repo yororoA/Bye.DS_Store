@@ -263,6 +263,7 @@ struct SettingsView: View {
             }
         }
         .formStyle(.grouped)
+        .id(settings.language)
         .frame(width: 640, height: 720)
         .onAppear {
             model.refreshLaunchAtLoginState()
