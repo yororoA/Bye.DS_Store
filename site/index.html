@@ -58,6 +58,23 @@
       border-bottom-color: rgba(255, 255, 255, .18);
     }
 
+    .scroll-progress {
+      position: fixed;
+      z-index: 21;
+      top: 67px;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      pointer-events: none;
+    }
+    .scroll-progress i {
+      display: block;
+      width: 0;
+      height: 100%;
+      background: var(--teal);
+      transition: width .12s linear;
+    }
+
     .nav {
       display: flex;
       align-items: center;
@@ -210,11 +227,46 @@
       font-size: 12px;
     }
 
+    .hero-activity {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      min-height: 28px;
+      margin-top: 26px;
+      padding: 0 10px;
+      color: #8ea4a7;
+      background: #142329;
+      border: 1px solid #2b4147;
+      border-radius: 5px;
+      font-family: "SF Mono", SFMono-Regular, Consolas, monospace;
+      font-size: 10px;
+    }
+    .activity-label {
+      color: var(--teal);
+      font-weight: 800;
+      letter-spacing: .08em;
+    }
+    #activity-text {
+      min-width: 230px;
+      transition: opacity .18s ease;
+    }
+    .activity-cursor {
+      display: inline-block;
+      width: 5px;
+      height: 12px;
+      background: var(--teal);
+      animation: cursor-blink 1s steps(2, jump-none) infinite;
+    }
+
     .desktop-scene {
       position: relative;
       min-height: 520px;
       padding: 20px 20px 0;
-      animation: scene-rise .9s .18s ease both;
+      --scene-x: 0px;
+      --scene-y: 0px;
+      transform: translate3d(var(--scene-x), var(--scene-y), 0);
+      animation: scene-fade .9s .18s ease both;
+      transition: transform .35s ease-out;
     }
 
     .desktop-scene::before {
@@ -611,6 +663,12 @@
       font-size: 12px;
     }
     .scan-rule i { color: var(--teal); font-style: normal; }
+    .scan-console.is-scanning .scan-rule {
+      animation: log-in .42s ease both;
+    }
+    .scan-console.is-scanning .scan-rule:nth-child(4) { animation-delay: .12s; }
+    .scan-console.is-scanning .scan-rule:nth-child(5) { animation-delay: .24s; }
+    .scan-console.is-scanning .scan-rule:nth-child(6) { animation-delay: .36s; }
 
     .safety-grid {
       display: grid;
@@ -712,9 +770,9 @@
       to { opacity: 1; transform: translateY(0); }
     }
 
-    @keyframes scene-rise {
-      from { opacity: 0; transform: translateY(24px); }
-      to { opacity: 1; transform: translateY(0); }
+    @keyframes scene-fade {
+      from { opacity: 0; }
+      to { opacity: 1; }
     }
 
     @keyframes window-float {
@@ -736,6 +794,16 @@
       0% { transform: translateX(-80%); }
       100% { transform: translateX(230%); }
     }
+
+    @keyframes cursor-blink {
+      0%, 45% { opacity: 1; }
+      46%, 100% { opacity: 0; }
+    }
+
+    @keyframes log-in {
+      from { opacity: .25; transform: translateX(-7px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
   </style>
 </head>
 <body>
@@ -756,6 +824,7 @@
       </a>
     </nav>
   </header>
+  <div class="scroll-progress" aria-hidden="true"><i id="scroll-progress"></i></div>
 
   <main id="top">
     <section class="hero">
@@ -774,6 +843,11 @@
             <a class="button button-ghost" href="#how-it-works">了解工作方式 <span aria-hidden="true">↘</span></a>
           </div>
           <p class="hero-note">macOS 14+ · Apple Silicon · 菜单栏常驻 · 开源</p>
+          <div class="hero-activity">
+            <span class="activity-label">LIVE</span>
+            <span id="activity-text">Finder target detected / Projects</span>
+            <span class="activity-cursor" aria-hidden="true"></span>
+          </div>
         </div>
 
         <div class="desktop-scene" aria-label="Bye.DS_Store 菜单栏面板预览">
@@ -1004,6 +1078,52 @@
     };
     window.addEventListener("scroll", updateHeader, { passive: true });
     updateHeader();
+
+    const scrollProgress = document.getElementById("scroll-progress");
+    const updateScrollProgress = () => {
+      const scrollable = Math.max(document.documentElement.scrollHeight - window.innerHeight, 1);
+      const progress = Math.min(window.scrollY / scrollable, 1) * 100;
+      scrollProgress.style.width = `${progress}%`;
+    };
+    window.addEventListener("scroll", updateScrollProgress, { passive: true });
+    window.addEventListener("resize", updateScrollProgress);
+    updateScrollProgress();
+
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const scene = document.querySelector(".desktop-scene");
+    if (!reduceMotion && window.matchMedia("(hover: hover)").matches) {
+      scene.addEventListener("pointermove", (event) => {
+        const rect = scene.getBoundingClientRect();
+        const x = (event.clientX - rect.left) / rect.width - 0.5;
+        const y = (event.clientY - rect.top) / rect.height - 0.5;
+        scene.style.setProperty("--scene-x", `${x * 8}px`);
+        scene.style.setProperty("--scene-y", `${y * 6}px`);
+      });
+
+      scene.addEventListener("pointerleave", () => {
+        scene.style.setProperty("--scene-x", "0px");
+        scene.style.setProperty("--scene-y", "0px");
+      });
+    }
+
+    const activityText = document.getElementById("activity-text");
+    const activities = [
+      "Finder target detected / Projects",
+      "Cleaning metadata / 12 files",
+      "Grace period active / Archive",
+      "Ready for the next folder"
+    ];
+    let activityIndex = 0;
+    if (!reduceMotion) {
+      window.setInterval(() => {
+        activityIndex = (activityIndex + 1) % activities.length;
+        activityText.style.opacity = "0";
+        window.setTimeout(() => {
+          activityText.textContent = activities[activityIndex];
+          activityText.style.opacity = "1";
+        }, 180);
+      }, 2600);
+    }
 
     const scanButton = document.getElementById("demo-scan");
     const scanConsole = document.querySelector(".scan-console");
