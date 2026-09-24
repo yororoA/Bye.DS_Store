@@ -8,6 +8,7 @@ struct SettingsView: View {
     @State private var exclusionInputError = false
     @State private var isShowingFullDiskScanConfirmation = false
     @State private var isShowingFullDiskScanDetails = false
+    @State private var isShowingClearExclusionsConfirmation = false
 
     init(model: SweeperAppModel) {
         self.model = model
@@ -141,6 +142,20 @@ struct SettingsView: View {
                         }
                     }
                 }
+
+                HStack {
+                    Button("恢复默认规则") {
+                        settings.resetExcludedFolderPatterns()
+                    }
+                    .disabled(settings.excludedFolderPatterns == AppSettings.defaultExcludedFolderPatterns)
+
+                    Spacer()
+
+                    Button("清空全部", role: .destructive) {
+                        isShowingClearExclusionsConfirmation = true
+                    }
+                    .disabled(settings.excludedFolderPatterns.isEmpty)
+                }
             }
 
             Section("系统") {
@@ -190,6 +205,17 @@ struct SettingsView: View {
             Button("取消", role: .cancel) {}
         } message: {
             Text("将递归扫描启动磁盘中的 .DS_Store 并直接删除。扫描可能耗时较长，也可能需要完整磁盘访问权限。")
+        }
+        .alert(
+            "清空全部排除规则？",
+            isPresented: $isShowingClearExclusionsConfirmation
+        ) {
+            Button("清空", role: .destructive) {
+                settings.removeAllExcludedFolderPatterns()
+            }
+            Button("取消", role: .cancel) {}
+        } message: {
+            Text("全盘扫描将不再跳过任何已配置的文件夹。")
         }
         .sheet(isPresented: $isShowingFullDiskScanDetails) {
             if let report = model.fullDiskScanReport {

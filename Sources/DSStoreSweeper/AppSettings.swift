@@ -107,4 +107,12 @@ final class AppSettings: ObservableObject {
     func removeExcludedFolderPattern(_ pattern: String) {
         excludedFolderPatterns.removeAll { $0 == pattern }
     }
+
+    func resetExcludedFolderPatterns() {
+        excludedFolderPatterns = Self.defaultExcludedFolderPatterns
+    }
+
+    func removeAllExcludedFolderPatterns() {
+        excludedFolderPatterns = []
+    }
 }
