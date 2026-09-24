@@ -29,15 +29,18 @@ struct SweeperMenuView: View {
         }
         .frame(width: 360)
         .alert(
-            "扫描整个启动磁盘？",
+            AppStrings.text("扫描整个启动磁盘？", "Scan the startup disk?"),
             isPresented: $isShowingFullDiskScanConfirmation
         ) {
-            Button("扫描并清理", role: .destructive) {
+            Button(AppStrings.text("扫描并清理", "Scan and clean"), role: .destructive) {
                 model.startFullDiskScan()
             }
-            Button("取消", role: .cancel) {}
+            Button(AppStrings.text("取消", "Cancel"), role: .cancel) {}
         } message: {
-            Text("将递归扫描启动磁盘中的 .DS_Store 并直接删除。扫描可能耗时较长。")
+            Text(AppStrings.text(
+                "将递归扫描启动磁盘中的 .DS_Store 并直接删除。扫描可能耗时较长。",
+                "This recursively scans and permanently deletes .DS_Store files on the startup disk. It may take a while."
+            ))
         }
     }
 
@@ -47,14 +50,16 @@ struct SweeperMenuView: View {
                 Text("Bye.DS_Store")
                     .font(.headline)
 
-                Text(settings.isMonitoringEnabled ? "后台监控已开启" : "后台监控已暂停")
+                Text(settings.isMonitoringEnabled
+                     ? AppStrings.monitoringEnabled
+                     : AppStrings.monitoringPaused)
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
 
             Spacer()
 
-            Toggle("后台监控", isOn: $settings.isMonitoringEnabled)
+            Toggle(AppStrings.monitoringLabel, isOn: $settings.isMonitoringEnabled)
                 .labelsHidden()
                 .toggleStyle(.switch)
                 .controlSize(.small)
@@ -68,14 +73,17 @@ struct SweeperMenuView: View {
         case .denied(let message):
             issueRow(
                 icon: "lock.trianglebadge.exclamationmark",
-                title: "Finder 自动化权限被拒绝",
+                title: AppStrings.text(
+                    "Finder 自动化权限被拒绝",
+                    "Finder automation permission denied"
+                ),
                 detail: message,
                 showsSettingsButton: true
             )
         case .failed(let message):
             issueRow(
                 icon: "exclamationmark.triangle",
-                title: "无法读取 Finder",
+                title: AppStrings.text("无法读取 Finder", "Unable to read Finder"),
                 detail: message,
                 showsSettingsButton: false
             )
@@ -97,7 +105,7 @@ struct SweeperMenuView: View {
                             .foregroundStyle(.tertiary)
                     }
 
-                    Text("最近清理 \(model.lastCleanupRemovedCount) 个")
+                    Text(AppStrings.recentCleanup(model.lastCleanupRemovedCount))
                         .font(.caption2)
                         .foregroundStyle(.tertiary)
                 }
@@ -114,7 +122,7 @@ struct SweeperMenuView: View {
                     Image(systemName: "folder")
                         .font(.title2)
                         .foregroundStyle(.tertiary)
-                    Text("Finder 中没有打开的文件夹")
+                    Text(AppStrings.emptyFolders)
                         .font(.callout)
                         .foregroundStyle(.secondary)
                 }
@@ -143,10 +151,10 @@ struct SweeperMenuView: View {
     private var footer: some View {
         HStack(spacing: 6) {
             VStack(alignment: .leading, spacing: 2) {
-                Text("累计清理 \(model.totalRemovedCount) 个")
+                Text(AppStrings.totalCleanup(model.totalRemovedCount))
                     .font(.caption)
                     .foregroundStyle(.secondary)
-                Text("快捷键 ⌘⌥B")
+                Text(AppStrings.text("快捷键 ", "Shortcut ") + AppStrings.shortcut)
                     .font(.caption2)
                     .foregroundStyle(.tertiary)
             }
@@ -161,8 +169,8 @@ struct SweeperMenuView: View {
             }
             .buttonStyle(.borderless)
             .disabled(model.isPolling)
-            .help("立即扫描")
-            .accessibilityLabel("立即扫描")
+            .help(AppStrings.immediateScan)
+            .accessibilityLabel(AppStrings.immediateScan)
 
             Button {
                 if model.isFullDiskScanRunning {
@@ -175,8 +183,8 @@ struct SweeperMenuView: View {
                     .frame(width: 22, height: 22)
             }
             .buttonStyle(.borderless)
-            .help(model.isFullDiskScanRunning ? "停止本机扫描" : "扫描本机并清理")
-            .accessibilityLabel(model.isFullDiskScanRunning ? "停止本机扫描" : "扫描本机并清理")
+            .help(model.isFullDiskScanRunning ? AppStrings.stopScan : AppStrings.fullDiskScan)
+            .accessibilityLabel(model.isFullDiskScanRunning ? AppStrings.stopScan : AppStrings.fullDiskScan)
 
             Button {
                 onOpenSettings()
@@ -185,8 +193,8 @@ struct SweeperMenuView: View {
                     .frame(width: 22, height: 22)
             }
             .buttonStyle(.borderless)
-            .help("设置")
-            .accessibilityLabel("设置")
+            .help(AppStrings.settings)
+            .accessibilityLabel(AppStrings.settings)
 
             Button {
                 NSApplication.shared.terminate(nil)
@@ -195,8 +203,8 @@ struct SweeperMenuView: View {
                     .frame(width: 22, height: 22)
             }
             .buttonStyle(.borderless)
-            .help("退出")
-            .accessibilityLabel("退出")
+            .help(AppStrings.quit)
+            .accessibilityLabel(AppStrings.quit)
         }
         .padding(.horizontal, 12)
         .padding(.vertical, 9)
@@ -204,14 +212,10 @@ struct SweeperMenuView: View {
 
     private var statusText: String {
         if !settings.isMonitoringEnabled {
-            return "监控已暂停"
+            return AppStrings.monitoringPaused
         }
 
-        if model.gracePeriodFolderCount == 0 {
-            return "正在监控 \(model.openFolderCount) 个文件夹"
-        }
-
-        return "监控 \(model.openFolderCount) 个，延续清理 \(model.gracePeriodFolderCount) 个"
+        return AppStrings.monitored(model.openFolderCount, model.gracePeriodFolderCount)
     }
 
     private func issueRow(
@@ -237,7 +241,7 @@ struct SweeperMenuView: View {
             Spacer(minLength: 4)
 
             if showsSettingsButton {
-                Button("授权") {
+                Button(AppStrings.text("授权", "Allow")) {
                     model.openAutomationPrivacySettings()
                 }
                 .controlSize(.small)
@@ -311,7 +315,7 @@ private struct FolderRow: View {
     private var stateLabel: some View {
         switch folder.state {
         case .open:
-            Text("打开")
+            Text(AppStrings.text("打开", "Open"))
                 .font(.caption2)
                 .foregroundStyle(.secondary)
         case .gracePeriod(let expiresAt):
@@ -321,7 +325,7 @@ private struct FolderRow: View {
                     Int(expiresAt.timeIntervalSince(context.date).rounded(.up))
                 )
 
-                Text("\(remainingSeconds) 秒")
+                Text(AppStrings.remaining(remainingSeconds))
                     .font(.caption2)
                     .monospacedDigit()
                     .foregroundStyle(.orange)

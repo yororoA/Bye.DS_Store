@@ -225,7 +225,7 @@ final class MenuBarController: NSObject, NSApplicationDelegate {
                 defer: false
             )
             window.contentViewController = NSHostingController(rootView: settingsView)
-            window.title = "Bye.DS_Store 设置"
+            window.title = AppStrings.text("Bye.DS_Store 设置", "Bye.DS_Store Settings")
             window.isReleasedWhenClosed = false
             window.center()
             settingsWindow = window
