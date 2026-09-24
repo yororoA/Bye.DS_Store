@@ -6,6 +6,7 @@ struct SettingsView: View {
     @ObservedObject private var settings: AppSettings
     @State private var exclusionInput = ""
     @State private var exclusionInputError = false
+    @State private var isShowingFullDiskScanConfirmation = false
 
     init(model: SweeperAppModel) {
         self.model = model
@@ -63,7 +64,7 @@ struct SettingsView: View {
                     }
                 } else {
                     Button {
-                        model.startFullDiskScan()
+                        isShowingFullDiskScanConfirmation = true
                     } label: {
                         Label("扫描本机并清理", systemImage: "magnifyingglass")
                     }
@@ -173,6 +174,17 @@ struct SettingsView: View {
         .frame(width: 640, height: 720)
         .onAppear {
             model.refreshLaunchAtLoginState()
+        }
+        .alert(
+            "扫描整个启动磁盘？",
+            isPresented: $isShowingFullDiskScanConfirmation
+        ) {
+            Button("扫描并清理", role: .destructive) {
+                model.startFullDiskScan()
+            }
+            Button("取消", role: .cancel) {}
+        } message: {
+            Text("将递归扫描启动磁盘中的 .DS_Store 并直接删除。扫描可能耗时较长，也可能需要完整磁盘访问权限。")
         }
     }
 

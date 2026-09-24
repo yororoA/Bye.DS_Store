@@ -6,6 +6,7 @@ struct SweeperMenuView: View {
     @ObservedObject var model: SweeperAppModel
     @ObservedObject private var settings: AppSettings
     private let onOpenSettings: () -> Void
+    @State private var isShowingFullDiskScanConfirmation = false
 
     init(
         model: SweeperAppModel,
@@ -27,6 +28,17 @@ struct SweeperMenuView: View {
             footer
         }
         .frame(width: 360)
+        .alert(
+            "扫描整个启动磁盘？",
+            isPresented: $isShowingFullDiskScanConfirmation
+        ) {
+            Button("扫描并清理", role: .destructive) {
+                model.startFullDiskScan()
+            }
+            Button("取消", role: .cancel) {}
+        } message: {
+            Text("将递归扫描启动磁盘中的 .DS_Store 并直接删除。扫描可能耗时较长。")
+        }
     }
 
     private var header: some View {
@@ -147,7 +159,7 @@ struct SweeperMenuView: View {
                 if model.isFullDiskScanRunning {
                     model.cancelFullDiskScan()
                 } else {
-                    model.startFullDiskScan()
+                    isShowingFullDiskScanConfirmation = true
                 }
             } label: {
                 Image(systemName: model.isFullDiskScanRunning ? "stop.fill" : "magnifyingglass")
