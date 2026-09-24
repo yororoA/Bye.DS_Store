@@ -1,6 +1,5 @@
 import AppKit
 import Combine
-import ApplicationServices
 import SwiftUI
 
 @MainActor
@@ -12,6 +11,8 @@ final class MenuBarController: NSObject, NSApplicationDelegate {
     private var popover: NSPopover?
     private var fallbackPanel: NSPanel?
     private var settingsWindow: NSWindow?
+    private var globalClickMonitor: Any?
+    private var localClickMonitor: Any?
 
     override init() {
         model = SweeperAppModel()
@@ -21,8 +22,8 @@ final class MenuBarController: NSObject, NSApplicationDelegate {
     func applicationDidFinishLaunching(_ notification: Notification) {
         configureStatusItem()
         configurePopover()
+        configureOutsideClickHandling()
 
-        requestAccessibilityPermission()
         shortcutMonitor.start { [weak self] in
             self?.showControlPanelFromShortcut()
         }
@@ -30,6 +31,7 @@ final class MenuBarController: NSObject, NSApplicationDelegate {
 
     func applicationWillTerminate(_ notification: Notification) {
         shortcutMonitor.stop()
+        removeOutsideClickHandling()
     }
 
     private func configureStatusItem() {
@@ -74,6 +76,60 @@ final class MenuBarController: NSObject, NSApplicationDelegate {
                 self?.updateStatusIcon()
             }
             .store(in: &cancellables)
+    }
+
+    private func configureOutsideClickHandling() {
+        let mouseEvents: NSEvent.EventTypeMask = [
+            .leftMouseDown,
+            .rightMouseDown,
+            .otherMouseDown
+        ]
+
+        globalClickMonitor = NSEvent.addGlobalMonitorForEvents(
+            matching: mouseEvents
+        ) { [weak self] event in
+            DispatchQueue.main.async {
+                self?.closePopoverFromOutsideClick(event)
+            }
+        }
+
+        localClickMonitor = NSEvent.addLocalMonitorForEvents(
+            matching: mouseEvents
+        ) { [weak self] event in
+            DispatchQueue.main.async {
+                self?.closePopoverFromOutsideClick(event)
+            }
+            return event
+        }
+    }
+
+    private func removeOutsideClickHandling() {
+        if let globalClickMonitor {
+            NSEvent.removeMonitor(globalClickMonitor)
+        }
+
+        if let localClickMonitor {
+            NSEvent.removeMonitor(localClickMonitor)
+        }
+
+        globalClickMonitor = nil
+        localClickMonitor = nil
+    }
+
+    private func closePopoverFromOutsideClick(_ event: NSEvent) {
+        guard let popover,
+              popover.isShown else {
+            return
+        }
+
+        let eventWindow = event.window
+        let popoverWindow = popover.contentViewController?.view.window
+        let statusWindow = statusItem?.button?.window
+
+        if eventWindow !== popoverWindow,
+           eventWindow !== statusWindow {
+            popover.performClose(nil)
+        }
     }
 
     @objc
@@ -176,13 +232,6 @@ final class MenuBarController: NSObject, NSApplicationDelegate {
         }
 
         settingsWindow?.makeKeyAndOrderFront(nil)
-    }
-
-    private func requestAccessibilityPermission() {
-        let options = [
-            "AXTrustedCheckOptionPrompt": true
-        ] as CFDictionary
-        _ = AXIsProcessTrustedWithOptions(options)
     }
 
     private func updateStatusIcon() {

@@ -1,83 +1,83 @@
-import AppKit
+import Carbon.HIToolbox
 import Foundation
 
-@MainActor
-final class GlobalShortcutMonitor {
-    private enum KeyCode {
-        static let b: UInt16 = 11
-    }
+final class GlobalShortcutMonitor: @unchecked Sendable {
+    private static let hotKeySignature: OSType = 0x42594453
+    private static let hotKeyIdentifier: UInt32 = 1
 
-    private var globalMonitor: Any?
-    private var localMonitor: Any?
-    private var lastTriggerDate: Date?
-    private var action: (() -> Void)?
+    private var eventHandler: EventHandlerRef?
+    private var hotKey: EventHotKeyRef?
+    private var action: (@MainActor @Sendable () -> Void)?
 
-    func start(action: @escaping () -> Void) {
+    func start(action: @escaping @MainActor @Sendable () -> Void) {
         stop()
         self.action = action
 
-        globalMonitor = NSEvent.addGlobalMonitorForEvents(
-            matching: [.keyDown]
-        ) { [weak self] event in
-            self?.scheduleHandling(event)
+        var eventType = EventTypeSpec(
+            eventClass: OSType(kEventClassKeyboard),
+            eventKind: OSType(kEventHotKeyPressed)
+        )
+        let handlerStatus = InstallEventHandler(
+            GetApplicationEventTarget(),
+            Self.hotKeyEventHandler,
+            1,
+            &eventType,
+            Unmanaged.passUnretained(self).toOpaque(),
+            &eventHandler
+        )
+
+        guard handlerStatus == noErr else {
+            return
         }
 
-        localMonitor = NSEvent.addLocalMonitorForEvents(
-            matching: [.keyDown]
-        ) { [weak self] event in
-            self?.scheduleHandling(event)
-            return event
+        let hotKeyID = EventHotKeyID(
+            signature: Self.hotKeySignature,
+            id: Self.hotKeyIdentifier
+        )
+        let registerStatus = RegisterEventHotKey(
+            UInt32(kVK_ANSI_B),
+            UInt32(cmdKey | optionKey),
+            hotKeyID,
+            GetApplicationEventTarget(),
+            0,
+            &hotKey
+        )
+
+        if registerStatus != noErr {
+            stop()
         }
     }
 
     func stop() {
-        if let globalMonitor {
-            NSEvent.removeMonitor(globalMonitor)
+        if let hotKey {
+            UnregisterEventHotKey(hotKey)
         }
 
-        if let localMonitor {
-            NSEvent.removeMonitor(localMonitor)
+        if let eventHandler {
+            RemoveEventHandler(eventHandler)
         }
 
-        globalMonitor = nil
-        localMonitor = nil
+        hotKey = nil
+        eventHandler = nil
         action = nil
     }
 
-    nonisolated private func scheduleHandling(_ event: NSEvent) {
-        let keyCode = event.keyCode
-        let commandOptionPressed = event.modifierFlags.contains(.command)
-            && event.modifierFlags.contains(.option)
-        let isARepeat = event.isARepeat
-
+    private func trigger() {
         Task { @MainActor [weak self] in
-            self?.handle(
-                keyCode: keyCode,
-                commandOptionPressed: commandOptionPressed,
-                isARepeat: isARepeat
-            )
+            self?.action?()
         }
     }
 
-    private func handle(
-        keyCode: UInt16,
-        commandOptionPressed: Bool,
-        isARepeat: Bool
-    ) {
-        guard !isARepeat,
-              keyCode == KeyCode.b,
-              commandOptionPressed else {
-            return
+    private static let hotKeyEventHandler: EventHandlerUPP = {
+        _, _, userData in
+        guard let userData else {
+            return OSStatus(eventNotHandledErr)
         }
 
-        let now = Date()
-
-        if let lastTriggerDate,
-           now.timeIntervalSince(lastTriggerDate) < 0.25 {
-            return
-        }
-
-        lastTriggerDate = now
-        action?()
+        let monitor = Unmanaged<GlobalShortcutMonitor>
+            .fromOpaque(userData)
+            .takeUnretainedValue()
+        monitor.trigger()
+        return noErr
     }
 }

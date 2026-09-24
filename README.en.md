@@ -60,11 +60,7 @@ macOS exposes the active target of each Finder window, but does not reliably exp
 
 Press `⌘⌥B` to open the Bye.DS_Store control panel. This works even when the app is not in the foreground, and normally shows the panel beside the status item.
 
-If the shortcut does not respond, allow Bye.DS_Store to monitor keyboard events here:
-
-```text
-System Settings > Privacy & Security > Accessibility > Bye.DS_Store
-```
+The shortcut uses macOS's native global hot-key registration and does not require additional Accessibility permission.
 
 ## Requirements
 
