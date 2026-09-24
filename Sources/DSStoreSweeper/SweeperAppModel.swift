@@ -40,6 +40,7 @@ final class SweeperAppModel: ObservableObject {
     private let cleanupWorker = CleanupWorker()
     private let cleanupTargetResolver = CleanupTargetResolver()
     private let fullDiskScanner = FullDiskScanner()
+    private let mountedVolumeResolver = MountedVolumeResolver()
     private var tracker = FolderTracker()
     private var monitoringTask: Task<Void, Never>?
     private var fullDiskScanTask: Task<Void, Never>?
@@ -116,7 +117,10 @@ final class SweeperAppModel: ObservableObject {
                 FolderExclusionPattern.init
             )
             let report = await self.fullDiskScanner.scanAndClean(
-                excluding: exclusions
+                excluding: exclusions,
+                skipping: self.mountedVolumeResolver.excludedVolumeURLs(
+                    for: self.settings.diskScanScope
+                )
             )
             self.fullDiskScanReport = report
             self.isFullDiskScanRunning = false

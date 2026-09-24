@@ -23,6 +23,7 @@ final class AppSettings: ObservableObject {
         static let gracePeriod = "gracePeriod"
         static let cleanupScope = "cleanupScope"
         static let excludedFolderPatterns = "excludedFolderPatterns"
+        static let diskScanScope = "diskScanScope"
     }
 
     @Published var isMonitoringEnabled: Bool {
@@ -52,6 +53,12 @@ final class AppSettings: ObservableObject {
     @Published var excludedFolderPatterns: [String] {
         didSet {
             defaults.set(excludedFolderPatterns, forKey: Key.excludedFolderPatterns)
+        }
+    }
+
+    @Published var diskScanScope: DiskScanScope {
+        didSet {
+            defaults.set(diskScanScope.rawValue, forKey: Key.diskScanScope)
         }
     }
 
@@ -85,6 +92,10 @@ final class AppSettings: ObservableObject {
         ) as? [String]
         excludedFolderPatterns = (storedExcludedFolderPatterns ?? Self.defaultExcludedFolderPatterns)
             .compactMap { FolderExclusionPattern($0)?.value }
+
+        diskScanScope = DiskScanScope(
+            rawValue: defaults.string(forKey: Key.diskScanScope) ?? ""
+        ) ?? .startupDisk
     }
 
     @discardableResult

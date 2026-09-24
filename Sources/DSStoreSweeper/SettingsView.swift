@@ -53,6 +53,13 @@ struct SettingsView: View {
                     .foregroundStyle(.secondary)
                     .fixedSize(horizontal: false, vertical: true)
 
+                Picker("扫描位置", selection: $settings.diskScanScope) {
+                    ForEach(DiskScanScope.allCases, id: \.self) { scope in
+                        Text(scope.title)
+                            .tag(scope)
+                    }
+                }
+
                 if model.isFullDiskScanRunning {
                     HStack {
                         ProgressView()
