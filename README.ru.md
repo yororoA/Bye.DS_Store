@@ -1,16 +1,32 @@
 # Bye.DS_Store
 
-> Чистые папки Finder без лишнего шума.
+## Автоматически очищайте папки Mac от `.DS_Store`
+
+Bye.DS_Store — бесплатное приложение с открытым исходным кодом для строки меню macOS. Вы продолжаете работать в Finder, а приложение тихо удаляет ненужные `.DS_Store` в фоне.
 
 [简体中文](README.md) · [繁體中文](README.zh-Hant.md) · [English](README.en.md) · [日本語](README.ja.md) · [Deutsch](README.de.md) · [Русский](README.ru.md)
 
-[Страница продукта](https://bye-dsstore.yororoice.top/) · [Последний Release](https://github.com/yororoA/Bye.DS_Store/releases/latest) · [GitHub](https://github.com/yororoA/Bye.DS_Store)
+[Скачать последний DMG для Apple Silicon](https://github.com/yororoA/Bye.DS_Store/releases/latest) · [Открыть страницу продукта](https://bye-dsstore.yororoice.top/) · [Посмотреть исходный код](https://github.com/yororoA/Bye.DS_Store)
 
 ![macOS 14+](https://img.shields.io/badge/macOS-14%2B-0d171c?logo=apple&logoColor=white)
 ![Swift 6](https://img.shields.io/badge/Swift-6-00a994?logo=swift&logoColor=white)
 ![GitHub release](https://img.shields.io/github/v/release/yororoA/Bye.DS_Store?display_name=tag&color=f0aa3c)
+![MIT License](https://img.shields.io/badge/license-MIT-00a994.svg)
 
-Bye.DS_Store — нативное приложение для строки меню macOS. Оно отслеживает папки, открытые в Finder, периодически удаляет `.DS_Store` из связанных каталогов и ещё некоторое время сохраняет недавно закрытые папки в области очистки.
+**Подходит для:**
+
+- Git, Xcode, VS Code, Unity, веб-проектов, NAS-папок и внешних SSD, где `.DS_Store` появляется снова и снова;
+- автоматической очистки без приложения в Dock и без опасного скрипта `find / -delete`;
+- разработчиков, которым нужны нативный Swift-инструмент, видимые границы сканирования, пути ошибок и понятные разрешения.
+
+## Коротко о главном
+
+| Вопрос | Bye.DS_Store |
+| --- | --- |
+| Мешает работе? | Остаётся в строке меню и незаметно следует за Finder |
+| Может удалить лишнее? | Фоновая очистка ограничена Finder; полное сканирование требует подтверждения |
+| Можно управлять областью? | Настраиваются родительские папки, диски, исключения и символические ссылки |
+| Видны результаты? | Показываются просканированные, удалённые и ошибочные элементы с путями |
 
 ## Основные возможности
 

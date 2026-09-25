@@ -1,16 +1,32 @@
 # Bye.DS_Store
 
-> Finder のフォルダを、静かにきれいに保つ。
+## Mac のフォルダから `.DS_Store` を自動的に減らす
+
+Bye.DS_Store は無料でオープンソースの macOS ネイティブアプリです。Finder を使い続けるだけで、不要な `.DS_Store` をバックグラウンドで静かに削除します。
 
 [简体中文](README.md) · [繁體中文](README.zh-Hant.md) · [English](README.en.md) · [日本語](README.ja.md) · [Deutsch](README.de.md) · [Русский](README.ru.md)
 
-[製品ページ](https://bye-dsstore.yororoice.top/) · [最新 Release](https://github.com/yororoA/Bye.DS_Store/releases/latest) · [GitHub](https://github.com/yororoA/Bye.DS_Store)
+[最新 Apple Silicon DMG をダウンロード](https://github.com/yororoA/Bye.DS_Store/releases/latest) · [製品ページを開く](https://bye-dsstore.yororoice.top/) · [ソースを見る](https://github.com/yororoA/Bye.DS_Store)
 
 ![macOS 14+](https://img.shields.io/badge/macOS-14%2B-0d171c?logo=apple&logoColor=white)
 ![Swift 6](https://img.shields.io/badge/Swift-6-00a994?logo=swift&logoColor=white)
 ![GitHub release](https://img.shields.io/github/v/release/yororoA/Bye.DS_Store?display_name=tag&color=f0aa3c)
+![MIT License](https://img.shields.io/badge/license-MIT-00a994.svg)
 
-Bye.DS_Store は macOS のメニューバーに常駐するネイティブアプリです。Finder で現在開いているフォルダを読み取り、関連する場所の `.DS_Store` を定期的に削除します。ウィンドウを閉じた後も、最近使ったフォルダを一定時間監視します。
+**こんな人に向いています：**
+
+- Git、Xcode、VS Code、Unity、Web プロジェクト、NAS、外付け SSD で `.DS_Store` に悩んでいる；
+- Dock アプリや危険な全削除スクリプトなしで自動整理したい；
+- スキャン範囲、失敗パス、権限の境界が見えるネイティブ Swift ツールを使いたい。
+
+## すぐに分かること
+
+| 気になること | Bye.DS_Store の答え |
+| --- | --- |
+| 作業を邪魔しない？ | メニューバーに常駐し、Finder に合わせて静かに動作 |
+| 誤って削除しない？ | バックグラウンドは Finder の対象だけ。全体スキャンは確認が必要 |
+| 範囲を制御できる？ | 親フォルダ、ディスク、除外ルール、シンボリックリンクを設定可能 |
+| 結果を確認できる？ | スキャン数、削除数、失敗したパスを表示 |
 
 ## 主な機能
 

@@ -1,16 +1,32 @@
 # Bye.DS_Store
 
-> Halte Finder-Ordner sauber, ganz ohne Ablenkung.
+## Halte deine Mac-Ordner automatisch frei von `.DS_Store`
+
+Bye.DS_Store ist ein kostenloses Open-Source-Menüleistenprogramm für macOS. Du arbeitest weiter mit Finder, während es unnötige `.DS_Store`-Dateien leise im Hintergrund entfernt.
 
 [简体中文](README.md) · [繁體中文](README.zh-Hant.md) · [English](README.en.md) · [日本語](README.ja.md) · [Deutsch](README.de.md) · [Русский](README.ru.md)
 
-[Produktseite](https://bye-dsstore.yororoice.top/) · [Neuester Release](https://github.com/yororoA/Bye.DS_Store/releases/latest) · [GitHub](https://github.com/yororoA/Bye.DS_Store)
+[Neueste Apple-Silicon-DMG herunterladen](https://github.com/yororoA/Bye.DS_Store/releases/latest) · [Produktseite öffnen](https://bye-dsstore.yororoice.top/) · [Quellcode ansehen](https://github.com/yororoA/Bye.DS_Store)
 
 ![macOS 14+](https://img.shields.io/badge/macOS-14%2B-0d171c?logo=apple&logoColor=white)
 ![Swift 6](https://img.shields.io/badge/Swift-6-00a994?logo=swift&logoColor=white)
 ![GitHub release](https://img.shields.io/github/v/release/yororoA/Bye.DS_Store?display_name=tag&color=f0aa3c)
+![MIT License](https://img.shields.io/badge/license-MIT-00a994.svg)
 
-Bye.DS_Store ist ein natives macOS-Menüleistenprogramm. Es liest die aktuell in Finder geöffneten Ordner, entfernt regelmäßig `.DS_Store`-Dateien aus den passenden Verzeichnissen und behält kürzlich geschlossene Ordner noch eine kurze Schonfrist im Bereinigungsbereich.
+**Gebaut für:**
+
+- Git, Xcode, VS Code, Unity, Webprojekte, NAS-Ordner und externe SSDs, in denen `.DS_Store` immer wieder auftaucht;
+- automatische Bereinigung ohne Dock-App und ohne riskantes `find / -delete`;
+- Entwickler, die ein natives Swift-Tool mit sichtbaren Scan-Grenzen, Fehlerpfaden und klaren Berechtigungen möchten.
+
+## Auf einen Blick
+
+| Frage | Bye.DS_Store |
+| --- | --- |
+| Stört es meinen Workflow? | Es bleibt in der Menüleiste und folgt Finder unauffällig |
+| Kann es falsche Dateien löschen? | Hintergrundbereinigung bleibt bei Finder; Gesamtscans brauchen Bestätigung |
+| Kann ich den Bereich steuern? | Elternordner, Datenträger, Ausschlüsse und symbolische Links sind konfigurierbar |
+| Kann ich das Ergebnis prüfen? | Gescannte, entfernte und fehlgeschlagene Elemente samt Pfaden werden angezeigt |
 
 ## Kernfunktionen
 

@@ -4,7 +4,10 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#0d171c">
-  <meta name="description" content="Bye.DS_Store 是一个常驻 macOS 菜单栏的 .DS_Store 清理工具。">
+  <meta name="author" content="yororoA">
+  <meta name="description" content="Bye.DS_Store 是一款免费的开源 macOS 菜单栏工具，会跟随 Finder 自动清理 .DS_Store 文件。原生 Swift、Apple Silicon、支持排除规则和全盘扫描。">
+  <meta name="keywords" content=".DS_Store cleaner, macOS .DS_Store remover, Finder cleaner, Mac menu bar utility, Swift macOS utility">
+  <meta name="robots" content="index, follow">
   <link rel="canonical" href="https://bye-dsstore.yororoice.top/">
   <link rel="icon" href="assets/favicon.ico">
   <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16.png">
@@ -12,15 +15,43 @@
   <link rel="icon" type="image/png" sizes="48x48" href="assets/favicon-48.png">
   <link rel="apple-touch-icon" sizes="180x180" href="assets/favicon-180.png">
   <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Bye.DS_Store">
   <meta property="og:url" content="https://bye-dsstore.yororoice.top/">
-  <meta property="og:title" content="Bye.DS_Store — Keep Finder folders clean">
-  <meta property="og:description" content="常驻 macOS 菜单栏，跟随 Finder 文件夹，安静地清理 .DS_Store。">
+  <meta property="og:title" content="Bye.DS_Store — Automatic .DS_Store Cleaner for macOS">
+  <meta property="og:description" content="A free, open-source macOS menu bar app that automatically removes .DS_Store files from folders opened in Finder.">
   <meta property="og:image" content="https://bye-dsstore.yororoice.top/assets/bye-dsstore-icon.png">
   <meta name="twitter:card" content="summary">
-  <meta name="twitter:title" content="Bye.DS_Store — Keep Finder folders clean">
-  <meta name="twitter:description" content="常驻 macOS 菜单栏，跟随 Finder 文件夹，安静地清理 .DS_Store。">
+  <meta name="twitter:title" content="Bye.DS_Store — Automatic .DS_Store Cleaner for macOS">
+  <meta name="twitter:description" content="A free, open-source macOS menu bar app that automatically removes .DS_Store files from folders opened in Finder.">
   <meta name="twitter:image" content="https://bye-dsstore.yororoice.top/assets/bye-dsstore-icon.png">
-  <title>Bye.DS_Store — Keep Finder folders clean</title>
+  <meta name="twitter:site" content="@yororoA">
+  <title>Bye.DS_Store — Automatic .DS_Store Cleaner for macOS</title>
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "Bye.DS_Store",
+      "applicationCategory": "UtilitiesApplication",
+      "operatingSystem": "macOS 14+",
+      "description": "A free, open-source macOS menu bar app that automatically removes .DS_Store files from folders opened in Finder.",
+      "url": "https://bye-dsstore.yororoice.top/",
+      "downloadUrl": "https://github.com/yororoA/Bye.DS_Store/releases/latest",
+      "image": "https://bye-dsstore.yororoice.top/assets/bye-dsstore-icon.png",
+      "license": "https://github.com/yororoA/Bye.DS_Store/blob/main/LICENSE",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "featureList": [
+        "Finder folder monitoring",
+        "Automatic .DS_Store cleanup",
+        "Full-disk scan",
+        "Folder exclusion rules",
+        "macOS menu bar utility"
+      ]
+    }
+  </script>
   <style>
     :root {
       --ink: #0d171c;
@@ -1228,6 +1259,7 @@
         "nav.trust": "為什麼放心",
         "language.label": "語言",
         "download.prefix": "下載",
+        "release.latest": "最新版本",
         "hero.eyebrow": "更安靜的 Finder",
         "hero.title": "讓雜亂的<br>資料夾安靜下來。",
         "hero.copy": "Bye.DS_Store 常駐 macOS 選單列，跟隨你開啟的 Finder 資料夾，在背景清理不需要留下的 `.DS_Store`。",
@@ -1302,6 +1334,7 @@
         "nav.trust": "Why trust it",
         "language.label": "Language",
         "download.prefix": "Download",
+        "release.latest": "Latest release",
         "hero.eyebrow": "A quieter Finder",
         "hero.title": "Let your<br>folders breathe.",
         "hero.copy": "Bye.DS_Store lives in the macOS menu bar, follows the Finder folders you open, and quietly removes `.DS_Store` files in the background.",
@@ -1376,6 +1409,7 @@
         "nav.trust": "安心して使える理由",
         "language.label": "言語",
         "download.prefix": "ダウンロード",
+        "release.latest": "最新版",
         "hero.eyebrow": "静かな Finder",
         "hero.title": "散らかった<br>フォルダを静かに。",
         "hero.copy": "Bye.DS_Store は macOS のメニューバーに常駐し、開いている Finder のフォルダに合わせて `.DS_Store` を静かに削除します。",
@@ -1450,6 +1484,7 @@
         "nav.trust": "Warum vertrauen",
         "language.label": "Sprache",
         "download.prefix": "Download",
+        "release.latest": "Neueste Version",
         "hero.eyebrow": "Ein ruhigerer Finder",
         "hero.title": "Mehr Ruhe für<br>deine Ordner.",
         "hero.copy": "Bye.DS_Store bleibt in der macOS-Menüleiste, folgt deinen geöffneten Finder-Ordnern und entfernt `.DS_Store`-Dateien leise im Hintergrund.",
@@ -1524,6 +1559,7 @@
         "nav.trust": "Почему это безопасно",
         "language.label": "Язык",
         "download.prefix": "Скачать",
+        "release.latest": "Последняя версия",
         "hero.eyebrow": "Тихий Finder",
         "hero.title": "Пусть в папках<br>будет порядок.",
         "hero.copy": "Bye.DS_Store живёт в строке меню macOS, следит за открытыми папками Finder и незаметно удаляет `.DS_Store` в фоне.",
@@ -1594,7 +1630,8 @@
     };
 
     const pageTextFallbacks = {
-      "scan.scanning": "扫描中"
+      "scan.scanning": "扫描中",
+      "release.latest": "最新版本"
     };
     const languageControl = document.getElementById("language-control");
     const languageTrigger = document.getElementById("language-trigger");
@@ -1616,6 +1653,7 @@
     const defaultAttributesByKey = new Map();
     let activeLanguage = "zh-Hans";
     let activityIndex = 0;
+    let releaseVersionValue = null;
 
     document.querySelectorAll("[data-i18n]").forEach((element) => {
       defaultTextByKey.set(element.dataset.i18n, element.textContent.trim());
@@ -1728,6 +1766,9 @@
       });
       activityIndex = 0;
       activityText.textContent = pageActivities[activeLanguage][0];
+      document.querySelectorAll("[data-release-version]").forEach((element) => {
+        element.textContent = releaseVersionValue || pageText("release.latest");
+      });
       try {
         window.localStorage.setItem("bye-dsstore-site-language", activeLanguage);
       } catch {}
@@ -1796,8 +1837,9 @@
         .then((release) => {
           if (!release.version || !release.dmgUrl) throw new Error("Latest arm64 DMG is unavailable");
 
+          releaseVersionValue = release.version;
           releaseVersions.forEach((element) => {
-            element.textContent = release.version;
+            element.textContent = releaseVersionValue;
           });
           releaseDownloads.forEach((link) => {
             link.href = release.dmgUrl;

@@ -1,16 +1,32 @@
 # Bye.DS_Store
 
-> 讓 Finder 資料夾保持乾淨，不打擾你的工作。
+## 自動讓 Mac 資料夾遠離 `.DS_Store`
+
+Bye.DS_Store 是免費開源的原生 macOS 選單列工具。你繼續使用 Finder，它會在背景安靜地清理不需要留下的 `.DS_Store`。
 
 [简体中文](README.md) · [繁體中文](README.zh-Hant.md) · [English](README.en.md) · [日本語](README.ja.md) · [Deutsch](README.de.md) · [Русский](README.ru.md)
 
-[宣傳頁](https://bye-dsstore.yororoice.top/) · [最新 Release](https://github.com/yororoA/Bye.DS_Store/releases/latest) · [GitHub](https://github.com/yororoA/Bye.DS_Store)
+[下載最新 Apple Silicon DMG](https://github.com/yororoA/Bye.DS_Store/releases/latest) · [開啟宣傳頁](https://bye-dsstore.yororoice.top/) · [查看原始碼](https://github.com/yororoA/Bye.DS_Store)
 
 ![macOS 14+](https://img.shields.io/badge/macOS-14%2B-0d171c?logo=apple&logoColor=white)
 ![Swift 6](https://img.shields.io/badge/Swift-6-00a994?logo=swift&logoColor=white)
 ![GitHub release](https://img.shields.io/github/v/release/yororoA/Bye.DS_Store?display_name=tag&color=f0aa3c)
+![MIT License](https://img.shields.io/badge/license-MIT-00a994.svg)
 
-Bye.DS_Store 是一款原生 macOS 選單列工具。它會讀取 Finder 目前開啟的資料夾，定期清理相關目錄中的 `.DS_Store`，並在視窗關閉後將最近使用的資料夾保留一段寬限時間。
+**適合這些情境：**
+
+- Git、Xcode、VS Code、Unity、Web 專案、NAS 資料夾和外接 SSD 中反覆出現 `.DS_Store`；
+- 想自動清理，但不想安裝常駐 Dock 應用程式或執行危險的全盤刪除腳本；
+- 需要原生 Swift 工具，清楚展示掃描範圍、失敗路徑和權限邊界。
+
+## 快速了解
+
+| 你在意的事 | Bye.DS_Store 的做法 |
+| --- | --- |
+| 會不會打擾工作？ | 常駐選單列，跟隨 Finder，安靜地在背景運作 |
+| 會不會亂刪？ | 背景清理只處理 Finder 監控目錄；全磁碟掃描必須手動確認 |
+| 可以控制範圍嗎？ | 支援父資料夾、磁碟位置、排除規則和符號連結跳過 |
+| 可以複核結果嗎？ | 顯示掃描數量、刪除數量和失敗路徑 |
 
 ## 核心能力
 

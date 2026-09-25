@@ -1,16 +1,32 @@
 # Bye.DS_Store
 
-> Keep Finder folders clean, quietly.
+## Automatically keep your Mac folders free of `.DS_Store`
+
+Bye.DS_Store is a free, open-source native macOS menu bar utility. Keep using Finder; it quietly removes unnecessary `.DS_Store` files in the background.
 
 [简体中文](README.md) · [繁體中文](README.zh-Hant.md) · [English](README.en.md) · [日本語](README.ja.md) · [Deutsch](README.de.md) · [Русский](README.ru.md)
 
-[Product page](https://bye-dsstore.yororoice.top/) · [Latest release](https://github.com/yororoA/Bye.DS_Store/releases/latest) · [GitHub](https://github.com/yororoA/Bye.DS_Store)
+[Download the latest Apple Silicon DMG](https://github.com/yororoA/Bye.DS_Store/releases/latest) · [Open the product page](https://bye-dsstore.yororoice.top/) · [View source](https://github.com/yororoA/Bye.DS_Store)
 
 ![macOS 14+](https://img.shields.io/badge/macOS-14%2B-0d171c?logo=apple&logoColor=white)
 ![Swift 6](https://img.shields.io/badge/Swift-6-00a994?logo=swift&logoColor=white)
 ![GitHub release](https://img.shields.io/github/v/release/yororoA/Bye.DS_Store?display_name=tag&color=f0aa3c)
+![MIT License](https://img.shields.io/badge/license-MIT-00a994.svg)
 
-Bye.DS_Store is a native macOS menu bar utility. It reads the folders currently open in Finder, periodically removes `.DS_Store` files from the relevant locations, and keeps recently closed folders in the cleanup set for a short grace period.
+**Built for:**
+
+- Git, Xcode, VS Code, Unity, web projects, NAS folders, and external SSDs where `.DS_Store` keeps returning;
+- people who want automatic cleanup without a Dock app or a risky `find / -delete` script;
+- developers who want a native Swift utility with visible scan boundaries, failure paths, and permission behavior.
+
+## At a glance
+
+| Question | Bye.DS_Store |
+| --- | --- |
+| Will it interrupt my workflow? | It stays in the menu bar and follows Finder quietly |
+| Can it delete the wrong things? | Background cleanup is Finder-scoped; full-disk scans require confirmation |
+| Can I control the scope? | Choose parent folders, disk locations, exclusions, and symbolic-link behavior |
+| Can I verify what happened? | Review scanned, removed, and failed counts plus paths |
 
 ## Core capabilities
 
