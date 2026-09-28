@@ -699,6 +699,147 @@
     .feature h3 { margin-bottom: 9px; font-size: 19px; }
     .feature p { margin-bottom: 0; color: var(--muted); font-size: 14px; }
 
+    .update-grid {
+      display: grid;
+      grid-template-columns: minmax(0, .86fr) minmax(420px, 1.14fr);
+      gap: 76px;
+      align-items: center;
+    }
+    .update-points {
+      display: grid;
+      gap: 18px;
+      margin-top: 34px;
+    }
+    .update-point {
+      display: grid;
+      grid-template-columns: 34px 1fr;
+      gap: 12px;
+      align-items: start;
+    }
+    .update-point-number {
+      display: grid;
+      width: 30px;
+      height: 30px;
+      place-items: center;
+      color: var(--ink);
+      background: var(--teal);
+      border-radius: 50%;
+      font-size: 11px;
+      font-weight: 800;
+    }
+    .update-point:nth-child(2) .update-point-number { background: var(--amber); }
+    .update-point:nth-child(3) .update-point-number { background: #b6c8e8; }
+    .update-point h3 { margin-bottom: 4px; font-size: 16px; }
+    .update-point p { margin: 0; color: var(--muted); font-size: 13px; }
+    .update-console {
+      position: relative;
+      padding: 22px;
+      overflow: hidden;
+      color: #dce9e8;
+      background: #142329;
+      border: 1px solid #365057;
+      border-radius: 10px;
+      box-shadow: 0 20px 44px rgba(13, 23, 28, .15);
+      transition: transform .3s ease, box-shadow .3s ease;
+    }
+    .update-console:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 26px 54px rgba(13, 23, 28, .22);
+    }
+    .update-console::before {
+      position: absolute;
+      top: 0;
+      right: 0;
+      left: 0;
+      height: 3px;
+      background: var(--teal);
+      content: "";
+    }
+    .update-console-head,
+    .update-release {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .update-console-head {
+      padding-bottom: 18px;
+      color: #fff;
+      border-bottom: 1px solid #2f484e;
+      font-size: 14px;
+      font-weight: 700;
+    }
+    .update-console-head b {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: #7adbd0;
+      font-family: "SF Mono", SFMono-Regular, Consolas, monospace;
+      font-size: 9px;
+      letter-spacing: .08em;
+    }
+    .update-console-head b i {
+      width: 6px;
+      height: 6px;
+      background: var(--teal);
+      border-radius: 50%;
+      box-shadow: 0 0 0 4px rgba(0, 169, 148, .12);
+    }
+    .update-release {
+      gap: 12px;
+      padding: 18px 0;
+      border-bottom: 1px solid #2f484e;
+    }
+    .update-release > div {
+      flex: 1;
+      min-width: 0;
+    }
+    .update-release strong,
+    .update-release small {
+      display: block;
+    }
+    .update-release strong { color: #fff; font-size: 13px; }
+    .update-release small {
+      margin-top: 3px;
+      overflow: hidden;
+      color: #88a0a3;
+      font-family: "SF Mono", SFMono-Regular, Consolas, monospace;
+      font-size: 10px;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .update-release em {
+      color: #f0c16f;
+      font-size: 11px;
+      font-style: normal;
+    }
+    .update-release-dot {
+      width: 9px;
+      height: 9px;
+      background: var(--teal);
+      border-radius: 50%;
+      box-shadow: 0 0 0 5px rgba(0, 169, 148, .1);
+    }
+    .update-release:nth-child(3) .update-release-dot {
+      background: var(--amber);
+      box-shadow: 0 0 0 5px rgba(240, 170, 60, .1);
+    }
+    .update-release:nth-child(4) .update-release-dot {
+      background: #b6c8e8;
+      box-shadow: 0 0 0 5px rgba(182, 200, 232, .1);
+    }
+    .update-console-foot {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding-top: 18px;
+      color: #8ea4a7;
+      font-size: 11px;
+    }
+    .update-console-foot span {
+      color: var(--teal);
+      font-size: 15px;
+    }
+
     .workflow {
       display: grid;
       grid-template-columns: 1fr 1.1fr;
@@ -879,6 +1020,7 @@
     @media (max-width: 900px) {
       .hero { min-height: auto; padding-top: 132px; }
       .hero-grid, .workflow, .download-grid { grid-template-columns: 1fr; gap: 48px; }
+      .update-grid { grid-template-columns: 1fr; gap: 42px; }
       .desktop-scene { min-height: 480px; padding: 0; }
       .download-actions { justify-content: flex-start; }
     }
@@ -888,7 +1030,14 @@
       .nav-links { display: none; }
       .language-trigger { min-width: 90px; padding: 0 7px; }
       .language-menu { right: -8px; }
-      .nav .button { min-height: 36px; padding: 0 11px; font-size: 12px; }
+      .nav .button {
+        min-width: 58px;
+        min-height: 36px;
+        padding: 0 9px;
+        font-size: 12px;
+        white-space: nowrap;
+      }
+      .nav-release-version { display: none; }
       .hero { padding-bottom: 54px; }
       h1 { font-size: 54px; }
       .hero-copy { font-size: 16px; }
@@ -898,6 +1047,7 @@
       .finder-sidebar { padding-right: 8px; padding-left: 8px; }
       .finder-content { padding: 16px; }
       .feature-grid, .safety-grid { grid-template-columns: 1fr; }
+      .update-console { padding: 18px; }
       .feature { min-height: auto; }
       .scan-metric { grid-template-columns: 1fr; }
       .section { padding: 76px 0; }
@@ -963,6 +1113,7 @@
       </a>
       <div class="nav-links">
         <a href="#how-it-works" data-i18n="nav.work">工作方式</a>
+        <a href="#updates" data-i18n="nav.updates">自动更新</a>
         <a href="#scan" data-i18n="nav.scan">全盘扫描</a>
         <a href="#trust" data-i18n="nav.trust">为什么放心</a>
         <a href="https://github.com/yororoA/Bye.DS_Store" target="_blank" rel="noreferrer">GitHub ↗</a>
@@ -1010,7 +1161,7 @@
         </div>
       </div>
       <a class="button button-primary" data-release-download href="https://github.com/yororoA/Bye.DS_Store/releases/latest">
-        <span data-i18n="download.prefix">下载</span> <span data-release-version>最新版本</span>
+        <span data-i18n="download.prefix">下载</span> <span class="nav-release-version" data-release-version>最新版本</span>
       </a>
     </nav>
   </header>
@@ -1120,6 +1271,75 @@
             <h3 data-i18n="automatic.feature3.title">适合你的规则</h3>
             <p data-i18n="automatic.feature3.copy">扫描范围、排除目录、轮询间隔都可以在设置中按你的习惯调整。</p>
           </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="updates">
+      <div class="section-inner update-grid reveal">
+        <div>
+          <p class="section-kicker" data-i18n="update.kicker">Stay current quietly</p>
+          <h2 data-i18n-html="update.title">自动检查更新，<br>决定权仍在你。</h2>
+          <p class="section-intro" data-i18n="update.copy">
+            Bye.DS_Store 默认每天检查一次新版本。发现更新后只提示你，不会静默替换正在运行的应用；你可以在设置中关闭自动检查，也可以随时手动检查。
+          </p>
+          <div class="update-points">
+            <div class="update-point">
+              <span class="update-point-number">01</span>
+              <div>
+                <h3 data-i18n="update.point1.title">后台检查</h3>
+                <p data-i18n="update.point1.copy">每天读取一次轻量更新清单，不影响 Finder 监听和清理。</p>
+              </div>
+            </div>
+            <div class="update-point">
+              <span class="update-point-number">02</span>
+              <div>
+                <h3 data-i18n="update.point2.title">用户确认</h3>
+                <p data-i18n="update.point2.copy">发现新版本后展示提示，是否下载由你决定。</p>
+              </div>
+            </div>
+            <div class="update-point">
+              <span class="update-point-number">03</span>
+              <div>
+                <h3 data-i18n="update.point3.title">一键打开安装器</h3>
+                <p data-i18n="update.point3.copy">下载 DMG 后打开系统安装器，完成替换前仍保留最后一步控制权。</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="update-console reveal reveal-delay-1">
+          <div class="update-console-head">
+            <span>Bye.DS_Store</span>
+            <b><i></i><span data-i18n="update.console.badge">BACKGROUND</span></b>
+          </div>
+          <div class="update-release">
+            <span class="update-release-dot"></span>
+            <div>
+              <strong data-i18n="update.console.checking">检查更新清单</strong>
+              <small>bye-dsstore.yororoice.top/release.json</small>
+            </div>
+            <em data-i18n="update.console.daily">每天</em>
+          </div>
+          <div class="update-release">
+            <span class="update-release-dot"></span>
+            <div>
+              <strong data-i18n="update.console.available">发现新版本</strong>
+              <small data-i18n="update.console.prompt">提示后等待你的确认</small>
+            </div>
+            <em data-i18n="update.console.ask">询问</em>
+          </div>
+          <div class="update-release">
+            <span class="update-release-dot"></span>
+            <div>
+              <strong data-i18n="update.console.install">下载并打开 DMG</strong>
+              <small data-i18n="update.console.control">自动检查可在设置中关闭</small>
+            </div>
+            <em data-i18n="update.console.manual">手动</em>
+          </div>
+          <div class="update-console-foot">
+            <span>⌘</span>
+            <span data-i18n="update.console.footer">安静运行，随时可控</span>
+          </div>
         </div>
       </div>
     </section>
@@ -1255,6 +1475,7 @@
       "zh-Hant": {
         "nav.aria": "主導覽",
         "nav.work": "工作方式",
+        "nav.updates": "自動更新",
         "nav.scan": "全磁碟掃描",
         "nav.trust": "為什麼放心",
         "language.label": "語言",
@@ -1283,6 +1504,25 @@
         "automatic.feature2.copy": "資料夾關閉後仍會保留在清理範圍內，為 Finder 寫入中繼資料留出時間。",
         "automatic.feature3.title": "符合你的規則",
         "automatic.feature3.copy": "掃描範圍、排除目錄和輪詢間隔，都能在設定中依照習慣調整。",
+        "update.kicker": "安靜地保持最新",
+        "update.title": "自動檢查更新，<br>決定權仍在你。",
+        "update.copy": "Bye.DS_Store 預設每天檢查一次新版本。發現更新後只會提示你，不會靜默替換正在執行的應用程式；你可以在設定中關閉自動檢查，也可以隨時手動檢查。",
+        "update.point1.title": "背景檢查",
+        "update.point1.copy": "每天讀取一次輕量更新清單，不影響 Finder 監控和清理。",
+        "update.point2.title": "由你確認",
+        "update.point2.copy": "發現新版本後顯示提示，是否下載由你決定。",
+        "update.point3.title": "一鍵開啟安裝程式",
+        "update.point3.copy": "下載 DMG 後開啟系統安裝程式，完成替換前仍保留最後一步控制權。",
+        "update.console.badge": "背景運作",
+        "update.console.checking": "檢查更新清單",
+        "update.console.daily": "每天",
+        "update.console.available": "發現新版本",
+        "update.console.prompt": "提示後等待你的確認",
+        "update.console.ask": "詢問",
+        "update.console.install": "下載並開啟 DMG",
+        "update.console.control": "可在設定中關閉自動檢查",
+        "update.console.manual": "手動",
+        "update.console.footer": "安靜運作，隨時可控",
         "workflow.kicker": "工作方式",
         "workflow.title": "從活躍到近期活躍，清理有自己的節奏。",
         "workflow.copy": "`.DS_Store` 經常在你進入子資料夾時寫入原始資料夾，因此預設策略會關注目前資料夾和它的直接父資料夾。",
@@ -1330,6 +1570,7 @@
       "en": {
         "nav.aria": "Main navigation",
         "nav.work": "How it works",
+        "nav.updates": "Updates",
         "nav.scan": "Full-disk scan",
         "nav.trust": "Why trust it",
         "language.label": "Language",
@@ -1358,6 +1599,25 @@
         "automatic.feature2.copy": "Keep a closed folder in the cleanup set long enough for Finder to finish writing metadata.",
         "automatic.feature3.title": "Fit your rules",
         "automatic.feature3.copy": "Adjust scan locations, exclusions, and polling intervals to match the way you work.",
+        "update.kicker": "Stay current quietly",
+        "update.title": "Automatic checks,<br>your call to install.",
+        "update.copy": "Bye.DS_Store checks for a new release once a day by default. It only lets you know when one is available; it never silently replaces the running app. Turn automatic checks off in Settings or check manually whenever you want.",
+        "update.point1.title": "Background check",
+        "update.point1.copy": "Read a lightweight update manifest once a day without interrupting Finder monitoring or cleanup.",
+        "update.point2.title": "Your confirmation",
+        "update.point2.copy": "When a new release appears, you decide whether to download it.",
+        "update.point3.title": "Open the installer",
+        "update.point3.copy": "Download the DMG and open the system installer. The final replacement step stays in your hands.",
+        "update.console.badge": "BACKGROUND",
+        "update.console.checking": "Checking release manifest",
+        "update.console.daily": "daily",
+        "update.console.available": "New release found",
+        "update.console.prompt": "Waiting for your confirmation",
+        "update.console.ask": "ask",
+        "update.console.install": "Download and open DMG",
+        "update.console.control": "Turn off automatic checks in Settings",
+        "update.console.manual": "manual",
+        "update.console.footer": "Quiet by default, always in your control",
         "workflow.kicker": "How it works",
         "workflow.title": "Cleanup has a rhythm, from active to recently active.",
         "workflow.copy": "`.DS_Store` files are often written to the original folder when you enter a child folder, so the default scope covers the current folder and its direct parent.",
@@ -1405,6 +1665,7 @@
       "ja": {
         "nav.aria": "メインナビゲーション",
         "nav.work": "仕組み",
+        "nav.updates": "自動更新",
         "nav.scan": "ディスク全体をスキャン",
         "nav.trust": "安心して使える理由",
         "language.label": "言語",
@@ -1433,6 +1694,25 @@
         "automatic.feature2.copy": "ウィンドウを閉じた後も一定時間フォルダを対象に残し、Finder のメタデータ書き込みを待ちます。",
         "automatic.feature3.title": "ルールを調整",
         "automatic.feature3.copy": "スキャン場所、除外フォルダ、確認間隔を自分の使い方に合わせて設定できます。",
+        "update.kicker": "静かに最新へ",
+        "update.title": "自動で確認、<br>インストールはあなたが決める。",
+        "update.copy": "Bye.DS_Store は標準で 1 日 1 回、新しいバージョンを確認します。更新が見つかったときだけ知らせ、実行中のアプリを勝手に置き換えることはありません。設定から自動確認を無効にしたり、いつでも手動で確認できます。",
+        "update.point1.title": "バックグラウンド確認",
+        "update.point1.copy": "軽量な更新情報を 1 日 1 回読み取り、Finder の監視や整理を止めません。",
+        "update.point2.title": "確認してから実行",
+        "update.point2.copy": "新しいバージョンが見つかったら、ダウンロードするかどうかをあなたが決めます。",
+        "update.point3.title": "インストーラを開く",
+        "update.point3.copy": "DMG をダウンロードしてシステムのインストーラを開き、最後の置き換えは自分で確認できます。",
+        "update.console.badge": "バックグラウンド",
+        "update.console.checking": "更新情報を確認中",
+        "update.console.daily": "毎日",
+        "update.console.available": "新しいバージョンを検出",
+        "update.console.prompt": "確認を待機中",
+        "update.console.ask": "確認",
+        "update.console.install": "DMG をダウンロードして開く",
+        "update.console.control": "設定から自動確認を無効化",
+        "update.console.manual": "手動",
+        "update.console.footer": "静かに動作し、いつでも操作可能",
         "workflow.kicker": "仕組み",
         "workflow.title": "アクティブなフォルダを、必要な間だけ整理。",
         "workflow.copy": "`.DS_Store` は子フォルダに入ったとき元のフォルダへ書き込まれることが多いため、標準では現在のフォルダと直接の親フォルダを対象にします。",
@@ -1480,6 +1760,7 @@
       "de": {
         "nav.aria": "Hauptnavigation",
         "nav.work": "So funktioniert es",
+        "nav.updates": "Updates",
         "nav.scan": "Gesamten Datenträger scannen",
         "nav.trust": "Warum vertrauen",
         "language.label": "Sprache",
@@ -1508,6 +1789,25 @@
         "automatic.feature2.copy": "Geschlossene Ordner bleiben noch kurz im Bereinigungsbereich, damit Finder Metadaten fertig schreiben kann.",
         "automatic.feature3.title": "Deine Regeln",
         "automatic.feature3.copy": "Scanorte, Ausschlüsse und Abfrageintervalle lassen sich passend zu deinem Arbeitsstil einstellen.",
+        "update.kicker": "Leise auf dem neuesten Stand",
+        "update.title": "Automatisch prüfen,<br>du entscheidest über die Installation.",
+        "update.copy": "Bye.DS_Store prüft standardmäßig einmal täglich nach einem neuen Release. Bei einem Update wirst du nur informiert; die laufende App wird niemals still ersetzt. In den Einstellungen kannst du die automatische Prüfung deaktivieren oder jederzeit manuell prüfen.",
+        "update.point1.title": "Prüfung im Hintergrund",
+        "update.point1.copy": "Eine kleine Update-Manifestdatei wird täglich gelesen, ohne Finder-Überwachung oder Bereinigung zu unterbrechen.",
+        "update.point2.title": "Deine Bestätigung",
+        "update.point2.copy": "Wenn eine neue Version verfügbar ist, entscheidest du, ob sie geladen wird.",
+        "update.point3.title": "Installer öffnen",
+        "update.point3.copy": "DMG laden und den System-Installer öffnen. Der letzte Ersetzungsschritt bleibt unter deiner Kontrolle.",
+        "update.console.badge": "HINTERGRUND",
+        "update.console.checking": "Release-Manifest wird geprüft",
+        "update.console.daily": "täglich",
+        "update.console.available": "Neues Release gefunden",
+        "update.console.prompt": "Wartet auf deine Bestätigung",
+        "update.console.ask": "fragen",
+        "update.console.install": "DMG laden und öffnen",
+        "update.console.control": "Automatische Prüfung in Einstellungen deaktivieren",
+        "update.console.manual": "manuell",
+        "update.console.footer": "Leise standardmäßig, jederzeit unter deiner Kontrolle",
         "workflow.kicker": "So funktioniert es",
         "workflow.title": "Bereinigung folgt einem Rhythmus: aktiv bis kürzlich aktiv.",
         "workflow.copy": "`.DS_Store` wird beim Öffnen eines Unterordners oft im ursprünglichen Ordner geschrieben. Deshalb umfasst der Standardbereich den aktuellen Ordner und seinen direkten Elternordner.",
@@ -1555,6 +1855,7 @@
       "ru": {
         "nav.aria": "Основная навигация",
         "nav.work": "Как это работает",
+        "nav.updates": "Обновления",
         "nav.scan": "Полное сканирование диска",
         "nav.trust": "Почему это безопасно",
         "language.label": "Язык",
@@ -1583,6 +1884,25 @@
         "automatic.feature2.copy": "После закрытия папка ещё некоторое время остаётся в области очистки, чтобы Finder успел записать метаданные.",
         "automatic.feature3.title": "Ваши правила",
         "automatic.feature3.copy": "Настройте места сканирования, исключения и интервалы опроса под свой рабочий процесс.",
+        "update.kicker": "Тихо оставайтесь в актуальном состоянии",
+        "update.title": "Автоматическая проверка,<br>решение об установке за вами.",
+        "update.copy": "Bye.DS_Store по умолчанию раз в день проверяет новую версию. При обновлении приложение только уведомляет вас и никогда не заменяет запущенную версию без спроса. Автоматическую проверку можно отключить в настройках или запустить вручную.",
+        "update.point1.title": "Проверка в фоне",
+        "update.point1.copy": "Раз в день считывается небольшой манифест обновления, не мешая мониторингу и очистке Finder.",
+        "update.point2.title": "Ваше подтверждение",
+        "update.point2.copy": "Когда появляется новая версия, вы сами решаете, скачивать ли её.",
+        "update.point3.title": "Открыть установщик",
+        "update.point3.copy": "Скачайте DMG и откройте системный установщик. Последний шаг замены остаётся под вашим контролем.",
+        "update.console.badge": "В ФОНЕ",
+        "update.console.checking": "Проверка манифеста Release",
+        "update.console.daily": "ежедневно",
+        "update.console.available": "Найдена новая версия",
+        "update.console.prompt": "Ожидание вашего подтверждения",
+        "update.console.ask": "спросить",
+        "update.console.install": "Скачать и открыть DMG",
+        "update.console.control": "Автопроверку можно отключить в настройках",
+        "update.console.manual": "вручную",
+        "update.console.footer": "Тихо по умолчанию, всегда под вашим контролем",
         "workflow.kicker": "Как это работает",
         "workflow.title": "Очистка идёт своим ритмом: от активных папок к недавно активным.",
         "workflow.copy": "`.DS_Store` часто записывается в исходную папку при входе во вложенную, поэтому по умолчанию очищается текущая папка и её непосредственная родительская папка.",

@@ -33,6 +33,7 @@ final class SweeperAppModel: ObservableObject {
     @Published private(set) var launchAtLoginError: String?
     @Published private(set) var isFullDiskScanRunning = false
     @Published private(set) var fullDiskScanReport: FullDiskCleanupReport?
+    @Published private(set) var updateState: AppUpdateState = .idle
 
     let settings: AppSettings
 
@@ -41,13 +42,20 @@ final class SweeperAppModel: ObservableObject {
     private let cleanupTargetResolver = CleanupTargetResolver()
     private let fullDiskScanner = FullDiskScanner()
     private let mountedVolumeResolver = MountedVolumeResolver()
+    private let updateClient = AppUpdateClient()
     private var tracker = FolderTracker()
     private var monitoringTask: Task<Void, Never>?
     private var fullDiskScanTask: Task<Void, Never>?
+    private var updateScheduleTask: Task<Void, Never>?
+    private var updateRequestTask: Task<Void, Never>?
+    private var updateDownloadTask: Task<Void, Never>?
+    private var downloadedInstallerURL: URL?
+    private var cancellables = Set<AnyCancellable>()
 
     init(settings: AppSettings = AppSettings()) {
         self.settings = settings
         refreshLaunchAtLoginState()
+        configureAutomaticUpdateChecks()
 
         Task { @MainActor [weak self] in
             self?.start()
@@ -153,6 +161,73 @@ final class SweeperAppModel: ObservableObject {
         launchAtLoginEnabled = status == .enabled || status == .requiresApproval
     }
 
+    var currentAppVersion: String {
+        Bundle.main.object(
+            forInfoDictionaryKey: "CFBundleShortVersionString"
+        ) as? String ?? "1.0.0"
+    }
+
+    func checkForUpdates() {
+        guard updateState != .checking else {
+            return
+        }
+
+        updateState = .checking
+        updateRequestTask?.cancel()
+        updateRequestTask = Task { @MainActor [weak self] in
+            guard let self else {
+                return
+            }
+
+            do {
+                let currentVersion = SemanticVersion(self.currentAppVersion)
+                    ?? SemanticVersion("0.0.0")!
+                let release = try await self.updateClient.latestRelease(
+                    newerThan: currentVersion
+                )
+                self.updateState = release.map(AppUpdateState.available) ?? .upToDate
+            } catch is CancellationError {
+                return
+            } catch {
+                self.updateState = .failed
+            }
+        }
+    }
+
+    func downloadAndOpenUpdate(_ release: AppUpdateRelease) {
+        guard updateDownloadTask == nil else {
+            return
+        }
+
+        updateState = .downloading(release)
+        updateDownloadTask = Task { @MainActor [weak self] in
+            guard let self else {
+                return
+            }
+
+            do {
+                let installerURL = try await self.updateClient.download(release)
+                self.downloadedInstallerURL = installerURL
+                NSWorkspace.shared.open(installerURL)
+                self.updateState = .readyToInstall(release)
+            } catch is CancellationError {
+                return
+            } catch {
+                self.updateState = .failed
+            }
+
+            self.updateDownloadTask = nil
+        }
+    }
+
+    func openDownloadedInstaller() {
+        guard let downloadedInstallerURL else {
+            return
+        }
+
+        NSWorkspace.shared.open(downloadedInstallerURL)
+    }
+
     func openAutomationPrivacySettings() {
         guard let url = URL(
             string: "x-apple.systempreferences:com.apple.preference.security?Privacy_Automation"
@@ -209,6 +284,51 @@ final class SweeperAppModel: ObservableObject {
             finderAccessState = .denied(message)
         } catch {
             finderAccessState = .failed(error.localizedDescription)
+        }
+    }
+
+    private func configureAutomaticUpdateChecks() {
+        settings.$automaticUpdatesEnabled
+            .receive(on: RunLoop.main)
+            .sink { [weak self] _ in
+                self?.restartAutomaticUpdateChecks()
+            }
+            .store(in: &cancellables)
+
+        restartAutomaticUpdateChecks()
+    }
+
+    private func restartAutomaticUpdateChecks() {
+        updateScheduleTask?.cancel()
+        updateScheduleTask = nil
+
+        guard settings.automaticUpdatesEnabled else {
+            updateRequestTask?.cancel()
+            updateRequestTask = nil
+            if updateState == .checking {
+                updateState = .idle
+            }
+            return
+        }
+
+        updateScheduleTask = Task { @MainActor [weak self] in
+            guard let self else {
+                return
+            }
+
+            self.checkForUpdates()
+
+            do {
+                while !Task.isCancelled {
+                    try await Task.sleep(for: .seconds(24 * 60 * 60))
+                    guard self.settings.automaticUpdatesEnabled else {
+                        return
+                    }
+                    self.checkForUpdates()
+                }
+            } catch {
+                return
+            }
         }
     }
 }

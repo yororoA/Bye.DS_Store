@@ -39,6 +39,7 @@ Bye.DS_Store ist ein kostenloses Open-Source-Menüleistenprogramm für macOS. Du
 | Ausschlüsse | Ordner nach Namen oder Pfad ausschließen, etwa `node_modules` oder `lib/packages` |
 | Sicherheitsgrenzen | Vorher bestätigen, währenddessen stoppen und fehlgeschlagene Pfade danach prüfen |
 | Menüleisten-App | Kein Dock-Symbol, globaler Kurzbefehl `⌘⌥B` |
+| Automatische Updates | Prüft standardmäßig täglich nach einem neuen Release; in den Einstellungen abschaltbar oder manuell startbar |
 | Sprachen | Systemerkennung oder 简体中文, 繁體中文, English, 日本語, Deutsch und Русский |
 
 ## Warum den Elternordner einbeziehen?
@@ -115,6 +116,8 @@ Systemeinstellungen > Datenschutz & Sicherheit > Automation > Bye.DS_Store > Fin
 Für geschützte Orte wie Schreibtisch, Dokumente oder Downloads kann zusätzlich eine Dateizugriffsberechtigung erforderlich sein.
 
 ## Releases und GitHub Actions
+
+Release Please nutzt Conventional Commits, um automatisch einen Release-PR gegen `main` zu erstellen. Beim Mergen werden `CHANGELOG.md` aktualisiert, ein `vX.Y.Z`-Tag und der GitHub Release erstellt; anschließend paketiert der bestehende macOS-Build-Workflow die markierte Version.
 
 Ein Versions-Tag löst die automatische Veröffentlichung aus:
 

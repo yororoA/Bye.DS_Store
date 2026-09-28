@@ -84,6 +84,30 @@ final class FolderTrackerTests: XCTestCase {
     }
 }
 
+final class SemanticVersionTests: XCTestCase {
+    func testParsesOptionalVPrefixAndMissingComponents() {
+        XCTAssertEqual(SemanticVersion("v1.2.3")?.description, "1.2.3")
+        XCTAssertEqual(SemanticVersion("2.4")?.description, "2.4.0")
+    }
+
+    func testComparesVersionsNumerically() {
+        XCTAssertLessThan(
+            SemanticVersion("1.9.0")!,
+            SemanticVersion("1.10.0")!
+        )
+        XCTAssertGreaterThan(
+            SemanticVersion("v2.0.0")!,
+            SemanticVersion("1.99.99")!
+        )
+    }
+
+    func testRejectsInvalidVersions() {
+        XCTAssertNil(SemanticVersion(""))
+        XCTAssertNil(SemanticVersion("release-1.0.0"))
+        XCTAssertNil(SemanticVersion("1.2.3.4"))
+    }
+}
+
 final class DSStoreCleanerTests: XCTestCase {
     private var temporaryDirectoryURL: URL!
 

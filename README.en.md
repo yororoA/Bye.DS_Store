@@ -39,6 +39,7 @@ Bye.DS_Store is a free, open-source native macOS menu bar utility. Keep using Fi
 | Exclusion rules | Skips folders by name or path, such as `node_modules` or `lib/packages` |
 | Safety boundaries | Confirms before scanning, allows cancellation, and exposes failed paths afterward |
 | Menu bar workflow | Uses no Dock icon and supports the global shortcut `⌘⌥B` |
+| Automatic updates | Checks for a new release daily by default; disable it or check manually in Settings |
 | Languages | System detection plus 简体中文, 繁體中文, English, 日本語, Deutsch, and Русский |
 
 ## Why include the parent folder?
@@ -115,6 +116,8 @@ System Settings > Privacy & Security > Automation > Bye.DS_Store > Finder
 Cleaning protected locations such as Desktop, Documents, or Downloads may also require separate file access approval.
 
 ## Releases and GitHub Actions
+
+Release Please uses Conventional Commits to open a release PR against `main`. Merging that PR updates `CHANGELOG.md`, creates a `vX.Y.Z` tag, and creates the GitHub Release; the existing macOS build workflow then packages the tagged release.
 
 Push a version tag to trigger the release workflow:
 

@@ -24,6 +24,7 @@ struct SweeperMenuView: View {
             status
             Divider()
             folderList
+            updateNotice
             Divider()
             footer
         }
@@ -248,6 +249,68 @@ struct SweeperMenuView: View {
         }
         .padding(.horizontal, 12)
         .padding(.vertical, 9)
+    }
+
+    @ViewBuilder
+    private var updateNotice: some View {
+        switch model.updateState {
+        case .available(let release):
+            Button {
+                model.downloadAndOpenUpdate(release)
+            } label: {
+                HStack(spacing: 8) {
+                    Image(systemName: "arrow.down.circle.fill")
+                        .foregroundStyle(.orange)
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(AppStrings.newVersionAvailable)
+                            .font(.caption)
+                        Text(AppStrings.updateVersion(
+                            release.version.description,
+                            language: settings.language
+                        ))
+                            .font(.caption2)
+                            .foregroundStyle(.secondary)
+                    }
+                    Spacer()
+                    Image(systemName: "chevron.right")
+                        .font(.caption2)
+                        .foregroundStyle(.tertiary)
+                }
+                .padding(.horizontal, 14)
+                .padding(.vertical, 9)
+                .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+        case .readyToInstall(let release):
+            Button {
+                model.openDownloadedInstaller()
+            } label: {
+                HStack(spacing: 8) {
+                    Image(systemName: "checkmark.circle.fill")
+                        .foregroundStyle(.green)
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(AppStrings.updateDownloaded)
+                            .font(.caption)
+                        Text(AppStrings.updateVersion(
+                            release.version.description,
+                            language: settings.language
+                        ))
+                            .font(.caption2)
+                            .foregroundStyle(.secondary)
+                    }
+                    Spacer()
+                    Image(systemName: "chevron.right")
+                        .font(.caption2)
+                        .foregroundStyle(.tertiary)
+                }
+                .padding(.horizontal, 14)
+                .padding(.vertical, 9)
+                .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+        default:
+            EmptyView()
+        }
     }
 
     private var statusText: String {

@@ -25,6 +25,7 @@ final class AppSettings: ObservableObject {
         static let excludedFolderPatterns = "excludedFolderPatterns"
         static let diskScanScope = "diskScanScope"
         static let language = "language"
+        static let automaticUpdatesEnabled = "automaticUpdatesEnabled"
     }
 
     @Published var isMonitoringEnabled: Bool {
@@ -70,6 +71,12 @@ final class AppSettings: ObservableObject {
         }
     }
 
+    @Published var automaticUpdatesEnabled: Bool {
+        didSet {
+            defaults.set(automaticUpdatesEnabled, forKey: Key.automaticUpdatesEnabled)
+        }
+    }
+
     private let defaults: UserDefaults
 
     init(defaults: UserDefaults = .standard) {
@@ -108,6 +115,12 @@ final class AppSettings: ObservableObject {
         language = AppLanguage(
             rawValue: defaults.string(forKey: Key.language) ?? ""
         ) ?? .system
+
+        if defaults.object(forKey: Key.automaticUpdatesEnabled) == nil {
+            automaticUpdatesEnabled = true
+        } else {
+            automaticUpdatesEnabled = defaults.bool(forKey: Key.automaticUpdatesEnabled)
+        }
         AppStrings.preferredLanguage = language
     }
 

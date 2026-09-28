@@ -39,6 +39,7 @@ Bye.DS_Store 是一款免费开源的原生 macOS 菜单栏工具：你继续使
 | 排除规则 | 用 `node_modules` 或 `lib/packages` 等名称/路径排除目录 |
 | 安全边界 | 扫描前确认、扫描中可停止、扫描后查看失败路径 |
 | 菜单栏体验 | 不占用 Dock，支持 `⌘⌥B` 全局快捷键 |
+| 自动更新 | 默认每天检查一次新版本，可在设置中关闭或手动检查 |
 | 多语言 | 系统自动识别，也可固定为简体中文、繁體中文、English、日本語、Deutsch 或 Русский |
 
 ## 为什么默认包含父文件夹？
@@ -115,6 +116,8 @@ swift test --disable-index-store
 删除桌面、文稿、下载等受保护位置中的文件时，系统还可能要求单独的文件访问权限。
 
 ## Release 与 GitHub Actions
+
+Release Please 会根据 Conventional Commits 自动整理变更并在 `main` 上创建版本 PR。合并该 PR 后会更新 `CHANGELOG.md`、创建 `vX.Y.Z` 标签并生成 GitHub Release；标签发布随后触发现有的 macOS 构建工作流。
 
 推送版本标签即可触发自动发布：
 

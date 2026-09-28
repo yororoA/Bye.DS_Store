@@ -32,6 +32,16 @@ mkdir -p "$MACOS_DIR"
 cp "$BINARY_DIR/DSStoreSweeper" "$MACOS_DIR/DSStoreSweeper"
 cp "$ROOT_DIR/Support/Info.plist" "$CONTENTS_DIR/Info.plist"
 
+if [[ -n "${VERSION:-}" ]]; then
+    APP_VERSION="${VERSION#v}"
+    plutil -replace CFBundleShortVersionString \
+        -string "$APP_VERSION" \
+        "$CONTENTS_DIR/Info.plist"
+    plutil -replace CFBundleVersion \
+        -string "$APP_VERSION" \
+        "$CONTENTS_DIR/Info.plist"
+fi
+
 if [[ -n "${CODESIGN_IDENTITY:-}" ]]; then
     codesign \
         --force \

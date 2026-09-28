@@ -247,6 +247,37 @@ struct SettingsView: View {
                 }
             }
 
+            Section(AppStrings.softwareUpdates) {
+                Toggle(
+                    AppStrings.automaticUpdates,
+                    isOn: $settings.automaticUpdatesEnabled
+                )
+
+                Text(AppStrings.automaticUpdateDescription)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+
+                LabeledContent(
+                    AppStrings.currentVersion,
+                    value: model.currentAppVersion
+                )
+
+                HStack {
+                    updateStateView
+                    Spacer()
+                    Button {
+                        model.checkForUpdates()
+                    } label: {
+                        Label(
+                            AppStrings.checkForUpdates,
+                            systemImage: "arrow.triangle.2.circlepath"
+                        )
+                    }
+                    .disabled(model.updateState == .checking)
+                }
+            }
+
             Section(AppStrings.text("统计", "Statistics")) {
                 LabeledContent(
                     AppStrings.text("当前打开", "Currently open"),
@@ -311,6 +342,68 @@ struct SettingsView: View {
 
         if didAdd {
             exclusionInput = ""
+        }
+    }
+
+    @ViewBuilder
+    private var updateStateView: some View {
+        switch model.updateState {
+        case .idle:
+            EmptyView()
+        case .checking:
+            Label(
+                AppStrings.checkingForUpdates,
+                systemImage: "arrow.triangle.2.circlepath"
+            )
+            .foregroundStyle(.secondary)
+        case .upToDate:
+            Label(
+                AppStrings.upToDate,
+                systemImage: "checkmark.circle.fill"
+            )
+            .foregroundStyle(.green)
+        case .available(let release):
+            VStack(alignment: .leading, spacing: 4) {
+                Label(
+                    AppStrings.newVersionAvailable,
+                    systemImage: "arrow.down.circle.fill"
+                )
+                .foregroundStyle(.orange)
+                Text(AppStrings.updateVersion(release.version.description))
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                Button(AppStrings.downloadAndInstall) {
+                    model.downloadAndOpenUpdate(release)
+                }
+                .controlSize(.small)
+            }
+        case .downloading:
+            Label(
+                AppStrings.downloadingUpdate,
+                systemImage: "arrow.down.circle"
+            )
+            .foregroundStyle(.secondary)
+        case .readyToInstall(let release):
+            VStack(alignment: .leading, spacing: 4) {
+                Label(
+                    AppStrings.updateDownloaded,
+                    systemImage: "checkmark.circle.fill"
+                )
+                .foregroundStyle(.green)
+                Text(AppStrings.updateVersion(release.version.description))
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                Button(AppStrings.openInstaller) {
+                    model.openDownloadedInstaller()
+                }
+                .controlSize(.small)
+            }
+        case .failed:
+            Label(
+                AppStrings.updateCheckFailed,
+                systemImage: "exclamationmark.triangle"
+            )
+            .foregroundStyle(.orange)
         }
     }
 

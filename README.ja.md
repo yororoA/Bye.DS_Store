@@ -39,6 +39,7 @@ Bye.DS_Store は無料でオープンソースの macOS ネイティブアプリ
 | 除外ルール | `node_modules` や `lib/packages` などを名前またはパスで除外 |
 | 安全な操作 | 開始前の確認、実行中の停止、終了後の失敗パス表示 |
 | メニューバー運用 | Dock アイコンなし。グローバルショートカット `⌘⌥B` に対応 |
+| 自動アップデート | 標準で毎日新しい Release を確認。設定から無効化や手動確認が可能 |
 | 多言語 | システム自動判定、または简体中文 / 繁體中文 / English / 日本語 / Deutsch / Русский を固定 |
 
 ## 親フォルダも対象にする理由
@@ -115,6 +116,8 @@ swift test --disable-index-store
 デスクトップ、書類、ダウンロードなど保護された場所の削除には、別途ファイルアクセスの許可が必要になる場合があります。
 
 ## Release と GitHub Actions
+
+Release Please は Conventional Commits を使って変更をまとめ、`main` 向けのリリース PR を作成します。PR をマージすると `CHANGELOG.md` を更新し、`vX.Y.Z` タグと GitHub Release を作成します。その後、既存の macOS ビルドワークフローがタグ付きリリースをパッケージします。
 
 バージョンタグを push すると自動公開が始まります。
 

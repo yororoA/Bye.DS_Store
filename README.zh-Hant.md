@@ -39,6 +39,7 @@ Bye.DS_Store 是免費開源的原生 macOS 選單列工具。你繼續使用 Fi
 | 排除規則 | 以 `node_modules` 或 `lib/packages` 等名稱/路徑排除資料夾 |
 | 安全邊界 | 掃描前確認、掃描中可停止、掃描後檢視失敗路徑 |
 | 選單列體驗 | 不佔用 Dock，支援 `⌘⌥B` 全域快速鍵 |
+| 自動更新 | 預設每天檢查新版本，可在設定中關閉或手動檢查 |
 | 多語言 | 自動偵測系統，也可固定為簡體中文、繁體中文、English、日本語、Deutsch 或 Русский |
 
 ## 為什麼預設包含父資料夾？
@@ -115,6 +116,8 @@ swift test --disable-index-store
 清理桌面、文件、下載等受保護位置中的檔案時，系統也可能要求另外授予檔案存取權限。
 
 ## Release 與 GitHub Actions
+
+Release Please 會根據 Conventional Commits 自動整理變更，並在 `main` 上建立版本 PR。合併該 PR 後會更新 `CHANGELOG.md`、建立 `vX.Y.Z` 標籤並產生 GitHub Release；現有的 macOS 建置工作流程會接著打包該版本。
 
 推送版本標籤即可觸發自動發布：
 
