@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.2](https://github.com/yororoA/Bye.DS_Store/compare/v1.1.1...v1.1.2) (2026-09-28)
+
+
+### Bug Fixes
+
+* **update:** replace running app during installation ([ad082a8](https://github.com/yororoA/Bye.DS_Store/commit/ad082a89e37b1d86e7789d04e8da9197a443d3d8))
+
 ## [1.1.1](https://github.com/yororoA/Bye.DS_Store/compare/v1.1.0...v1.1.1) (2026-09-28)
 
 
