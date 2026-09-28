@@ -5,6 +5,11 @@ on:
     tags:
       - "v*"
   workflow_dispatch:
+    inputs:
+      release_tag:
+        description: "Release tag to build, for example v1.1.0"
+        required: false
+        type: string
 
 permissions:
   actions: write
@@ -69,14 +74,14 @@ jobs:
       - name: Build application bundle
         env:
           CODESIGN_IDENTITY: ${{ secrets.APPLE_DEVELOPER_IDENTITY }}
-          VERSION: ${{ github.ref_name }}
+          VERSION: ${{ inputs.release_tag || github.ref_name }}
         run: ./scripts/build-app.sh
 
       - name: Package release assets
         id: package
         shell: bash
         env:
-          RELEASE_TAG: ${{ github.ref_name }}
+          RELEASE_TAG: ${{ inputs.release_tag || github.ref_name }}
         run: |
           set -euo pipefail
 
@@ -135,7 +140,7 @@ jobs:
       - name: Create or update GitHub Release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          RELEASE_TAG: ${{ github.ref_name }}
+          RELEASE_TAG: ${{ inputs.release_tag || github.ref_name }}
           ARCHIVE_PATH: ${{ steps.package.outputs.archive }}
           ARCHIVE_CHECKSUM_PATH: ${{ steps.package.outputs.archive_checksum }}
           DMG_PATH: ${{ steps.package.outputs.dmg }}
