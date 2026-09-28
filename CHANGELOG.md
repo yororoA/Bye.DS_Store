@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.1.1](https://github.com/yororoA/Bye.DS_Store/compare/v1.1.0...v1.1.1) (2026-09-28)
+
+
+### Bug Fixes
+
+* **ci:** allow rebuilding an existing release tag ([f17fd23](https://github.com/yororoA/Bye.DS_Store/commit/f17fd23200d59dff284deac99a071415e6efe1b8))
+* **ci:** trigger release assets after release-please ([5abc2a6](https://github.com/yororoA/Bye.DS_Store/commit/5abc2a608cfeae18f160b8997e3cb394dcfc01d6))
+
 ## [1.1.0](https://github.com/yororoA/Bye.DS_Store/compare/v1.0.7...v1.1.0) (2026-09-28)
 
 
