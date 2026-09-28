@@ -117,6 +117,8 @@ Cleaning protected locations such as Desktop, Documents, or Downloads may also r
 
 ## Releases and GitHub Actions
 
+Release Please uses Conventional Commits to open a release PR against `main`. Merging that PR updates `CHANGELOG.md`, creates a `vX.Y.Z` tag, and creates the GitHub Release; the existing macOS build workflow then packages the tagged release.
+
 Push a version tag to trigger the release workflow:
 
 ```bash

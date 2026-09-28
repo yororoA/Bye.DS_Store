@@ -117,6 +117,8 @@ Für geschützte Orte wie Schreibtisch, Dokumente oder Downloads kann zusätzlic
 
 ## Releases und GitHub Actions
 
+Release Please nutzt Conventional Commits, um automatisch einen Release-PR gegen `main` zu erstellen. Beim Mergen werden `CHANGELOG.md` aktualisiert, ein `vX.Y.Z`-Tag und der GitHub Release erstellt; anschließend paketiert der bestehende macOS-Build-Workflow die markierte Version.
+
 Ein Versions-Tag löst die automatische Veröffentlichung aus:
 
 ```bash

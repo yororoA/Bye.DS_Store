@@ -117,6 +117,8 @@ swift test --disable-index-store
 
 ## Release 与 GitHub Actions
 
+Release Please 会根据 Conventional Commits 自动整理变更并在 `main` 上创建版本 PR。合并该 PR 后会更新 `CHANGELOG.md`、创建 `vX.Y.Z` 标签并生成 GitHub Release；标签发布随后触发现有的 macOS 构建工作流。
+
 推送版本标签即可触发自动发布：
 
 ```bash

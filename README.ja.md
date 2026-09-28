@@ -117,6 +117,8 @@ swift test --disable-index-store
 
 ## Release と GitHub Actions
 
+Release Please は Conventional Commits を使って変更をまとめ、`main` 向けのリリース PR を作成します。PR をマージすると `CHANGELOG.md` を更新し、`vX.Y.Z` タグと GitHub Release を作成します。その後、既存の macOS ビルドワークフローがタグ付きリリースをパッケージします。
+
 バージョンタグを push すると自動公開が始まります。
 
 ```bash

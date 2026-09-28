@@ -117,6 +117,8 @@ swift test --disable-index-store
 
 ## Release и GitHub Actions
 
+Release Please использует Conventional Commits, чтобы автоматически открыть PR релиза в `main`. После слияния он обновит `CHANGELOG.md`, создаст тег `vX.Y.Z` и GitHub Release; затем существующий workflow сборки macOS упакует версию с этим тегом.
+
 Отправьте тег версии, чтобы запустить автоматическую публикацию:
 
 ```bash
