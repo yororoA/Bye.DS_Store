@@ -289,7 +289,7 @@ struct SweeperMenuView: View {
                     Image(systemName: "checkmark.circle.fill")
                         .foregroundStyle(.green)
                     VStack(alignment: .leading, spacing: 2) {
-                        Text(AppStrings.updateDownloaded)
+                        Text(AppStrings.installDownloadedUpdate)
                             .font(.caption)
                         Text(AppStrings.updateVersion(
                             release.version.description,
@@ -308,6 +308,15 @@ struct SweeperMenuView: View {
                 .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
+        case .installing:
+            HStack(spacing: 8) {
+                ProgressView()
+                    .controlSize(.small)
+                Text(AppStrings.installingUpdate)
+                    .font(.caption)
+            }
+            .padding(.horizontal, 14)
+            .padding(.vertical, 9)
         default:
             EmptyView()
         }

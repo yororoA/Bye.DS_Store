@@ -49,6 +49,7 @@ final class SweeperAppModel: ObservableObject {
     private var updateScheduleTask: Task<Void, Never>?
     private var updateRequestTask: Task<Void, Never>?
     private var updateDownloadTask: Task<Void, Never>?
+    private var updateInstallTask: Task<Void, Never>?
     private var downloadedInstallerURL: URL?
     private var cancellables = Set<AnyCancellable>()
 
@@ -208,7 +209,6 @@ final class SweeperAppModel: ObservableObject {
             do {
                 let installerURL = try await self.updateClient.download(release)
                 self.downloadedInstallerURL = installerURL
-                NSWorkspace.shared.open(installerURL)
                 self.updateState = .readyToInstall(release)
             } catch is CancellationError {
                 return
@@ -221,11 +221,55 @@ final class SweeperAppModel: ObservableObject {
     }
 
     func openDownloadedInstaller() {
-        guard let downloadedInstallerURL else {
+        guard updateInstallTask == nil,
+              let downloadedInstallerURL,
+              case .readyToInstall(let release) = updateState else {
             return
         }
 
-        NSWorkspace.shared.open(downloadedInstallerURL)
+        updateState = .installing(release)
+        updateInstallTask = Task { @MainActor [weak self] in
+            guard let self else {
+                return
+            }
+
+            do {
+                let installation = try await self.updateClient.prepareInstallation(
+                    for: downloadedInstallerURL,
+                    currentBundleURL: Bundle.main.bundleURL,
+                    expectedBundleIdentifier: Bundle.main.bundleIdentifier
+                        ?? AppUpdateClient.applicationBundleIdentifier
+                )
+                let processIDs = self.runningApplicationProcessIDs()
+                try self.updateClient.launchInstallation(
+                    installation,
+                    waitingFor: processIDs
+                )
+                NSApplication.shared.terminate(nil)
+            } catch is CancellationError {
+                return
+            } catch {
+                self.updateState = .failed
+            }
+
+            self.updateInstallTask = nil
+        }
+    }
+
+    private func runningApplicationProcessIDs() -> [Int32] {
+        let bundleIdentifier = Bundle.main.bundleIdentifier
+            ?? AppUpdateClient.applicationBundleIdentifier
+        let currentProcessID = ProcessInfo.processInfo.processIdentifier
+        let runningApplications = NSRunningApplication
+            .runningApplications(withBundleIdentifier: bundleIdentifier)
+
+        for application in runningApplications
+            where application.processIdentifier != currentProcessID {
+            application.terminate()
+        }
+
+        let processIDs = runningApplications.map(\.processIdentifier)
+        return Array(Set(processIDs + [currentProcessID]))
     }
 
     func openAutomationPrivacySettings() {

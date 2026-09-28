@@ -393,11 +393,17 @@ struct SettingsView: View {
                 Text(AppStrings.updateVersion(release.version.description))
                     .font(.caption)
                     .foregroundStyle(.secondary)
-                Button(AppStrings.openInstaller) {
+                Button(AppStrings.installDownloadedUpdate) {
                     model.openDownloadedInstaller()
                 }
                 .controlSize(.small)
             }
+        case .installing:
+            Label(
+                AppStrings.installingUpdate,
+                systemImage: "arrow.down.app"
+            )
+            .foregroundStyle(.secondary)
         case .failed:
             Label(
                 AppStrings.updateCheckFailed,

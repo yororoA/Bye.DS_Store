@@ -360,11 +360,17 @@ enum AppStrings {
             .german: "Update heruntergeladen",
             .russian: "Обновление загружено"
         ],
-        "Open installer": [
-            .traditionalChinese: "開啟安裝程式",
-            .japanese: "インストーラを開く",
-            .german: "Installer öffnen",
-            .russian: "Открыть установщик"
+        "Install downloaded update": [
+            .traditionalChinese: "安裝已下載的更新",
+            .japanese: "ダウンロードしたアップデートをインストール",
+            .german: "Heruntergeladenes Update installieren",
+            .russian: "Установить загруженное обновление"
+        ],
+        "Installing update...": [
+            .traditionalChinese: "正在安裝更新...",
+            .japanese: "アップデートをインストール中...",
+            .german: "Update wird installiert ...",
+            .russian: "Установка обновления..."
         ],
         "Update check failed": [
             .traditionalChinese: "更新檢查失敗",
@@ -685,8 +691,12 @@ enum AppStrings {
         text("更新已下载", "Update downloaded")
     }
 
-    static var openInstaller: String {
-        text("打开安装器", "Open installer")
+    static var installDownloadedUpdate: String {
+        text("安装已下载的更新", "Install downloaded update")
+    }
+
+    static var installingUpdate: String {
+        text("正在安装更新...", "Installing update...")
     }
 
     static var updateCheckFailed: String {
