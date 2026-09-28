@@ -4,8 +4,10 @@ on:
   push:
     tags:
       - "v*"
+  workflow_dispatch:
 
 permissions:
+  actions: write
   contents: write
 
 concurrency:
