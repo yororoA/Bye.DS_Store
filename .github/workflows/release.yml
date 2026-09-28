@@ -67,6 +67,7 @@ jobs:
       - name: Build application bundle
         env:
           CODESIGN_IDENTITY: ${{ secrets.APPLE_DEVELOPER_IDENTITY }}
+          VERSION: ${{ github.ref_name }}
         run: ./scripts/build-app.sh
 
       - name: Package release assets

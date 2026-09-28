@@ -312,6 +312,90 @@ enum AppStrings {
             .german: "System",
             .russian: "Система"
         ],
+        "Software updates": [
+            .traditionalChinese: "軟體更新",
+            .japanese: "ソフトウェアアップデート",
+            .german: "Softwareupdates",
+            .russian: "Обновления ПО"
+        ],
+        "Automatically check for updates": [
+            .traditionalChinese: "自動檢查更新",
+            .japanese: "アップデートを自動的に確認",
+            .german: "Automatisch nach Updates suchen",
+            .russian: "Автоматически проверять обновления"
+        ],
+        "Check for updates": [
+            .traditionalChinese: "檢查更新",
+            .japanese: "アップデートを確認",
+            .german: "Nach Updates suchen",
+            .russian: "Проверить обновления"
+        ],
+        "Checking for updates...": [
+            .traditionalChinese: "正在檢查更新...",
+            .japanese: "アップデートを確認中...",
+            .german: "Suche nach Updates ...",
+            .russian: "Проверка обновлений..."
+        ],
+        "You're up to date": [
+            .traditionalChinese: "已是最新版本",
+            .japanese: "最新バージョンです",
+            .german: "Du bist auf dem neuesten Stand",
+            .russian: "Установлена последняя версия"
+        ],
+        "Download and install": [
+            .traditionalChinese: "下載並安裝",
+            .japanese: "ダウンロードしてインストール",
+            .german: "Herunterladen und installieren",
+            .russian: "Скачать и установить"
+        ],
+        "Downloading update...": [
+            .traditionalChinese: "正在下載更新...",
+            .japanese: "アップデートをダウンロード中...",
+            .german: "Update wird heruntergeladen ...",
+            .russian: "Загрузка обновления..."
+        ],
+        "Update downloaded": [
+            .traditionalChinese: "更新已下載",
+            .japanese: "アップデートをダウンロードしました",
+            .german: "Update heruntergeladen",
+            .russian: "Обновление загружено"
+        ],
+        "Open installer": [
+            .traditionalChinese: "開啟安裝程式",
+            .japanese: "インストーラを開く",
+            .german: "Installer öffnen",
+            .russian: "Открыть установщик"
+        ],
+        "Update check failed": [
+            .traditionalChinese: "更新檢查失敗",
+            .japanese: "アップデートの確認に失敗しました",
+            .german: "Updateprüfung fehlgeschlagen",
+            .russian: "Не удалось проверить обновления"
+        ],
+        "A new version is available": [
+            .traditionalChinese: "有新版本可用",
+            .japanese: "新しいバージョンがあります",
+            .german: "Eine neue Version ist verfügbar",
+            .russian: "Доступна новая версия"
+        ],
+        "Update settings are saved on this Mac.": [
+            .traditionalChinese: "更新設定會儲存在這台 Mac 上。",
+            .japanese: "アップデート設定はこの Mac に保存されます。",
+            .german: "Updateeinstellungen werden auf diesem Mac gespeichert.",
+            .russian: "Настройки обновлений сохраняются на этом Mac."
+        ],
+        "When enabled, GitHub Release is checked once a day.": [
+            .traditionalChinese: "啟用後每天會檢查一次 GitHub Release。",
+            .japanese: "有効にすると、1 日 1 回 GitHub Release を確認します。",
+            .german: "Wenn aktiviert, wird einmal täglich nach einem GitHub Release gesucht.",
+            .russian: "При включении GitHub Release проверяется раз в день."
+        ],
+        "Current version": [
+            .traditionalChinese: "目前版本",
+            .japanese: "現在のバージョン",
+            .german: "Aktuelle Version",
+            .russian: "Текущая версия"
+        ],
         "Launch at login": [
             .traditionalChinese: "登入時啟動",
             .japanese: "ログイン時に起動",
@@ -567,6 +651,88 @@ enum AppStrings {
 
     static var scanInProgress: String {
         text("正在扫描本机...", "Scanning disk...")
+    }
+
+    static var softwareUpdates: String {
+        text("软件更新", "Software updates")
+    }
+
+    static var automaticUpdates: String {
+        text("自动检查更新", "Automatically check for updates")
+    }
+
+    static var checkForUpdates: String {
+        text("检查更新", "Check for updates")
+    }
+
+    static var checkingForUpdates: String {
+        text("正在检查更新...", "Checking for updates...")
+    }
+
+    static var upToDate: String {
+        text("已是最新版本", "You're up to date")
+    }
+
+    static var downloadAndInstall: String {
+        text("下载并安装", "Download and install")
+    }
+
+    static var downloadingUpdate: String {
+        text("正在下载更新...", "Downloading update...")
+    }
+
+    static var updateDownloaded: String {
+        text("更新已下载", "Update downloaded")
+    }
+
+    static var openInstaller: String {
+        text("打开安装器", "Open installer")
+    }
+
+    static var updateCheckFailed: String {
+        text("更新检查失败", "Update check failed")
+    }
+
+    static var newVersionAvailable: String {
+        text("有新版本可用", "A new version is available")
+    }
+
+    static var updateSettingsDescription: String {
+        text("更新设置会保存在这台 Mac 上。", "Update settings are saved on this Mac.")
+    }
+
+    static var automaticUpdateDescription: String {
+        text(
+            "启用后每天会检查一次 GitHub Release。",
+            "When enabled, GitHub Release is checked once a day."
+        )
+    }
+
+    static var currentVersion: String {
+        text("当前版本", "Current version")
+    }
+
+    static func updateVersion(_ version: String, language: AppLanguage? = nil) -> String {
+        switch resolvedLanguage(for: language) {
+        case .chinese:
+            return "发现新版本 \(version)"
+        case .traditionalChinese:
+            return "發現新版本 \(version)"
+        case .english:
+            return "New version \(version) is available"
+        case .japanese:
+            return "新しいバージョン \(version) があります"
+        case .german:
+            return "Neue Version \(version) verfügbar"
+        case .russian:
+            return "Доступна новая версия \(version)"
+        case .system:
+            return "发现新版本 \(version)"
+        }
+    }
+
+    static func versionValue(_ version: String, language: AppLanguage? = nil) -> String {
+        "\(currentVersion): \(version)"
     }
 
     static var shortcut: String {
