@@ -36,6 +36,15 @@ cp "$ROOT_DIR/Support/AppIcon.icns" "$RESOURCES_DIR/AppIcon.icns"
 
 if [[ -n "${VERSION:-}" ]]; then
     APP_VERSION="${VERSION#v}"
+else
+    APP_VERSION="$(
+        git -C "$ROOT_DIR" describe --tags --match "v[0-9]*" --abbrev=0 2>/dev/null \
+            | sed 's/^v//' \
+            || true
+    )"
+fi
+
+if [[ -n "$APP_VERSION" ]]; then
     plutil -replace CFBundleShortVersionString \
         -string "$APP_VERSION" \
         "$CONTENTS_DIR/Info.plist"
