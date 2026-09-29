@@ -43,7 +43,8 @@ final class MenuBarController: NSObject, NSApplicationDelegate {
         statusItem.button?.image?.isTemplate = true
         statusItem.button?.toolTip = "Bye.DS_Store"
         statusItem.button?.target = self
-        statusItem.button?.action = #selector(togglePopover)
+        statusItem.button?.action = #selector(handleStatusItemClick)
+        statusItem.button?.sendAction(on: [.leftMouseUp, .rightMouseUp])
         self.statusItem = statusItem
         updateStatusIcon()
     }
@@ -133,6 +134,19 @@ final class MenuBarController: NSObject, NSApplicationDelegate {
     }
 
     @objc
+    private func handleStatusItemClick() {
+        guard let event = NSApp.currentEvent else {
+            togglePopover()
+            return
+        }
+
+        if event.type == .rightMouseUp {
+            showQuickSettingsMenu()
+        } else {
+            togglePopover()
+        }
+    }
+
     private func togglePopover() {
         guard let popover,
               let button = statusItem?.button else {
@@ -148,6 +162,86 @@ final class MenuBarController: NSObject, NSApplicationDelegate {
                 preferredEdge: .minY
             )
         }
+    }
+
+    private func showQuickSettingsMenu() {
+        guard let button = statusItem?.button else {
+            return
+        }
+
+        popover?.performClose(nil)
+
+        let menu = NSMenu()
+        menu.autoenablesItems = false
+        menu.addItem(
+            toggleMenuItem(
+                title: AppStrings.text("登录时启动", "Launch at login"),
+                isEnabled: model.launchAtLoginEnabled,
+                action: #selector(toggleLaunchAtLogin)
+            )
+        )
+        menu.addItem(
+            toggleMenuItem(
+                title: AppStrings.monitoringLabel,
+                isEnabled: model.settings.isMonitoringEnabled,
+                action: #selector(toggleBackgroundMonitoring)
+            )
+        )
+        menu.addItem(
+            toggleMenuItem(
+                title: AppStrings.automaticUpdates,
+                isEnabled: model.settings.automaticUpdatesEnabled,
+                action: #selector(toggleAutomaticUpdates)
+            )
+        )
+        menu.addItem(.separator())
+
+        let quitItem = NSMenuItem(
+            title: AppStrings.quit,
+            action: #selector(quitApplication),
+            keyEquivalent: ""
+        )
+        quitItem.target = self
+        menu.addItem(quitItem)
+
+        button.isHighlighted = true
+        menu.popUp(
+            positioning: nil,
+            at: NSPoint(x: 0, y: button.bounds.height),
+            in: button
+        )
+        button.isHighlighted = false
+    }
+
+    private func toggleMenuItem(
+        title: String,
+        isEnabled: Bool,
+        action: Selector
+    ) -> NSMenuItem {
+        let item = NSMenuItem(title: title, action: action, keyEquivalent: "")
+        item.target = self
+        item.state = isEnabled ? .on : .off
+        return item
+    }
+
+    @objc
+    private func toggleLaunchAtLogin() {
+        model.setLaunchAtLogin(!model.launchAtLoginEnabled)
+    }
+
+    @objc
+    private func toggleBackgroundMonitoring() {
+        model.settings.isMonitoringEnabled.toggle()
+    }
+
+    @objc
+    private func toggleAutomaticUpdates() {
+        model.settings.automaticUpdatesEnabled.toggle()
+    }
+
+    @objc
+    private func quitApplication() {
+        NSApplication.shared.terminate(nil)
     }
 
     private func showControlPanelFromShortcut() {
