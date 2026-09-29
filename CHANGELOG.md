@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.0](https://github.com/yororoA/Bye.DS_Store/compare/v1.1.2...v1.2.0) (2026-09-29)
+
+
+### Features
+
+* **app:** add branded application icon ([f826ca0](https://github.com/yororoA/Bye.DS_Store/commit/f826ca03eb018579c648e53731284ef629eccb9e))
+
 ## [1.1.2](https://github.com/yororoA/Bye.DS_Store/compare/v1.1.1...v1.1.2) (2026-09-28)
 
 
