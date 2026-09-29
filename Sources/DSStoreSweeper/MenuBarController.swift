@@ -37,7 +37,7 @@ final class MenuBarController: NSObject, NSApplicationDelegate {
     private func configureStatusItem() {
         let statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
         statusItem.button?.image = NSImage(
-            systemSymbolName: "sparkles",
+            systemSymbolName: "folder.badge.gearshape",
             accessibilityDescription: "Bye.DS_Store"
         )
         statusItem.button?.image?.isTemplate = true
@@ -259,7 +259,9 @@ final class MenuBarController: NSObject, NSApplicationDelegate {
         case .denied, .failed:
             iconName = "exclamationmark.triangle"
         case .unknown, .allowed:
-            iconName = model.settings.isMonitoringEnabled ? "sparkles" : "pause.circle"
+            iconName = model.settings.isMonitoringEnabled
+                ? "folder.badge.gearshape"
+                : "pause.circle"
         }
 
         statusItem?.button?.image = NSImage(
