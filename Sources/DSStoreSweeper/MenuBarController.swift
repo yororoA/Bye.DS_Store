@@ -36,6 +36,11 @@ final class MenuBarController: NSObject, NSApplicationDelegate {
 
     private func configureStatusItem() {
         let statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
+        statusItem.button?.image = NSImage(
+            systemSymbolName: "sparkles",
+            accessibilityDescription: "Bye.DS_Store"
+        )
+        statusItem.button?.image?.isTemplate = true
         statusItem.button?.toolTip = "Bye.DS_Store"
         statusItem.button?.target = self
         statusItem.button?.action = #selector(togglePopover)
@@ -248,36 +253,17 @@ final class MenuBarController: NSObject, NSApplicationDelegate {
     }
 
     private func updateStatusIcon() {
+        let iconName: String
+
         switch model.finderAccessState {
         case .denied, .failed:
-            setStatusSymbol("exclamationmark.triangle")
+            iconName = "exclamationmark.triangle"
         case .unknown, .allowed:
-            if model.settings.isMonitoringEnabled,
-               let applicationIcon = applicationIcon() {
-                statusItem?.button?.image = applicationIcon
-            } else {
-                setStatusSymbol("pause.circle")
-            }
-        }
-    }
-
-    private func applicationIcon() -> NSImage? {
-        guard let iconURL = Bundle.main.url(
-            forResource: "AppIcon",
-            withExtension: "icns"
-        ),
-        let icon = NSImage(contentsOf: iconURL) else {
-            return nil
+            iconName = model.settings.isMonitoringEnabled ? "sparkles" : "pause.circle"
         }
 
-        icon.size = NSSize(width: 18, height: 18)
-        icon.isTemplate = false
-        return icon
-    }
-
-    private func setStatusSymbol(_ name: String) {
         statusItem?.button?.image = NSImage(
-            systemSymbolName: name,
+            systemSymbolName: iconName,
             accessibilityDescription: "Bye.DS_Store"
         )
         statusItem?.button?.image?.isTemplate = true
