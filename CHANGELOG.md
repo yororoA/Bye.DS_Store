@@ -1,5 +1,23 @@
 # Changelog
 
+## [1.3.0](https://github.com/yororoA/Bye.DS_Store/compare/v1.2.0...v1.3.0) (2026-09-29)
+
+
+### Features
+
+* **menu:** show app icon while monitoring ([c39daa4](https://github.com/yororoA/Bye.DS_Store/commit/c39daa42bd8c69de4349f601ebc4f9550f14cac6))
+* **menu:** use folder monitoring status icon ([a3e1851](https://github.com/yororoA/Bye.DS_Store/commit/a3e1851b6ec4345ac27af85a5143fc65b60cd7d0))
+
+
+### Bug Fixes
+
+* **build:** derive local version from latest tag ([a06b8e0](https://github.com/yororoA/Bye.DS_Store/commit/a06b8e0b988914e41baa7bb951e4e4ff9bc5869b))
+
+
+### Reverts
+
+* restore previous menu bar icon ([e6a34c4](https://github.com/yororoA/Bye.DS_Store/commit/e6a34c4f99c203b557711fcb038fbe2b6238bc85))
+
 ## [1.2.0](https://github.com/yororoA/Bye.DS_Store/compare/v1.1.2...v1.2.0) (2026-09-29)
 
 
