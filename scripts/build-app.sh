@@ -8,6 +8,7 @@ APP_NAME="Bye.DS_Store"
 APP_BUNDLE="$ROOT_DIR/dist/$APP_NAME.app"
 CONTENTS_DIR="$APP_BUNDLE/Contents"
 MACOS_DIR="$CONTENTS_DIR/MacOS"
+RESOURCES_DIR="$CONTENTS_DIR/Resources"
 
 SWIFT_BUILD_ARGS=(
     --package-path "$ROOT_DIR"
@@ -28,9 +29,10 @@ if [[ -d "$APP_BUNDLE" ]]; then
     rm -rf -- "$APP_BUNDLE"
 fi
 
-mkdir -p "$MACOS_DIR"
+mkdir -p "$MACOS_DIR" "$RESOURCES_DIR"
 cp "$BINARY_DIR/DSStoreSweeper" "$MACOS_DIR/DSStoreSweeper"
 cp "$ROOT_DIR/Support/Info.plist" "$CONTENTS_DIR/Info.plist"
+cp "$ROOT_DIR/Support/AppIcon.icns" "$RESOURCES_DIR/AppIcon.icns"
 
 if [[ -n "${VERSION:-}" ]]; then
     APP_VERSION="${VERSION#v}"
