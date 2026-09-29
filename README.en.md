@@ -1,17 +1,34 @@
-# Bye.DS_Store
+<!-- markdownlint-disable MD033 MD041 -->
 
-## Automatically keep your Mac folders free of `.DS_Store`
+<div align="center">
+  <img src="site/assets/bye-dsstore-icon.png" width="128" alt="Bye.DS_Store app icon">
+  <h1>Bye.DS_Store</h1>
+  <p><strong>Automatically keep your Mac folders free of <code>.DS_Store</code></strong></p>
+  <p>A free, open-source native macOS menu bar utility. Keep using Finder while it quietly cleans up in the background.</p>
+  <p>
+    <a href="https://github.com/yororoA/Bye.DS_Store/releases/latest"><img src="https://img.shields.io/github/v/release/yororoA/Bye.DS_Store?display_name=tag&color=f0aa3c" alt="Latest release"></a>
+    <img src="https://img.shields.io/badge/macOS-14%2B-0d171c?logo=apple&logoColor=white" alt="macOS 14 or later">
+    <img src="https://img.shields.io/badge/Swift-6-00a994?logo=swift&logoColor=white" alt="Swift 6">
+    <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-00a994.svg" alt="MIT License"></a>
+  </p>
+  <p>
+    <a href="https://github.com/yororoA/Bye.DS_Store/releases/latest"><strong>Download the latest Apple Silicon DMG</strong></a>
+    ·
+    <a href="https://bye-dsstore.yororoice.top/">Product page</a>
+    ·
+    <a href="https://github.com/yororoA/Bye.DS_Store">Source code</a>
+  </p>
+  <p>
+    <a href="README.md">简体中文</a> ·
+    <a href="README.zh-Hant.md">繁體中文</a> ·
+    <strong>English</strong> ·
+    <a href="README.ja.md">日本語</a> ·
+    <a href="README.de.md">Deutsch</a> ·
+    <a href="README.ru.md">Русский</a>
+  </p>
+</div>
 
-Bye.DS_Store is a free, open-source native macOS menu bar utility. Keep using Finder; it quietly removes unnecessary `.DS_Store` files in the background.
-
-[简体中文](README.md) · [繁體中文](README.zh-Hant.md) · [English](README.en.md) · [日本語](README.ja.md) · [Deutsch](README.de.md) · [Русский](README.ru.md)
-
-[Download the latest Apple Silicon DMG](https://github.com/yororoA/Bye.DS_Store/releases/latest) · [Open the product page](https://bye-dsstore.yororoice.top/) · [View source](https://github.com/yororoA/Bye.DS_Store)
-
-![macOS 14+](https://img.shields.io/badge/macOS-14%2B-0d171c?logo=apple&logoColor=white)
-![Swift 6](https://img.shields.io/badge/Swift-6-00a994?logo=swift&logoColor=white)
-![GitHub release](https://img.shields.io/github/v/release/yororoA/Bye.DS_Store?display_name=tag&color=f0aa3c)
-![MIT License](https://img.shields.io/badge/license-MIT-00a994.svg)
+---
 
 **Built for:**
 

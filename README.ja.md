@@ -1,17 +1,34 @@
-# Bye.DS_Store
+<!-- markdownlint-disable MD033 MD041 -->
 
-## Mac のフォルダから `.DS_Store` を自動的に減らす
+<div align="center">
+  <img src="site/assets/bye-dsstore-icon.png" width="128" alt="Bye.DS_Store アプリアイコン">
+  <h1>Bye.DS_Store</h1>
+  <p><strong>Mac のフォルダから <code>.DS_Store</code> を自動的に減らす</strong></p>
+  <p>無料でオープンソースの macOS ネイティブメニューバーアプリ。Finder を使い続けるだけで、バックグラウンドで静かに整理します。</p>
+  <p>
+    <a href="https://github.com/yororoA/Bye.DS_Store/releases/latest"><img src="https://img.shields.io/github/v/release/yororoA/Bye.DS_Store?display_name=tag&color=f0aa3c" alt="最新リリース"></a>
+    <img src="https://img.shields.io/badge/macOS-14%2B-0d171c?logo=apple&logoColor=white" alt="macOS 14 以降">
+    <img src="https://img.shields.io/badge/Swift-6-00a994?logo=swift&logoColor=white" alt="Swift 6">
+    <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-00a994.svg" alt="MIT License"></a>
+  </p>
+  <p>
+    <a href="https://github.com/yororoA/Bye.DS_Store/releases/latest"><strong>最新 Apple Silicon DMG をダウンロード</strong></a>
+    ·
+    <a href="https://bye-dsstore.yororoice.top/">製品ページ</a>
+    ·
+    <a href="https://github.com/yororoA/Bye.DS_Store">ソースコード</a>
+  </p>
+  <p>
+    <a href="README.md">简体中文</a> ·
+    <a href="README.zh-Hant.md">繁體中文</a> ·
+    <a href="README.en.md">English</a> ·
+    <strong>日本語</strong> ·
+    <a href="README.de.md">Deutsch</a> ·
+    <a href="README.ru.md">Русский</a>
+  </p>
+</div>
 
-Bye.DS_Store は無料でオープンソースの macOS ネイティブアプリです。Finder を使い続けるだけで、不要な `.DS_Store` をバックグラウンドで静かに削除します。
-
-[简体中文](README.md) · [繁體中文](README.zh-Hant.md) · [English](README.en.md) · [日本語](README.ja.md) · [Deutsch](README.de.md) · [Русский](README.ru.md)
-
-[最新 Apple Silicon DMG をダウンロード](https://github.com/yororoA/Bye.DS_Store/releases/latest) · [製品ページを開く](https://bye-dsstore.yororoice.top/) · [ソースを見る](https://github.com/yororoA/Bye.DS_Store)
-
-![macOS 14+](https://img.shields.io/badge/macOS-14%2B-0d171c?logo=apple&logoColor=white)
-![Swift 6](https://img.shields.io/badge/Swift-6-00a994?logo=swift&logoColor=white)
-![GitHub release](https://img.shields.io/github/v/release/yororoA/Bye.DS_Store?display_name=tag&color=f0aa3c)
-![MIT License](https://img.shields.io/badge/license-MIT-00a994.svg)
+---
 
 **こんな人に向いています：**
 

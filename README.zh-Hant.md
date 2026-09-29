@@ -1,17 +1,34 @@
-# Bye.DS_Store
+<!-- markdownlint-disable MD033 MD041 -->
 
-## 自動讓 Mac 資料夾遠離 `.DS_Store`
+<div align="center">
+  <img src="site/assets/bye-dsstore-icon.png" width="128" alt="Bye.DS_Store 應用程式圖示">
+  <h1>Bye.DS_Store</h1>
+  <p><strong>自動讓 Mac 資料夾遠離 <code>.DS_Store</code></strong></p>
+  <p>一款免費開源的原生 macOS 選單列工具。你繼續使用 Finder，它會在背景安靜地完成清理。</p>
+  <p>
+    <a href="https://github.com/yororoA/Bye.DS_Store/releases/latest"><img src="https://img.shields.io/github/v/release/yororoA/Bye.DS_Store?display_name=tag&color=f0aa3c" alt="最新版本"></a>
+    <img src="https://img.shields.io/badge/macOS-14%2B-0d171c?logo=apple&logoColor=white" alt="macOS 14 或更新版本">
+    <img src="https://img.shields.io/badge/Swift-6-00a994?logo=swift&logoColor=white" alt="Swift 6">
+    <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-00a994.svg" alt="MIT License"></a>
+  </p>
+  <p>
+    <a href="https://github.com/yororoA/Bye.DS_Store/releases/latest"><strong>下載最新 Apple Silicon DMG</strong></a>
+    ·
+    <a href="https://bye-dsstore.yororoice.top/">產品官網</a>
+    ·
+    <a href="https://github.com/yororoA/Bye.DS_Store">原始碼</a>
+  </p>
+  <p>
+    <a href="README.md">简体中文</a> ·
+    <strong>繁體中文</strong> ·
+    <a href="README.en.md">English</a> ·
+    <a href="README.ja.md">日本語</a> ·
+    <a href="README.de.md">Deutsch</a> ·
+    <a href="README.ru.md">Русский</a>
+  </p>
+</div>
 
-Bye.DS_Store 是免費開源的原生 macOS 選單列工具。你繼續使用 Finder，它會在背景安靜地清理不需要留下的 `.DS_Store`。
-
-[简体中文](README.md) · [繁體中文](README.zh-Hant.md) · [English](README.en.md) · [日本語](README.ja.md) · [Deutsch](README.de.md) · [Русский](README.ru.md)
-
-[下載最新 Apple Silicon DMG](https://github.com/yororoA/Bye.DS_Store/releases/latest) · [開啟宣傳頁](https://bye-dsstore.yororoice.top/) · [查看原始碼](https://github.com/yororoA/Bye.DS_Store)
-
-![macOS 14+](https://img.shields.io/badge/macOS-14%2B-0d171c?logo=apple&logoColor=white)
-![Swift 6](https://img.shields.io/badge/Swift-6-00a994?logo=swift&logoColor=white)
-![GitHub release](https://img.shields.io/github/v/release/yororoA/Bye.DS_Store?display_name=tag&color=f0aa3c)
-![MIT License](https://img.shields.io/badge/license-MIT-00a994.svg)
+---
 
 **適合這些情境：**
 
