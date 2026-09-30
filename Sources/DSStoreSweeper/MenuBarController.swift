@@ -170,9 +170,23 @@ final class MenuBarController: NSObject, NSApplicationDelegate {
         }
 
         popover?.performClose(nil)
+        model.refreshLaunchAtLoginState()
 
         let menu = NSMenu()
         menu.autoenablesItems = false
+        let scanItem = actionMenuItem(
+            title: AppStrings.immediateScan,
+            action: #selector(scanNowFromMenu)
+        )
+        scanItem.isEnabled = !model.isPolling
+        menu.addItem(scanItem)
+        menu.addItem(
+            actionMenuItem(
+                title: AppStrings.openSettings,
+                action: #selector(openSettingsFromMenu)
+            )
+        )
+        menu.addItem(.separator())
         menu.addItem(
             toggleMenuItem(
                 title: AppStrings.text("登录时启动", "Launch at login"),
@@ -222,6 +236,25 @@ final class MenuBarController: NSObject, NSApplicationDelegate {
         item.target = self
         item.state = isEnabled ? .on : .off
         return item
+    }
+
+    private func actionMenuItem(
+        title: String,
+        action: Selector
+    ) -> NSMenuItem {
+        let item = NSMenuItem(title: title, action: action, keyEquivalent: "")
+        item.target = self
+        return item
+    }
+
+    @objc
+    private func scanNowFromMenu() {
+        model.pollNow()
+    }
+
+    @objc
+    private func openSettingsFromMenu() {
+        openSettings()
     }
 
     @objc

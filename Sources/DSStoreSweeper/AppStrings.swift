@@ -132,6 +132,12 @@ enum AppStrings {
             .german: "Einstellungen",
             .russian: "Настройки"
         ],
+        "Open settings": [
+            .traditionalChinese: "開啟設定",
+            .japanese: "設定を開く",
+            .german: "Einstellungen öffnen",
+            .russian: "Открыть настройки"
+        ],
         "Quit": [
             .traditionalChinese: "結束",
             .japanese: "終了",
@@ -402,6 +408,60 @@ enum AppStrings {
             .german: "Aktuelle Version",
             .russian: "Текущая версия"
         ],
+        "Release date": [
+            .traditionalChinese: "發佈日期",
+            .japanese: "リリース日",
+            .german: "Veröffentlichungsdatum",
+            .russian: "Дата выпуска"
+        ],
+        "Download size": [
+            .traditionalChinese: "下載大小",
+            .japanese: "ダウンロードサイズ",
+            .german: "Downloadgröße",
+            .russian: "Размер загрузки"
+        ],
+        "Release notes": [
+            .traditionalChinese: "版本說明",
+            .japanese: "リリースノート",
+            .german: "Versionshinweise",
+            .russian: "Примечания к выпуску"
+        ],
+        "View full release notes": [
+            .traditionalChinese: "查看完整版本說明",
+            .japanese: "完全なリリースノートを表示",
+            .german: "Vollständige Versionshinweise anzeigen",
+            .russian: "Открыть полные примечания"
+        ],
+        "SHA-256 checksum provided": [
+            .traditionalChinese: "已提供 SHA-256 校驗值",
+            .japanese: "SHA-256 チェックサムを確認できます",
+            .german: "SHA-256-Prüfsumme verfügbar",
+            .russian: "Контрольная сумма SHA-256 доступна"
+        ],
+        "SHA-256 verified": [
+            .traditionalChinese: "SHA-256 校驗通過",
+            .japanese: "SHA-256 検証済み",
+            .german: "SHA-256 verifiziert",
+            .russian: "SHA-256 проверен"
+        ],
+        "Install this update?": [
+            .traditionalChinese: "要安裝此更新嗎？",
+            .japanese: "このアップデートをインストールしますか？",
+            .german: "Dieses Update installieren?",
+            .russian: "Установить это обновление?"
+        ],
+        "Bye.DS_Store will replace the current application and restart.": [
+            .traditionalChinese: "Bye.DS_Store 將替換目前的應用程式並重新啟動。",
+            .japanese: "現在のアプリケーションを置き換えて、Bye.DS_Store を再起動します。",
+            .german: "Bye.DS_Store ersetzt die aktuelle Anwendung und startet neu.",
+            .russian: "Bye.DS_Store заменит текущее приложение и перезапустится."
+        ],
+        "Install and restart": [
+            .traditionalChinese: "安裝並重新啟動",
+            .japanese: "インストールして再起動",
+            .german: "Installieren und neu starten",
+            .russian: "Установить и перезапустить"
+        ],
         "Launch at login": [
             .traditionalChinese: "登入時啟動",
             .japanese: "ログイン時に起動",
@@ -643,6 +703,10 @@ enum AppStrings {
         text("设置", "Settings")
     }
 
+    static var openSettings: String {
+        text("打开设置", "Open settings")
+    }
+
     static var quit: String {
         text("退出", "Quit")
     }
@@ -720,6 +784,45 @@ enum AppStrings {
 
     static var currentVersion: String {
         text("当前版本", "Current version")
+    }
+
+    static var releaseDate: String {
+        text("发布日期", "Release date")
+    }
+
+    static var downloadSize: String {
+        text("下载大小", "Download size")
+    }
+
+    static var releaseNotes: String {
+        text("版本说明", "Release notes")
+    }
+
+    static var viewFullReleaseNotes: String {
+        text("查看完整版本说明", "View full release notes")
+    }
+
+    static var checksumProvided: String {
+        text("已提供 SHA-256 校验值", "SHA-256 checksum provided")
+    }
+
+    static var checksumVerified: String {
+        text("SHA-256 校验通过", "SHA-256 verified")
+    }
+
+    static var installUpdateConfirmation: String {
+        text("安装此更新？", "Install this update?")
+    }
+
+    static var installUpdateExplanation: String {
+        text(
+            "Bye.DS_Store 将替换当前应用并重新启动。",
+            "Bye.DS_Store will replace the current application and restart."
+        )
+    }
+
+    static var installAndRestart: String {
+        text("安装并重新启动", "Install and restart")
     }
 
     static func updateVersion(_ version: String, language: AppLanguage? = nil) -> String {

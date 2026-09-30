@@ -7,6 +7,7 @@ struct SweeperMenuView: View {
     @ObservedObject private var settings: AppSettings
     private let onOpenSettings: () -> Void
     @State private var isShowingFullDiskScanConfirmation = false
+    @State private var isShowingUpdateInstallConfirmation = false
 
     init(
         model: SweeperAppModel,
@@ -51,6 +52,32 @@ struct SweeperMenuView: View {
             Text(AppStrings.text(
                 "将递归扫描启动磁盘中的 .DS_Store 并直接删除。扫描可能耗时较长。",
                 "This recursively scans and permanently deletes .DS_Store files on the startup disk. It may take a while.",
+                language: settings.language
+            ))
+        }
+        .alert(
+            AppStrings.text(
+                "安装此更新？",
+                "Install this update?",
+                language: settings.language
+            ),
+            isPresented: $isShowingUpdateInstallConfirmation
+        ) {
+            Button(AppStrings.text(
+                "安装并重新启动",
+                "Install and restart",
+                language: settings.language
+            )) {
+                model.openDownloadedInstaller()
+            }
+            Button(
+                AppStrings.text("取消", "Cancel", language: settings.language),
+                role: .cancel
+            ) {}
+        } message: {
+            Text(AppStrings.text(
+                "Bye.DS_Store 将替换当前应用并重新启动。",
+                "Bye.DS_Store will replace the current application and restart.",
                 language: settings.language
             ))
         }
@@ -283,7 +310,7 @@ struct SweeperMenuView: View {
             .buttonStyle(.plain)
         case .readyToInstall(let release):
             Button {
-                model.openDownloadedInstaller()
+                isShowingUpdateInstallConfirmation = true
             } label: {
                 HStack(spacing: 8) {
                     Image(systemName: "checkmark.circle.fill")
