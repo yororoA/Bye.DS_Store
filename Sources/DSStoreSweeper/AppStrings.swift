@@ -132,6 +132,12 @@ enum AppStrings {
             .german: "Einstellungen",
             .russian: "Настройки"
         ],
+        "Open settings": [
+            .traditionalChinese: "開啟設定",
+            .japanese: "設定を開く",
+            .german: "Einstellungen öffnen",
+            .russian: "Открыть настройки"
+        ],
         "Quit": [
             .traditionalChinese: "結束",
             .japanese: "終了",
@@ -695,6 +701,10 @@ enum AppStrings {
 
     static var settings: String {
         text("设置", "Settings")
+    }
+
+    static var openSettings: String {
+        text("打开设置", "Open settings")
     }
 
     static var quit: String {
