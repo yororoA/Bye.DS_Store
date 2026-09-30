@@ -43,8 +43,10 @@ final class SweeperAppModel: ObservableObject {
     private let fullDiskScanner = FullDiskScanner()
     private let mountedVolumeResolver = MountedVolumeResolver()
     private let updateClient = AppUpdateClient()
+    private let pollingPolicy = AdaptivePollingPolicy()
     private var tracker = FolderTracker()
     private var monitoringTask: Task<Void, Never>?
+    private var consecutiveIdlePolls = 0
     private var fullDiskScanTask: Task<Void, Never>?
     private var updateScheduleTask: Task<Void, Never>?
     private var updateRequestTask: Task<Void, Never>?
@@ -56,11 +58,8 @@ final class SweeperAppModel: ObservableObject {
     init(settings: AppSettings = AppSettings()) {
         self.settings = settings
         refreshLaunchAtLoginState()
+        configureMonitoring()
         configureAutomaticUpdateChecks()
-
-        Task { @MainActor [weak self] in
-            self?.start()
-        }
     }
 
     var openFolderCount: Int {
@@ -76,7 +75,8 @@ final class SweeperAppModel: ObservableObject {
     }
 
     func start() {
-        guard monitoringTask == nil else {
+        guard monitoringTask == nil,
+              settings.isMonitoringEnabled else {
             return
         }
 
@@ -86,13 +86,11 @@ final class SweeperAppModel: ObservableObject {
                     return
                 }
 
-                if self.settings.isMonitoringEnabled {
-                    await self.poll()
-                }
-
-                let sleepInterval = self.settings.isMonitoringEnabled
-                    ? self.settings.pollingInterval
-                    : 1
+                await self.poll()
+                let sleepInterval = self.pollingPolicy.interval(
+                    baseInterval: self.settings.pollingInterval,
+                    consecutiveIdlePolls: self.consecutiveIdlePolls
+                )
 
                 do {
                     try await Task.sleep(for: .seconds(sleepInterval))
@@ -104,6 +102,7 @@ final class SweeperAppModel: ObservableObject {
     }
 
     func pollNow() {
+        consecutiveIdlePolls = 0
         Task { @MainActor [weak self] in
             await self?.poll()
         }
@@ -309,6 +308,9 @@ final class SweeperAppModel: ObservableObject {
                 gracePeriod: settings.gracePeriod
             )
             finderAccessState = .allowed
+            consecutiveIdlePolls = trackedFolders.isEmpty
+                ? consecutiveIdlePolls + 1
+                : 0
 
             let folderURLsForCleanup = cleanupTargetResolver.resolve(
                 folderURLs: previouslyTrackedFolderURLs + trackedFolders.map(\.url),
@@ -326,9 +328,76 @@ final class SweeperAppModel: ObservableObject {
             }
         } catch FinderFolderProviderError.automationDenied(let message) {
             finderAccessState = .denied(message)
+            consecutiveIdlePolls += 1
         } catch {
             finderAccessState = .failed(error.localizedDescription)
+            consecutiveIdlePolls += 1
         }
+    }
+
+    private func configureMonitoring() {
+        Publishers.CombineLatest(
+            settings.$isMonitoringEnabled.removeDuplicates(),
+            settings.$pollingInterval.removeDuplicates()
+        )
+        .receive(on: RunLoop.main)
+        .sink { [weak self] _, _ in
+            self?.restartMonitoring()
+        }
+        .store(in: &cancellables)
+
+        let workspaceNotifications = NSWorkspace.shared.notificationCenter
+        for notificationName in [
+            NSWorkspace.didActivateApplicationNotification,
+            NSWorkspace.didLaunchApplicationNotification,
+            NSWorkspace.didUnhideApplicationNotification
+        ] {
+            workspaceNotifications.publisher(for: notificationName)
+                .compactMap { notification in
+                    notification.userInfo?[
+                        NSWorkspace.applicationUserInfoKey
+                    ] as? NSRunningApplication
+                }
+                .filter { application in
+                    application.bundleIdentifier == "com.apple.finder"
+                }
+                .receive(on: RunLoop.main)
+                .sink { [weak self] _ in
+                    self?.wakeMonitoringForFinderActivity()
+                }
+                .store(in: &cancellables)
+        }
+
+        workspaceNotifications.publisher(
+            for: NSWorkspace.didWakeNotification
+        )
+        .receive(on: RunLoop.main)
+        .sink { [weak self] _ in
+            self?.wakeMonitoringForFinderActivity()
+        }
+        .store(in: &cancellables)
+    }
+
+    private func restartMonitoring() {
+        monitoringTask?.cancel()
+        monitoringTask = nil
+        consecutiveIdlePolls = 0
+        start()
+    }
+
+    private func wakeMonitoringForFinderActivity() {
+        guard settings.isMonitoringEnabled else {
+            return
+        }
+
+        consecutiveIdlePolls = 0
+        guard !isPolling else {
+            return
+        }
+
+        monitoringTask?.cancel()
+        monitoringTask = nil
+        start()
     }
 
     private func configureAutomaticUpdateChecks() {
