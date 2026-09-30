@@ -1,5 +1,24 @@
 # Changelog
 
+## [1.4.0](https://github.com/yororoA/Bye.DS_Store/compare/v1.3.0...v1.4.0) (2026-09-30)
+
+
+### Features
+
+* improve monitoring efficiency and update transparency ([#11](https://github.com/yororoA/Bye.DS_Store/issues/11)) ([c230032](https://github.com/yororoA/Bye.DS_Store/commit/c230032631cc4e9df367d1784f26669d27c5f2fe))
+* **menu:** add scan and settings shortcuts ([0b67996](https://github.com/yororoA/Bye.DS_Store/commit/0b67996e1dfba0a1138af6538b3e993846140889))
+* **update:** verify downloads and show release details ([129e525](https://github.com/yororoA/Bye.DS_Store/commit/129e5250b55795ce9cedc2e55976b99de81b623b))
+
+
+### Bug Fixes
+
+* **monitoring:** keep Finder interactions responsive ([d0630e6](https://github.com/yororoA/Bye.DS_Store/commit/d0630e69383e3edc5f0376d8ec6eedd7da3a4b4f))
+
+
+### Performance Improvements
+
+* **monitoring:** reduce idle polling ([37f3cd3](https://github.com/yororoA/Bye.DS_Store/commit/37f3cd3187f966e52db7e3d18af162e45a0f0657))
+
 ## [1.3.0](https://github.com/yororoA/Bye.DS_Store/compare/v1.2.0...v1.3.0) (2026-09-29)
 
 
