@@ -308,7 +308,10 @@ final class SweeperAppModel: ObservableObject {
                 gracePeriod: settings.gracePeriod
             )
             finderAccessState = .allowed
-            consecutiveIdlePolls = trackedFolders.isEmpty
+            let isFinderActive = NSWorkspace.shared.frontmostApplication?
+                .bundleIdentifier == "com.apple.finder"
+            let isMonitoringIdle = trackedFolders.isEmpty && !isFinderActive
+            consecutiveIdlePolls = isMonitoringIdle
                 ? consecutiveIdlePolls + 1
                 : 0
 
