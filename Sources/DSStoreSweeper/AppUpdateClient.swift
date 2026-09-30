@@ -1,3 +1,4 @@
+import CryptoKit
 import Foundation
 import SweeperCore
 
@@ -6,6 +7,10 @@ struct AppUpdateRelease: Equatable, Sendable {
     let tagName: String
     let releaseURL: URL
     let downloadURL: URL
+    let publishedAt: Date?
+    let releaseNotes: String?
+    let fileSize: Int64?
+    let sha256: String?
 }
 
 enum AppUpdateState: Equatable {
@@ -16,7 +21,7 @@ enum AppUpdateState: Equatable {
     case downloading(AppUpdateRelease)
     case readyToInstall(AppUpdateRelease)
     case installing(AppUpdateRelease)
-    case failed
+    case failed(String)
 }
 
 struct PreparedAppUpdate: Sendable {
@@ -36,11 +41,19 @@ struct AppUpdateClient: Sendable {
         let version: String
         let dmgURL: URL
         let releaseURL: URL
+        let publishedAt: String?
+        let releaseNotes: String?
+        let fileSize: Int64?
+        let sha256: String?
 
         enum CodingKeys: String, CodingKey {
             case version
             case dmgURL = "dmgUrl"
             case releaseURL = "releaseUrl"
+            case publishedAt
+            case releaseNotes
+            case fileSize
+            case sha256
         }
     }
 
@@ -67,7 +80,17 @@ struct AppUpdateClient: Sendable {
             version: version,
             tagName: manifest.version,
             releaseURL: manifest.releaseURL,
-            downloadURL: manifest.dmgURL
+            downloadURL: manifest.dmgURL,
+            publishedAt: manifest.publishedAt.flatMap {
+                ISO8601DateFormatter().date(from: $0)
+            },
+            releaseNotes: manifest.releaseNotes?.trimmingCharacters(
+                in: .whitespacesAndNewlines
+            ).nilIfEmpty,
+            fileSize: manifest.fileSize,
+            sha256: manifest.sha256?.trimmingCharacters(
+                in: .whitespacesAndNewlines
+            ).lowercased().nilIfEmpty
         )
     }
 
@@ -83,8 +106,17 @@ struct AppUpdateClient: Sendable {
         let destinationURL = FileManager.default.temporaryDirectory
             .appendingPathComponent("Bye.DS_Store-\(release.version).dmg")
         try? FileManager.default.removeItem(at: destinationURL)
-        try FileManager.default.moveItem(at: temporaryURL, to: destinationURL)
-        return destinationURL
+        do {
+            try FileManager.default.moveItem(
+                at: temporaryURL,
+                to: destinationURL
+            )
+            try await verifyDownload(at: destinationURL, release: release)
+            return destinationURL
+        } catch {
+            try? FileManager.default.removeItem(at: destinationURL)
+            throw error
+        }
     }
 
     func prepareInstallation(
@@ -151,6 +183,8 @@ private extension AppUpdateClient {
         case applicationNotFound
         case bundleIdentifierMismatch
         case noWritableInstallationLocation
+        case downloadSizeMismatch
+        case checksumMismatch
         case processFailed(String)
 
         var errorDescription: String? {
@@ -163,10 +197,57 @@ private extension AppUpdateClient {
                 return "The downloaded application is not Bye.DS_Store."
             case .noWritableInstallationLocation:
                 return "No writable installation location is available."
+            case .downloadSizeMismatch:
+                return "The downloaded update size does not match the release metadata."
+            case .checksumMismatch:
+                return "SHA-256 verification failed for the downloaded update."
             case .processFailed(let message):
                 return message
             }
         }
+    }
+
+    func verifyDownload(
+        at fileURL: URL,
+        release: AppUpdateRelease
+    ) async throws {
+        try await Task.detached(priority: .utility) {
+            let fileManager = FileManager.default
+
+            if let expectedSize = release.fileSize {
+                let attributes = try fileManager.attributesOfItem(
+                    atPath: fileURL.path
+                )
+                let actualSize = (attributes[.size] as? NSNumber)?.int64Value
+                guard actualSize == expectedSize else {
+                    throw UpdateClientError.downloadSizeMismatch
+                }
+            }
+
+            if let expectedSHA256 = release.sha256 {
+                let actualSHA256 = try Self.sha256(of: fileURL)
+                guard actualSHA256 == expectedSHA256 else {
+                    throw UpdateClientError.checksumMismatch
+                }
+            }
+        }.value
+    }
+
+    static func sha256(of fileURL: URL) throws -> String {
+        let fileHandle = try FileHandle(forReadingFrom: fileURL)
+        defer {
+            try? fileHandle.close()
+        }
+
+        var hasher = SHA256()
+        while let data = try fileHandle.read(upToCount: 1_048_576),
+              !data.isEmpty {
+            hasher.update(data: data)
+        }
+
+        return hasher.finalize().map {
+            String(format: "%02x", $0)
+        }.joined()
     }
 
     static let installationScript = """
@@ -499,5 +580,11 @@ private extension AppUpdateClient {
             )
         }
         return output
+    }
+}
+
+private extension String {
+    var nilIfEmpty: String? {
+        isEmpty ? nil : self
     }
 }

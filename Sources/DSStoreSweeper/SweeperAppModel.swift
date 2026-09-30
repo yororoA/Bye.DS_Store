@@ -189,7 +189,7 @@ final class SweeperAppModel: ObservableObject {
             } catch is CancellationError {
                 return
             } catch {
-                self.updateState = .failed
+                self.updateState = .failed(error.localizedDescription)
             }
         }
     }
@@ -212,7 +212,7 @@ final class SweeperAppModel: ObservableObject {
             } catch is CancellationError {
                 return
             } catch {
-                self.updateState = .failed
+                self.updateState = .failed(error.localizedDescription)
             }
 
             self.updateDownloadTask = nil
@@ -248,7 +248,7 @@ final class SweeperAppModel: ObservableObject {
             } catch is CancellationError {
                 return
             } catch {
-                self.updateState = .failed
+                self.updateState = .failed(error.localizedDescription)
             }
 
             self.updateInstallTask = nil

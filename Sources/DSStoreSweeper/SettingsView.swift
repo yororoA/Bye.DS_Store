@@ -1,3 +1,4 @@
+import Foundation
 import SwiftUI
 import SweeperCore
 
@@ -9,6 +10,7 @@ struct SettingsView: View {
     @State private var isShowingFullDiskScanConfirmation = false
     @State private var isShowingFullDiskScanDetails = false
     @State private var isShowingClearExclusionsConfirmation = false
+    @State private var isShowingUpdateInstallConfirmation = false
 
     init(model: SweeperAppModel) {
         self.model = model
@@ -327,6 +329,17 @@ struct SettingsView: View {
                 "Full-disk scans will no longer skip any configured folders."
             ))
         }
+        .alert(
+            AppStrings.installUpdateConfirmation,
+            isPresented: $isShowingUpdateInstallConfirmation
+        ) {
+            Button(AppStrings.installAndRestart) {
+                model.openDownloadedInstaller()
+            }
+            Button(AppStrings.text("取消", "Cancel"), role: .cancel) {}
+        } message: {
+            Text(AppStrings.installUpdateExplanation)
+        }
         .sheet(isPresented: $isShowingFullDiskScanDetails) {
             if let report = model.fullDiskScanReport {
                 FullDiskScanDetailView(report: report)
@@ -372,6 +385,7 @@ struct SettingsView: View {
                 Text(AppStrings.updateVersion(release.version.description))
                     .font(.caption)
                     .foregroundStyle(.secondary)
+                releaseMetadataView(release, checksumVerified: false)
                 Button(AppStrings.downloadAndInstall) {
                     model.downloadAndOpenUpdate(release)
                 }
@@ -393,8 +407,9 @@ struct SettingsView: View {
                 Text(AppStrings.updateVersion(release.version.description))
                     .font(.caption)
                     .foregroundStyle(.secondary)
+                releaseMetadataView(release, checksumVerified: true)
                 Button(AppStrings.installDownloadedUpdate) {
-                    model.openDownloadedInstaller()
+                    isShowingUpdateInstallConfirmation = true
                 }
                 .controlSize(.small)
             }
@@ -404,13 +419,75 @@ struct SettingsView: View {
                 systemImage: "arrow.down.app"
             )
             .foregroundStyle(.secondary)
-        case .failed:
-            Label(
-                AppStrings.updateCheckFailed,
-                systemImage: "exclamationmark.triangle"
-            )
-            .foregroundStyle(.orange)
+        case .failed(let message):
+            VStack(alignment: .leading, spacing: 4) {
+                Label(
+                    AppStrings.updateCheckFailed,
+                    systemImage: "exclamationmark.triangle"
+                )
+                .foregroundStyle(.orange)
+                Text(message)
+                    .font(.caption2)
+                    .foregroundStyle(.secondary)
+                    .lineLimit(3)
+                    .textSelection(.enabled)
+            }
         }
+    }
+
+    @ViewBuilder
+    private func releaseMetadataView(
+        _ release: AppUpdateRelease,
+        checksumVerified: Bool
+    ) -> some View {
+        VStack(alignment: .leading, spacing: 4) {
+            if let publishedAt = release.publishedAt {
+                LabeledContent(
+                    AppStrings.releaseDate,
+                    value: publishedAt.formatted(
+                        date: .abbreviated,
+                        time: .omitted
+                    )
+                )
+            }
+
+            if let fileSize = release.fileSize {
+                LabeledContent(
+                    AppStrings.downloadSize,
+                    value: ByteCountFormatter.string(
+                        fromByteCount: fileSize,
+                        countStyle: .file
+                    )
+                )
+            }
+
+            if release.sha256 != nil {
+                Label(
+                    checksumVerified
+                        ? AppStrings.checksumVerified
+                        : AppStrings.checksumProvided,
+                    systemImage: checksumVerified
+                        ? "checkmark.shield.fill"
+                        : "checkmark.shield"
+                )
+                .font(.caption)
+                .foregroundStyle(checksumVerified ? .green : .secondary)
+            }
+
+            if let releaseNotes = release.releaseNotes {
+                Text(AppStrings.releaseNotes)
+                    .font(.caption.weight(.semibold))
+                Text(releaseNotes)
+                    .font(.caption2)
+                    .foregroundStyle(.secondary)
+                    .lineLimit(5)
+                    .textSelection(.enabled)
+            }
+
+            Link(AppStrings.viewFullReleaseNotes, destination: release.releaseURL)
+                .font(.caption)
+        }
+        .padding(.vertical, 2)
     }
 
     @ViewBuilder

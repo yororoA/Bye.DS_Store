@@ -46,18 +46,43 @@ jobs:
 
           release_json="$(gh api "repos/${GITHUB_REPOSITORY}/releases/latest")"
           version="$(jq -r '.tag_name // empty' <<<"$release_json")"
-          dmg_url="$(jq -r '[.assets[]? | select(.name | endswith("macOS-arm64.dmg")) | .browser_download_url][0] // empty' <<<"$release_json")"
+          dmg_asset="$(jq -c '[.assets[]? | select(.name | endswith("macOS-arm64.dmg"))][0] // empty' <<<"$release_json")"
+          dmg_name="$(jq -r '.name // empty' <<<"$dmg_asset")"
+          dmg_url="$(jq -r '.browser_download_url // empty' <<<"$dmg_asset")"
+          dmg_size="$(jq -r '.size // empty' <<<"$dmg_asset")"
           release_url="$(jq -r '.html_url // empty' <<<"$release_json")"
+          published_at="$(jq -r '.published_at // empty' <<<"$release_json")"
+          release_notes="$(jq -r '.body // empty' <<<"$release_json")"
+          checksum_url="$(jq -r --arg name "${dmg_name}.sha256" '[.assets[]? | select(.name == $name) | .browser_download_url][0] // empty' <<<"$release_json")"
+          sha256=""
+
+          if [[ -n "$checksum_url" ]]; then
+            sha256="$(curl --fail --silent --show-error --location "$checksum_url" | awk 'NR == 1 { print tolower($1) }')"
+          fi
 
           test -n "$version"
           test -n "$dmg_url"
+          test -n "$dmg_size"
           test -n "$release_url"
+          [[ "$sha256" =~ ^[0-9a-f]{64}$ ]]
 
           jq -n \
             --arg version "$version" \
             --arg dmg_url "$dmg_url" \
             --arg release_url "$release_url" \
-            '{version: $version, dmgUrl: $dmg_url, releaseUrl: $release_url}' \
+            --arg published_at "$published_at" \
+            --arg release_notes "$release_notes" \
+            --argjson file_size "$dmg_size" \
+            --arg sha256 "$sha256" \
+            '{
+              version: $version,
+              dmgUrl: $dmg_url,
+              releaseUrl: $release_url,
+              publishedAt: $published_at,
+              releaseNotes: $release_notes,
+              fileSize: $file_size,
+              sha256: (if $sha256 == "" then null else $sha256 end)
+            }' \
             > site/release.json
 
       - name: Upload site artifact
