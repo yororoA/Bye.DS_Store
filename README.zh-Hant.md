@@ -50,6 +50,7 @@
 | 能力 | 說明 |
 | --- | --- |
 | Finder 監控 | 讀取目前 Finder 視窗目標，多視窗自動去重 |
+| Finder 穩定性 | 查詢在獨立程序中執行，5 秒無回應即逾時，避免中斷連線的網路磁碟長時間阻塞 |
 | 寬限期清理 | 資料夾關閉後預設繼續清理 60 秒 |
 | 清理範圍 | 預設處理監控資料夾及其直接父資料夾，也可切換為只處理目前資料夾 |
 | 全磁碟掃描 | 手動掃描啟動磁碟、外接磁碟、網路磁碟或所有已掛載磁碟 |
@@ -97,6 +98,7 @@ node_modules、.venv、venv、__pycache__、vendor、Pods、target、.gradle
 ## 執行要求
 
 - macOS 14 或更新版本
+- Apple 晶片或 Intel 晶片 Mac（Universal 2）
 - Xcode 16 或更新版本
 - Swift 6 工具鏈
 
@@ -110,6 +112,12 @@ node_modules、.venv、venv、__pycache__、vendor、Pods、target、.gradle
 
 ```bash
 ./scripts/build-app.sh
+```
+
+預設只建置目前 Mac 的架構。若要建置同時支援 Apple 晶片與 Intel 的 Universal 2 應用程式：
+
+```bash
+ARCHITECTURES="arm64 x86_64" ./scripts/build-app.sh
 ```
 
 執行測試：
@@ -143,7 +151,7 @@ git tag vX.Y.Z
 git push origin vX.Y.Z
 ```
 
-工作流程會執行測試、建置 macOS 應用程式、產生 zip/DMG 與 SHA-256 校驗檔；設定 Apple Developer secrets 後，還會執行 Developer ID 簽署和 notarization。
+工作流程會執行測試、建置 Universal 2 macOS 應用程式、產生 zip/DMG 與 SHA-256 校驗檔；設定 Apple Developer secrets 後，還會執行 Developer ID 簽署和 notarization。
 
 Release 說明放在：
 
@@ -163,6 +171,7 @@ Release 說明放在：
 Sources/SweeperCore/       資料夾狀態、清理範圍與 .DS_Store 刪除邏輯
 Sources/DSStoreSweeper/    Finder 整合、選單列 UI、設定與應用程式生命週期
 Tests/SweeperCoreTests/    核心行為測試
+Tests/DSStoreSweeperTests/ Finder 查詢程序的逾時與取消測試
 Support/Info.plist         macOS 應用程式封裝設定
 scripts/                   建置與啟動腳本
 site/                      GitHub Pages 宣傳頁

@@ -50,6 +50,7 @@
 | 機能 | 内容 |
 | --- | --- |
 | Finder 監視 | 現在の Finder ウィンドウを読み取り、複数ウィンドウを自動で重複排除 |
+| Finder の安定性 | 照会を独立プロセスで実行し、5 秒でタイムアウトして切断済みネットワークドライブによる停止を防止 |
 | 猶予期間 | フォルダを閉じた後も標準で 60 秒間クリーンアップ |
 | クリーンアップ範囲 | 標準では監視対象と直接の親フォルダ。対象フォルダのみの設定も可能 |
 | ディスク全体のスキャン | 起動ディスク、外部ディスク、ネットワークディスク、全マウントボリュームを手動スキャン |
@@ -97,6 +98,7 @@ node_modules、.venv、venv、__pycache__、vendor、Pods、target、.gradle
 ## 動作要件
 
 - macOS 14 以降
+- Apple Silicon または Intel Mac（Universal 2）
 - Xcode 16 以降
 - Swift 6 ツールチェーン
 
@@ -110,6 +112,12 @@ node_modules、.venv、venv、__pycache__、vendor、Pods、target、.gradle
 
 ```bash
 ./scripts/build-app.sh
+```
+
+標準では現在の Mac のアーキテクチャだけをビルドします。Apple Silicon と Intel の両方に対応する Universal 2 アプリをビルドするには：
+
+```bash
+ARCHITECTURES="arm64 x86_64" ./scripts/build-app.sh
 ```
 
 テスト：
@@ -143,7 +151,7 @@ git tag vX.Y.Z
 git push origin vX.Y.Z
 ```
 
-ワークフローはテスト、macOS アプリのビルド、zip/DMG と SHA-256 チェックサムの生成を行います。Apple Developer secrets を設定すると Developer ID 署名と notarization も実行します。
+ワークフローはテスト、Universal 2 macOS アプリのビルド、zip/DMG と SHA-256 チェックサムの生成を行います。Apple Developer secrets を設定すると Developer ID 署名と notarization も実行します。
 
 Release の説明は次に保存します。
 
@@ -163,6 +171,7 @@ Release の説明は次に保存します。
 Sources/SweeperCore/       フォルダ状態、クリーンアップ範囲、削除ロジック
 Sources/DSStoreSweeper/    Finder 連携、メニューバー UI、設定、ライフサイクル
 Tests/SweeperCoreTests/    コア動作テスト
+Tests/DSStoreSweeperTests/ Finder 照会プロセスのタイムアウトとキャンセルのテスト
 Support/Info.plist         macOS アプリバンドル設定
 scripts/                   ビルドと起動スクリプト
 site/                      GitHub Pages 製品ページ

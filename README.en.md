@@ -50,6 +50,7 @@
 | Capability | What it does |
 | --- | --- |
 | Finder monitoring | Reads current Finder window targets and deduplicates multiple windows |
+| Finder resilience | Runs queries in a separate process and times out after 5 seconds to avoid stalls from disconnected network drives |
 | Grace-period cleanup | Keeps a closed folder in the cleanup set for 60 seconds by default |
 | Cleanup scope | Covers the monitored folder and its direct parent by default, with an option for the current folder only |
 | Full-disk scan | Manually scans the startup disk, external disks, network disks, or all mounted volumes |
@@ -97,6 +98,7 @@ node_modules, .venv, venv, __pycache__, vendor, Pods, target, .gradle
 ## Requirements
 
 - macOS 14 or later
+- Apple Silicon or Intel Mac (Universal 2)
 - Xcode 16 or later
 - Swift 6 toolchain
 
@@ -110,6 +112,12 @@ Build only:
 
 ```bash
 ./scripts/build-app.sh
+```
+
+This builds for the current Mac architecture by default. To build a Universal 2 app for both Apple Silicon and Intel:
+
+```bash
+ARCHITECTURES="arm64 x86_64" ./scripts/build-app.sh
 ```
 
 Run tests:
@@ -143,7 +151,7 @@ git tag vX.Y.Z
 git push origin vX.Y.Z
 ```
 
-The workflow runs tests, builds the macOS app, creates zip/DMG installers and SHA-256 checksums, and uses Developer ID signing and notarization when Apple Developer secrets are configured.
+The workflow runs tests, builds a Universal 2 macOS app, creates zip/DMG installers and SHA-256 checksums, and uses Developer ID signing and notarization when Apple Developer secrets are configured.
 
 Release descriptions are stored at:
 
@@ -163,6 +171,7 @@ This project is distributed under the [MIT License](LICENSE).
 Sources/SweeperCore/       Folder tracking, cleanup scope, and .DS_Store removal
 Sources/DSStoreSweeper/    Finder integration, menu bar UI, settings, and lifecycle
 Tests/SweeperCoreTests/    Core behavior tests
+Tests/DSStoreSweeperTests/ Finder query process timeout and cancellation tests
 Support/Info.plist         macOS app bundle metadata
 scripts/                   Build and launch scripts
 site/                      GitHub Pages product page

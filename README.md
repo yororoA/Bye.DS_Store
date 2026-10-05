@@ -50,6 +50,7 @@
 | 能力 | 说明 |
 | --- | --- |
 | Finder 监听 | 读取当前 Finder 窗口目标，多窗口自动去重 |
+| Finder 稳定性 | 查询在独立进程中执行，5 秒无响应即超时，避免失联网络盘长期阻塞 |
 | 延续清理 | 文件夹关闭后默认继续清理 60 秒 |
 | 清理范围 | 默认处理被监控文件夹及其直接父文件夹，也可切换为仅处理当前文件夹 |
 | 全盘扫描 | 手动扫描启动盘、外接盘、网络盘或全部已挂载磁盘 |
@@ -97,6 +98,7 @@ node_modules、.venv、venv、__pycache__、vendor、Pods、target、.gradle
 ## 运行要求
 
 - macOS 14 或更高版本
+- Apple 芯片或 Intel 芯片 Mac（Universal 2）
 - Xcode 16 或更新版本
 - Swift 6 工具链
 
@@ -110,6 +112,12 @@ node_modules、.venv、venv、__pycache__、vendor、Pods、target、.gradle
 
 ```bash
 ./scripts/build-app.sh
+```
+
+默认仅构建当前 Mac 的架构。构建同时支持 Apple 芯片与 Intel 的 Universal 2 应用：
+
+```bash
+ARCHITECTURES="arm64 x86_64" ./scripts/build-app.sh
 ```
 
 运行测试：
@@ -143,7 +151,7 @@ git tag vX.Y.Z
 git push origin vX.Y.Z
 ```
 
-工作流会运行测试、构建 macOS 应用、生成 zip/DMG 及 SHA-256 校验文件，并在配置 Apple Developer secrets 时执行 Developer ID 签名和 notarization。
+工作流会运行测试、构建 Universal 2 macOS 应用、生成 zip/DMG 及 SHA-256 校验文件，并在配置 Apple Developer secrets 时执行 Developer ID 签名和 notarization。
 
 对应版本的 Release 说明放在：
 
@@ -163,6 +171,7 @@ git push origin vX.Y.Z
 Sources/SweeperCore/       文件夹状态、清理范围与 .DS_Store 删除逻辑
 Sources/DSStoreSweeper/    Finder 集成、菜单栏 UI、设置与应用生命周期
 Tests/SweeperCoreTests/    核心行为测试
+Tests/DSStoreSweeperTests/ Finder 查询子进程的超时与取消测试
 Support/Info.plist         macOS 应用包配置
 scripts/                   构建与启动脚本
 site/                      GitHub Pages 宣传页
