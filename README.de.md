@@ -12,7 +12,7 @@
     <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-00a994.svg" alt="MIT License"></a>
   </p>
   <p>
-    <a href="https://github.com/yororoA/Bye.DS_Store/releases/latest"><strong>Neueste Apple-Silicon-DMG herunterladen</strong></a>
+    <a href="https://github.com/yororoA/Bye.DS_Store/releases/latest"><strong>Neueste Universal-DMG (Apple Silicon & Intel) herunterladen</strong></a>
     ·
     <a href="https://bye-dsstore.yororoice.top/">Produktseite</a>
     ·

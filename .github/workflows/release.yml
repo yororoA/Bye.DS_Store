@@ -73,6 +73,7 @@ jobs:
 
       - name: Build application bundle
         env:
+          ARCHITECTURES: "arm64 x86_64"
           CODESIGN_IDENTITY: ${{ secrets.APPLE_DEVELOPER_IDENTITY }}
           VERSION: ${{ inputs.release_tag || github.ref_name }}
         run: ./scripts/build-app.sh
@@ -85,9 +86,8 @@ jobs:
         run: |
           set -euo pipefail
 
-          architecture="$(uname -m)"
-          archive_path="dist/Bye.DS_Store-${RELEASE_TAG}-macOS-${architecture}.zip"
-          dmg_path="dist/Bye.DS_Store-${RELEASE_TAG}-macOS-${architecture}.dmg"
+          archive_path="dist/Bye.DS_Store-${RELEASE_TAG}-macOS-universal.zip"
+          dmg_path="dist/Bye.DS_Store-${RELEASE_TAG}-macOS-universal.dmg"
           checksum_path="${archive_path}.sha256"
           dmg_checksum_path="${dmg_path}.sha256"
 

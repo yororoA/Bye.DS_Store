@@ -46,7 +46,11 @@ jobs:
 
           release_json="$(gh api "repos/${GITHUB_REPOSITORY}/releases/latest")"
           version="$(jq -r '.tag_name // empty' <<<"$release_json")"
-          dmg_asset="$(jq -c '[.assets[]? | select(.name | endswith("macOS-arm64.dmg"))][0] // empty' <<<"$release_json")"
+          dmg_asset="$(jq -c '
+            [.assets[]? | select(.name | endswith("macOS-universal.dmg"))][0]
+            // [.assets[]? | select(.name | endswith("macOS-arm64.dmg"))][0]
+            // empty
+          ' <<<"$release_json")"
           dmg_name="$(jq -r '.name // empty' <<<"$dmg_asset")"
           dmg_url="$(jq -r '.browser_download_url // empty' <<<"$dmg_asset")"
           dmg_size="$(jq -r '.size // empty' <<<"$dmg_asset")"
