@@ -28,6 +28,10 @@ let package = Package(
         .testTarget(
             name: "SweeperCoreTests",
             dependencies: ["SweeperCore"]
+        ),
+        .testTarget(
+            name: "DSStoreSweeperTests",
+            dependencies: ["DSStoreSweeper"]
         )
     ]
 )

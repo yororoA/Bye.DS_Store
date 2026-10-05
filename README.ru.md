@@ -12,7 +12,7 @@
     <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-00a994.svg" alt="MIT License"></a>
   </p>
   <p>
-    <a href="https://github.com/yororoA/Bye.DS_Store/releases/latest"><strong>Скачать последний DMG для Apple Silicon</strong></a>
+    <a href="https://github.com/yororoA/Bye.DS_Store/releases/latest"><strong>Скачать последний универсальный DMG (Apple Silicon и Intel)</strong></a>
     ·
     <a href="https://bye-dsstore.yororoice.top/">Страница продукта</a>
     ·
@@ -50,6 +50,7 @@
 | Возможность | Что делает |
 | --- | --- |
 | Мониторинг Finder | Читает текущие окна Finder и автоматически убирает дубликаты |
+| Стабильность Finder | Выполняет запрос в отдельном процессе и прерывает его через 5 секунд, чтобы отключённые сетевые диски не блокировали приложение |
 | Отложенная очистка | После закрытия папка остаётся в области очистки 60 секунд по умолчанию |
 | Область очистки | Текущая папка и её непосредственная родительская папка; можно выбрать только текущую |
 | Полное сканирование | Ручное сканирование загрузочного, внешних, сетевых или всех подключённых дисков |
@@ -97,6 +98,7 @@ node_modules, .venv, venv, __pycache__, vendor, Pods, target, .gradle
 ## Требования
 
 - macOS 14 или новее
+- Mac с Apple Silicon или процессором Intel (Universal 2)
 - Xcode 16 или новее
 - Swift 6
 
@@ -110,6 +112,12 @@ node_modules, .venv, venv, __pycache__, vendor, Pods, target, .gradle
 
 ```bash
 ./scripts/build-app.sh
+```
+
+По умолчанию выполняется сборка только для архитектуры текущего Mac. Для сборки Universal 2 с поддержкой Apple Silicon и Intel:
+
+```bash
+ARCHITECTURES="arm64 x86_64" ./scripts/build-app.sh
 ```
 
 Тесты:
@@ -143,7 +151,7 @@ git tag vX.Y.Z
 git push origin vX.Y.Z
 ```
 
-Workflow запускает тесты, собирает приложение macOS, создаёт zip/DMG и SHA-256, а при наличии Apple Developer secrets выполняет подпись Developer ID и notarization.
+Workflow запускает тесты, собирает приложение Universal 2 для macOS, создаёт zip/DMG и SHA-256, а при наличии Apple Developer secrets выполняет подпись Developer ID и notarization.
 
 Описание Release хранится в:
 
@@ -163,6 +171,7 @@ Workflow запускает тесты, собирает приложение ma
 Sources/SweeperCore/       Состояние папок, область очистки и удаление .DS_Store
 Sources/DSStoreSweeper/    Интеграция с Finder, UI строки меню, настройки и жизненный цикл
 Tests/SweeperCoreTests/    Тесты основной логики
+Tests/DSStoreSweeperTests/ Тесты тайм-аута и отмены процесса запросов Finder
 Support/Info.plist         Конфигурация macOS app bundle
 scripts/                   Скрипты сборки и запуска
 site/                      Продуктовая страница GitHub Pages

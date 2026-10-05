@@ -329,8 +329,13 @@ final class SweeperAppModel: ObservableObject {
             lastCleanupError = cleanupReport.failures.first.map { failure in
                 "\(failure.folderURL.path): \(failure.message)"
             }
+        } catch is CancellationError {
+            return
         } catch FinderFolderProviderError.automationDenied(let message) {
             finderAccessState = .denied(message)
+            consecutiveIdlePolls += 1
+        } catch FinderFolderProviderError.queryTimedOut {
+            finderAccessState = .failed(AppStrings.finderQueryTimedOut)
             consecutiveIdlePolls += 1
         } catch {
             finderAccessState = .failed(error.localizedDescription)

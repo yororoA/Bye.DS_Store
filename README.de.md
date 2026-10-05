@@ -12,7 +12,7 @@
     <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-00a994.svg" alt="MIT License"></a>
   </p>
   <p>
-    <a href="https://github.com/yororoA/Bye.DS_Store/releases/latest"><strong>Neueste Apple-Silicon-DMG herunterladen</strong></a>
+    <a href="https://github.com/yororoA/Bye.DS_Store/releases/latest"><strong>Neueste Universal-DMG (Apple Silicon & Intel) herunterladen</strong></a>
     ·
     <a href="https://bye-dsstore.yororoice.top/">Produktseite</a>
     ·
@@ -50,6 +50,7 @@
 | Funktion | Beschreibung |
 | --- | --- |
 | Finder-Überwachung | Liest aktuelle Finder-Fenster und führt mehrere Fenster automatisch zusammen |
+| Finder-Stabilität | Führt Abfragen in einem separaten Prozess aus und bricht nach 5 Sekunden ab, damit getrennte Netzlaufwerke die App nicht blockieren |
 | Bereinigung mit Schonfrist | Behält geschlossene Ordner standardmäßig 60 Sekunden im Bereich |
 | Bereinigungsbereich | Überwachter Ordner plus direkter Elternordner; optional nur der aktuelle Ordner |
 | Gesamtscan | Startvolume, externe Datenträger, Netzwerkdatenträger oder alle eingebundenen Volumes manuell scannen |
@@ -97,6 +98,7 @@ node_modules, .venv, venv, __pycache__, vendor, Pods, target, .gradle
 ## Voraussetzungen
 
 - macOS 14 oder neuer
+- Mac mit Apple Silicon oder Intel-Prozessor (Universal 2)
 - Xcode 16 oder neuer
 - Swift-6-Toolchain
 
@@ -110,6 +112,12 @@ Nur bauen:
 
 ```bash
 ./scripts/build-app.sh
+```
+
+Standardmäßig wird nur für die Architektur des aktuellen Mac gebaut. Eine Universal-2-App für Apple Silicon und Intel erstellst du mit:
+
+```bash
+ARCHITECTURES="arm64 x86_64" ./scripts/build-app.sh
 ```
 
 Tests ausführen:
@@ -143,7 +151,7 @@ git tag vX.Y.Z
 git push origin vX.Y.Z
 ```
 
-Der Workflow führt Tests aus, baut die macOS-App, erstellt zip/DMG und SHA-256-Prüfsummen und verwendet Developer-ID-Signierung sowie Notarisierung, wenn Apple-Developer-Secrets hinterlegt sind.
+Der Workflow führt Tests aus, baut eine Universal-2-macOS-App, erstellt zip/DMG und SHA-256-Prüfsummen und verwendet Developer-ID-Signierung sowie Notarisierung, wenn Apple-Developer-Secrets hinterlegt sind.
 
 Release-Beschreibungen liegen unter:
 
@@ -163,6 +171,7 @@ Dieses Projekt steht unter der [MIT License](LICENSE).
 Sources/SweeperCore/       Ordnerstatus, Bereinigungsbereich und Löschlogik
 Sources/DSStoreSweeper/    Finder-Integration, Menüleisten-UI, Einstellungen, Lebenszyklus
 Tests/SweeperCoreTests/    Tests für das Kernverhalten
+Tests/DSStoreSweeperTests/ Tests für Zeitlimit und Abbruch des Finder-Abfrageprozesses
 Support/Info.plist         Metadaten des macOS-App-Bundles
 scripts/                   Build- und Startskripte
 site/                      GitHub-Pages-Produktseite
