@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.5.0](https://github.com/yororoA/Bye.DS_Store/compare/v1.4.0...v1.5.0) (2026-10-05)
+
+
+### Features
+
+* **build:** publish universal macOS artifacts ([fe5e4e8](https://github.com/yororoA/Bye.DS_Store/commit/fe5e4e804cd549271d36f8f2e70d3e82f73aab23))
+* support universal builds and bound Finder queries ([#13](https://github.com/yororoA/Bye.DS_Store/issues/13)) ([972e1ce](https://github.com/yororoA/Bye.DS_Store/commit/972e1cee575d870cde6acb30c0f9e54ca02266f8))
+
+
+### Bug Fixes
+
+* **monitoring:** time out Finder queries ([50c9451](https://github.com/yororoA/Bye.DS_Store/commit/50c94514bf87d8f954c1a67b8b1e5931ec744b0f))
+
 ## [1.4.0](https://github.com/yororoA/Bye.DS_Store/compare/v1.3.0...v1.4.0) (2026-09-30)
 
 
