@@ -96,6 +96,12 @@ enum AppStrings {
             .german: "Finder kann nicht gelesen werden",
             .russian: "Не удалось прочитать Finder"
         ],
+        "Finder query timed out. Check Finder and disconnected network drives.": [
+            .traditionalChinese: "Finder 查詢逾時，請檢查 Finder 或已中斷連線的網路磁碟。",
+            .japanese: "Finder の照会がタイムアウトしました。Finder または切断されたネットワークドライブを確認してください。",
+            .german: "Die Finder-Abfrage hat das Zeitlimit überschritten. Prüfe Finder und getrennte Netzlaufwerke.",
+            .russian: "Время ожидания Finder истекло. Проверьте Finder и отключённые сетевые диски."
+        ],
         "No folders are open in Finder": [
             .traditionalChinese: "Finder 中沒有開啟的資料夾",
             .japanese: "Finder で開いているフォルダはありません",
@@ -693,6 +699,13 @@ enum AppStrings {
 
     static var emptyFolders: String {
         text("Finder 中没有打开的文件夹", "No folders are open in Finder")
+    }
+
+    static var finderQueryTimedOut: String {
+        text(
+            "Finder 查询超时，请检查 Finder 或已断开的网络磁盘。",
+            "Finder query timed out. Check Finder and disconnected network drives."
+        )
     }
 
     static var immediateScan: String {
