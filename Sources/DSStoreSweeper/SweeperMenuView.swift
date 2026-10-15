@@ -6,16 +6,20 @@ struct SweeperMenuView: View {
     @ObservedObject var model: SweeperAppModel
     @ObservedObject private var settings: AppSettings
     private let onOpenSettings: () -> Void
-    @State private var isShowingFullDiskScanConfirmation = false
-    @State private var isShowingUpdateInstallConfirmation = false
+    private let onRequestFullDiskScan: () -> Void
+    private let onRequestUpdateInstallation: () -> Void
 
     init(
         model: SweeperAppModel,
-        onOpenSettings: @escaping () -> Void = {}
+        onOpenSettings: @escaping () -> Void = {},
+        onRequestFullDiskScan: @escaping () -> Void = {},
+        onRequestUpdateInstallation: @escaping () -> Void = {}
     ) {
         self.model = model
         settings = model.settings
         self.onOpenSettings = onOpenSettings
+        self.onRequestFullDiskScan = onRequestFullDiskScan
+        self.onRequestUpdateInstallation = onRequestUpdateInstallation
     }
 
     var body: some View {
@@ -30,57 +34,6 @@ struct SweeperMenuView: View {
             footer
         }
         .frame(width: 360)
-        .alert(
-            AppStrings.text(
-                "扫描整个启动磁盘？",
-                "Scan the startup disk?",
-                language: settings.language
-            ),
-            isPresented: $isShowingFullDiskScanConfirmation
-        ) {
-            Button(
-                AppStrings.text("扫描并清理", "Scan and clean", language: settings.language),
-                role: .destructive
-            ) {
-                model.startFullDiskScan()
-            }
-            Button(
-                AppStrings.text("取消", "Cancel", language: settings.language),
-                role: .cancel
-            ) {}
-        } message: {
-            Text(AppStrings.text(
-                "将递归扫描启动磁盘中的 .DS_Store 并直接删除。扫描可能耗时较长。",
-                "This recursively scans and permanently deletes .DS_Store files on the startup disk. It may take a while.",
-                language: settings.language
-            ))
-        }
-        .alert(
-            AppStrings.text(
-                "安装此更新？",
-                "Install this update?",
-                language: settings.language
-            ),
-            isPresented: $isShowingUpdateInstallConfirmation
-        ) {
-            Button(AppStrings.text(
-                "安装并重新启动",
-                "Install and restart",
-                language: settings.language
-            )) {
-                model.openDownloadedInstaller()
-            }
-            Button(
-                AppStrings.text("取消", "Cancel", language: settings.language),
-                role: .cancel
-            ) {}
-        } message: {
-            Text(AppStrings.text(
-                "Bye.DS_Store 将替换当前应用并重新启动。",
-                "Bye.DS_Store will replace the current application and restart.",
-                language: settings.language
-            ))
-        }
     }
 
     private var header: some View {
@@ -240,7 +193,7 @@ struct SweeperMenuView: View {
                 if model.isFullDiskScanRunning {
                     model.cancelFullDiskScan()
                 } else {
-                    isShowingFullDiskScanConfirmation = true
+                    onRequestFullDiskScan()
                 }
             } label: {
                 Image(systemName: model.isFullDiskScanRunning ? "stop.fill" : "magnifyingglass")
@@ -310,7 +263,7 @@ struct SweeperMenuView: View {
             .buttonStyle(.plain)
         case .readyToInstall(let release):
             Button {
-                isShowingUpdateInstallConfirmation = true
+                onRequestUpdateInstallation()
             } label: {
                 HStack(spacing: 8) {
                     Image(systemName: "checkmark.circle.fill")
