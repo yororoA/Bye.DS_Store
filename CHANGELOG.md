@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.5.1](https://github.com/yororoA/Bye.DS_Store/compare/v1.5.0...v1.5.1) (2026-10-15)
+
+
+### Bug Fixes
+
+* keep menu bar popover interactive after alert cancellation ([#15](https://github.com/yororoA/Bye.DS_Store/issues/15)) ([1c08f90](https://github.com/yororoA/Bye.DS_Store/commit/1c08f90037f290a8ccc84fa7297ba180a47dd9d0))
+* **menu:** keep popover interactive after cancelling alerts ([42058b6](https://github.com/yororoA/Bye.DS_Store/commit/42058b68f9fbd66cbef6d5d04536939550bc3bcd))
+
 ## [1.5.0](https://github.com/yororoA/Bye.DS_Store/compare/v1.4.0...v1.5.0) (2026-10-05)
 
 
