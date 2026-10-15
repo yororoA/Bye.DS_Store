@@ -4,6 +4,9 @@ import SwiftUI
 
 @MainActor
 final class MenuBarController: NSObject, NSApplicationDelegate {
+    private static let confirmationWindowIdentifier =
+        NSUserInterfaceItemIdentifier("ByeDSStoreConfirmation")
+
     let model: SweeperAppModel
 
     private let shortcutMonitor = GlobalShortcutMonitor()
@@ -54,6 +57,12 @@ final class MenuBarController: NSObject, NSApplicationDelegate {
             model: model,
             onOpenSettings: { [weak self] in
                 self?.openSettings()
+            },
+            onRequestFullDiskScan: { [weak self] in
+                self?.confirmFullDiskScan()
+            },
+            onRequestUpdateInstallation: { [weak self] in
+                self?.confirmUpdateInstallation()
             }
         )
         let hostingController = NSHostingController(rootView: rootView)
@@ -126,6 +135,11 @@ final class MenuBarController: NSObject, NSApplicationDelegate {
         let eventWindow = event.window
         let popoverWindow = popover.contentViewController?.view.window
         let statusWindow = statusItem?.button?.window
+
+        if eventWindow?.identifier == Self.confirmationWindowIdentifier
+            || eventWindow?.sheetParent === popoverWindow {
+            return
+        }
 
         if eventWindow !== popoverWindow,
            eventWindow !== statusWindow {
@@ -301,6 +315,12 @@ final class MenuBarController: NSObject, NSApplicationDelegate {
                 model: model,
                 onOpenSettings: { [weak self] in
                     self?.openSettings()
+                },
+                onRequestFullDiskScan: { [weak self] in
+                    self?.confirmFullDiskScan()
+                },
+                onRequestUpdateInstallation: { [weak self] in
+                    self?.confirmUpdateInstallation()
                 }
             )
             let panel = NSPanel(
@@ -337,6 +357,95 @@ final class MenuBarController: NSObject, NSApplicationDelegate {
         }
 
         fallbackPanel.makeKeyAndOrderFront(nil)
+    }
+
+    private func confirmFullDiskScan() {
+        guard !model.isFullDiskScanRunning else {
+            return
+        }
+
+        let shouldStartScan = presentConfirmation(
+            title: AppStrings.text(
+                "扫描整个启动磁盘？",
+                "Scan the startup disk?",
+                language: model.settings.language
+            ),
+            message: AppStrings.text(
+                "将递归扫描启动磁盘中的 .DS_Store 并直接删除。扫描可能耗时较长。",
+                "This recursively scans and permanently deletes .DS_Store files on the startup disk. It may take a while.",
+                language: model.settings.language
+            ),
+            confirmTitle: AppStrings.text(
+                "扫描并清理",
+                "Scan and clean",
+                language: model.settings.language
+            )
+        )
+
+        if shouldStartScan {
+            model.startFullDiskScan()
+        }
+    }
+
+    private func confirmUpdateInstallation() {
+        guard case .readyToInstall = model.updateState else {
+            return
+        }
+
+        let shouldInstall = presentConfirmation(
+            title: AppStrings.text(
+                "安装此更新？",
+                "Install this update?",
+                language: model.settings.language
+            ),
+            message: AppStrings.text(
+                "Bye.DS_Store 将替换当前应用并重新启动。",
+                "Bye.DS_Store will replace the current application and restart.",
+                language: model.settings.language
+            ),
+            confirmTitle: AppStrings.text(
+                "安装并重新启动",
+                "Install and restart",
+                language: model.settings.language
+            )
+        )
+
+        if shouldInstall {
+            model.openDownloadedInstaller()
+        }
+    }
+
+    private func presentConfirmation(
+        title: String,
+        message: String,
+        confirmTitle: String
+    ) -> Bool {
+        let alert = NSAlert()
+        alert.window.identifier = Self.confirmationWindowIdentifier
+        alert.alertStyle = .warning
+        alert.messageText = title
+        alert.informativeText = message
+        alert.addButton(withTitle: confirmTitle)
+        alert.addButton(
+            withTitle: AppStrings.text(
+                "取消",
+                "Cancel",
+                language: model.settings.language
+            )
+        )
+        alert.buttons.first?.hasDestructiveAction = true
+
+        let originalPopoverBehavior = popover?.behavior
+        popover?.behavior = .applicationDefined
+        NSApp.activate(ignoringOtherApps: true)
+
+        defer {
+            if let originalPopoverBehavior {
+                popover?.behavior = originalPopoverBehavior
+            }
+        }
+
+        return alert.runModal() == .alertFirstButtonReturn
     }
 
     private func openSettings() {
