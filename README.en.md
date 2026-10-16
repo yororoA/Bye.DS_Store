@@ -57,7 +57,7 @@
 | Exclusion rules | Skips folders by name or path, such as `node_modules` or `lib/packages` |
 | Safety boundaries | Confirms before scanning, allows cancellation, and exposes failed paths afterward |
 | Menu bar workflow | Uses no Dock icon and supports the global shortcut `⌘⌥B` |
-| Automatic updates | Checks for a new release daily by default; disable it or check manually in Settings |
+| Automatic updates | Checks daily, shows release notes in-app, and supports manual installation or optional install-after-download |
 | Languages | System detection plus 简体中文, 繁體中文, English, 日本語, Deutsch, and Русский |
 
 ## Why include the parent folder?
@@ -152,6 +152,8 @@ git push origin vX.Y.Z
 ```
 
 The workflow runs tests, builds a Universal 2 macOS app, creates zip/DMG installers and SHA-256 checksums, and uses Developer ID signing and notarization when Apple Developer secrets are configured.
+
+GitHub Release titles and notes are generated in Chinese and English. Each merged PR entry credits its `@contributor`; Git tags keep the standard `vX.Y.Z` format.
 
 Release descriptions are stored at:
 
