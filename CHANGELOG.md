@@ -1,5 +1,24 @@
 # Changelog
 
+## [1.6.0](https://github.com/yororoA/Bye.DS_Store/compare/v1.5.1...v1.6.0) (2026-10-16)
+
+
+### Features / 新功能
+
+* improve in-app updates and release automation ([#17](https://github.com/yororoA/Bye.DS_Store/issues/17)) ([eed20c7](https://github.com/yororoA/Bye.DS_Store/commit/eed20c782da8591440f003ac13c0c2c5a15cd99d))
+* **release:** generate bilingual contributor notes ([075c7e6](https://github.com/yororoA/Bye.DS_Store/commit/075c7e638c53607c83c25fdfdafd7834fd194215))
+* **update:** add automatic install and markdown notes ([f40c4bf](https://github.com/yororoA/Bye.DS_Store/commit/f40c4bf6afa6d7e01da7f3b9595b5afa34faaa50))
+
+
+### Bug Fixes / 问题修复
+
+* **menu:** present confirmations inside popover ([7256ef9](https://github.com/yororoA/Bye.DS_Store/commit/7256ef998add8558cf8ffa33632b4ad18b059e7f))
+
+
+### Documentation / 文档
+
+* describe update and release automation ([9c55740](https://github.com/yororoA/Bye.DS_Store/commit/9c557402b13ffbccc78e6a05be989862da792e91))
+
 ## [1.5.1](https://github.com/yororoA/Bye.DS_Store/compare/v1.5.0...v1.5.1) (2026-10-15)
 
 
