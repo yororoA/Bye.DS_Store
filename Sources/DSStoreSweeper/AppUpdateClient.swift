@@ -2,7 +2,7 @@ import CryptoKit
 import Foundation
 import SweeperCore
 
-struct AppUpdateRelease: Equatable, Sendable {
+struct AppUpdateRelease: Equatable, Identifiable, Sendable {
     let version: SemanticVersion
     let tagName: String
     let releaseURL: URL
@@ -11,6 +11,10 @@ struct AppUpdateRelease: Equatable, Sendable {
     let releaseNotes: String?
     let fileSize: Int64?
     let sha256: String?
+
+    var id: String {
+        tagName
+    }
 }
 
 enum AppUpdateState: Equatable {

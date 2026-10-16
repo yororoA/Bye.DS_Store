@@ -26,6 +26,7 @@ final class AppSettings: ObservableObject {
         static let diskScanScope = "diskScanScope"
         static let language = "language"
         static let automaticUpdatesEnabled = "automaticUpdatesEnabled"
+        static let automaticallyInstallUpdates = "automaticallyInstallUpdates"
     }
 
     @Published var isMonitoringEnabled: Bool {
@@ -77,6 +78,15 @@ final class AppSettings: ObservableObject {
         }
     }
 
+    @Published var automaticallyInstallUpdates: Bool {
+        didSet {
+            defaults.set(
+                automaticallyInstallUpdates,
+                forKey: Key.automaticallyInstallUpdates
+            )
+        }
+    }
+
     private let defaults: UserDefaults
 
     init(defaults: UserDefaults = .standard) {
@@ -121,6 +131,10 @@ final class AppSettings: ObservableObject {
         } else {
             automaticUpdatesEnabled = defaults.bool(forKey: Key.automaticUpdatesEnabled)
         }
+
+        automaticallyInstallUpdates = defaults.bool(
+            forKey: Key.automaticallyInstallUpdates
+        )
         AppStrings.preferredLanguage = language
     }
 

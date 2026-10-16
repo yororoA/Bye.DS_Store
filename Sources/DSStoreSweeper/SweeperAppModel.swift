@@ -209,6 +209,9 @@ final class SweeperAppModel: ObservableObject {
                 let installerURL = try await self.updateClient.download(release)
                 self.downloadedInstallerURL = installerURL
                 self.updateState = .readyToInstall(release)
+                if self.settings.automaticallyInstallUpdates {
+                    self.openDownloadedInstaller()
+                }
             } catch is CancellationError {
                 return
             } catch {
