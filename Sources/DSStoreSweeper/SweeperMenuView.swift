@@ -3,37 +3,48 @@ import SwiftUI
 import SweeperCore
 
 struct SweeperMenuView: View {
+    private enum Confirmation {
+        case fullDiskScan
+        case updateInstallation
+    }
+
     @ObservedObject var model: SweeperAppModel
     @ObservedObject private var settings: AppSettings
     private let onOpenSettings: () -> Void
-    private let onRequestFullDiskScan: () -> Void
-    private let onRequestUpdateInstallation: () -> Void
+    @State private var confirmation: Confirmation?
 
     init(
         model: SweeperAppModel,
-        onOpenSettings: @escaping () -> Void = {},
-        onRequestFullDiskScan: @escaping () -> Void = {},
-        onRequestUpdateInstallation: @escaping () -> Void = {}
+        onOpenSettings: @escaping () -> Void = {}
     ) {
         self.model = model
         settings = model.settings
         self.onOpenSettings = onOpenSettings
-        self.onRequestFullDiskScan = onRequestFullDiskScan
-        self.onRequestUpdateInstallation = onRequestUpdateInstallation
     }
 
     var body: some View {
-        VStack(spacing: 0) {
-            header
-            Divider()
-            status
-            Divider()
-            folderList
-            updateNotice
-            Divider()
-            footer
+        ZStack {
+            VStack(spacing: 0) {
+                header
+                Divider()
+                status
+                Divider()
+                folderList
+                updateNotice
+                Divider()
+                footer
+            }
+
+            if let confirmation {
+                confirmationOverlay(for: confirmation)
+                    .transition(.opacity)
+            }
         }
         .frame(width: 360)
+        .animation(.easeInOut(duration: 0.16), value: confirmation)
+        .onDisappear {
+            confirmation = nil
+        }
     }
 
     private var header: some View {
@@ -193,7 +204,7 @@ struct SweeperMenuView: View {
                 if model.isFullDiskScanRunning {
                     model.cancelFullDiskScan()
                 } else {
-                    onRequestFullDiskScan()
+                    confirmation = .fullDiskScan
                 }
             } label: {
                 Image(systemName: model.isFullDiskScanRunning ? "stop.fill" : "magnifyingglass")
@@ -263,7 +274,7 @@ struct SweeperMenuView: View {
             .buttonStyle(.plain)
         case .readyToInstall(let release):
             Button {
-                onRequestUpdateInstallation()
+                confirmation = .updateInstallation
             } label: {
                 HStack(spacing: 8) {
                     Image(systemName: "checkmark.circle.fill")
@@ -299,6 +310,127 @@ struct SweeperMenuView: View {
             .padding(.vertical, 9)
         default:
             EmptyView()
+        }
+    }
+
+    private func confirmationOverlay(
+        for confirmation: Confirmation
+    ) -> some View {
+        ZStack {
+            Color.black.opacity(0.14)
+                .contentShape(Rectangle())
+
+            VStack(alignment: .leading, spacing: 14) {
+                Text(confirmationTitle(for: confirmation))
+                    .font(.headline)
+
+                Text(confirmationMessage(for: confirmation))
+                    .font(.callout)
+                    .foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+
+                HStack(spacing: 10) {
+                    Button(
+                        AppStrings.text(
+                            "取消",
+                            "Cancel",
+                            language: settings.language
+                        )
+                    ) {
+                        self.confirmation = nil
+                    }
+                    .keyboardShortcut(.cancelAction)
+
+                    Spacer()
+
+                    Button(
+                        confirmationActionTitle(for: confirmation),
+                        role: .destructive
+                    ) {
+                        performConfirmationAction(confirmation)
+                    }
+                    .keyboardShortcut(.defaultAction)
+                    .buttonStyle(.borderedProminent)
+                }
+            }
+            .padding(20)
+            .frame(width: 300)
+            .background(.regularMaterial)
+            .clipShape(RoundedRectangle(cornerRadius: 8))
+            .overlay {
+                RoundedRectangle(cornerRadius: 8)
+                    .stroke(.separator.opacity(0.8), lineWidth: 1)
+            }
+            .shadow(color: .black.opacity(0.16), radius: 16, y: 6)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+
+    private func confirmationTitle(
+        for confirmation: Confirmation
+    ) -> String {
+        switch confirmation {
+        case .fullDiskScan:
+            return AppStrings.text(
+                "扫描整个启动磁盘？",
+                "Scan the startup disk?",
+                language: settings.language
+            )
+        case .updateInstallation:
+            return AppStrings.text(
+                "安装此更新？",
+                "Install this update?",
+                language: settings.language
+            )
+        }
+    }
+
+    private func confirmationMessage(
+        for confirmation: Confirmation
+    ) -> String {
+        switch confirmation {
+        case .fullDiskScan:
+            return AppStrings.text(
+                "将递归扫描启动磁盘中的 .DS_Store 并直接删除。扫描可能耗时较长。",
+                "This recursively scans and permanently deletes .DS_Store files on the startup disk. It may take a while.",
+                language: settings.language
+            )
+        case .updateInstallation:
+            return AppStrings.text(
+                "Bye.DS_Store 将替换当前应用并重新启动。",
+                "Bye.DS_Store will replace the current application and restart.",
+                language: settings.language
+            )
+        }
+    }
+
+    private func confirmationActionTitle(
+        for confirmation: Confirmation
+    ) -> String {
+        switch confirmation {
+        case .fullDiskScan:
+            return AppStrings.text(
+                "扫描并清理",
+                "Scan and clean",
+                language: settings.language
+            )
+        case .updateInstallation:
+            return AppStrings.text(
+                "安装并重新启动",
+                "Install and restart",
+                language: settings.language
+            )
+        }
+    }
+
+    private func performConfirmationAction(_ confirmation: Confirmation) {
+        self.confirmation = nil
+
+        switch confirmation {
+        case .fullDiskScan:
+            model.startFullDiskScan()
+        case .updateInstallation:
+            model.openDownloadedInstaller()
         }
     }
 
