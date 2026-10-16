@@ -17,13 +17,25 @@ let package = Package(
             targets: ["DSStoreSweeper"]
         )
     ],
+    dependencies: [
+        .package(
+            url: "https://github.com/gonzalezreal/swift-markdown-ui",
+            from: "2.4.1"
+        )
+    ],
     targets: [
         .target(
             name: "SweeperCore"
         ),
         .executableTarget(
             name: "DSStoreSweeper",
-            dependencies: ["SweeperCore"]
+            dependencies: [
+                "SweeperCore",
+                .product(
+                    name: "MarkdownUI",
+                    package: "swift-markdown-ui"
+                )
+            ]
         ),
         .testTarget(
             name: "SweeperCoreTests",

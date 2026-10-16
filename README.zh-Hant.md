@@ -57,7 +57,7 @@
 | 排除規則 | 以 `node_modules` 或 `lib/packages` 等名稱/路徑排除資料夾 |
 | 安全邊界 | 掃描前確認、掃描中可停止、掃描後檢視失敗路徑 |
 | 選單列體驗 | 不佔用 Dock，支援 `⌘⌥B` 全域快速鍵 |
-| 自動更新 | 預設每天檢查新版本，可在設定中關閉或手動檢查 |
+| 自動更新 | 預設每天檢查，並在應用程式內顯示更新說明；可手動安裝或啟用下載後自動安裝 |
 | 多語言 | 自動偵測系統，也可固定為簡體中文、繁體中文、English、日本語、Deutsch 或 Русский |
 
 ## 為什麼預設包含父資料夾？
@@ -152,6 +152,8 @@ git push origin vX.Y.Z
 ```
 
 工作流程會執行測試、建置 Universal 2 macOS 應用程式、產生 zip/DMG 與 SHA-256 校驗檔；設定 Apple Developer secrets 後，還會執行 Developer ID 簽署和 notarization。
+
+GitHub Release 標題與內容會自動產生中英雙語版本，每項 PR 變更會在對應條目後標註 `@contributor`；Git tag 保持標準的 `vX.Y.Z` 版本格式。
 
 Release 說明放在：
 

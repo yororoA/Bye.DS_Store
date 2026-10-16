@@ -336,6 +336,18 @@ enum AppStrings {
             .german: "Automatisch nach Updates suchen",
             .russian: "Автоматически проверять обновления"
         ],
+        "Install updates automatically after download": [
+            .traditionalChinese: "下載完成後自動安裝",
+            .japanese: "ダウンロード後に自動インストール",
+            .german: "Updates nach dem Download automatisch installieren",
+            .russian: "Автоматически устанавливать после загрузки"
+        ],
+        "When enabled, a verified download replaces the current app and restarts it automatically.": [
+            .traditionalChinese: "啟用後，下載內容通過校驗便會自動替換目前的應用程式並重新啟動。",
+            .japanese: "有効にすると、検証済みのダウンロードで現在のアプリを自動的に置き換えて再起動します。",
+            .german: "Nach erfolgreicher Prüfung ersetzt der Download automatisch die aktuelle App und startet sie neu.",
+            .russian: "После проверки загрузка автоматически заменит текущее приложение и перезапустит его."
+        ],
         "Check for updates": [
             .traditionalChinese: "檢查更新",
             .japanese: "アップデートを確認",
@@ -432,11 +444,23 @@ enum AppStrings {
             .german: "Versionshinweise",
             .russian: "Примечания к выпуску"
         ],
-        "View full release notes": [
-            .traditionalChinese: "查看完整版本說明",
-            .japanese: "完全なリリースノートを表示",
-            .german: "Vollständige Versionshinweise anzeigen",
-            .russian: "Открыть полные примечания"
+        "View release notes": [
+            .traditionalChinese: "查看更新說明",
+            .japanese: "リリースノートを表示",
+            .german: "Versionshinweise anzeigen",
+            .russian: "Показать примечания к выпуску"
+        ],
+        "Open release on GitHub": [
+            .traditionalChinese: "在 GitHub 開啟 Release",
+            .japanese: "GitHub で Release を開く",
+            .german: "Release auf GitHub öffnen",
+            .russian: "Открыть Release на GitHub"
+        ],
+        "No release notes are available for this version.": [
+            .traditionalChinese: "此版本沒有可用的更新說明。",
+            .japanese: "このバージョンのリリースノートはありません。",
+            .german: "Für diese Version sind keine Versionshinweise verfügbar.",
+            .russian: "Для этой версии нет примечаний к выпуску."
         ],
         "SHA-256 checksum provided": [
             .traditionalChinese: "已提供 SHA-256 校驗值",
@@ -744,6 +768,20 @@ enum AppStrings {
         text("自动检查更新", "Automatically check for updates")
     }
 
+    static var automaticallyInstallUpdates: String {
+        text(
+            "下载完成后自动安装",
+            "Install updates automatically after download"
+        )
+    }
+
+    static var automaticInstallationDescription: String {
+        text(
+            "启用后，下载内容通过校验便会自动替换当前应用并重新启动。",
+            "When enabled, a verified download replaces the current app and restarts it automatically."
+        )
+    }
+
     static var checkForUpdates: String {
         text("检查更新", "Check for updates")
     }
@@ -811,8 +849,19 @@ enum AppStrings {
         text("版本说明", "Release notes")
     }
 
-    static var viewFullReleaseNotes: String {
-        text("查看完整版本说明", "View full release notes")
+    static var viewReleaseNotes: String {
+        text("查看更新说明", "View release notes")
+    }
+
+    static var openReleaseOnGitHub: String {
+        text("在 GitHub 打开 Release", "Open release on GitHub")
+    }
+
+    static var noReleaseNotes: String {
+        text(
+            "此版本没有可用的更新说明。",
+            "No release notes are available for this version."
+        )
     }
 
     static var checksumProvided: String {

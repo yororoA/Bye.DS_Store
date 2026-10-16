@@ -138,10 +138,23 @@ jobs:
           xcrun stapler validate "$DMG_PATH"
           shasum -a 256 "$DMG_PATH" > "${DMG_PATH}.sha256"
 
+      - name: Generate bilingual release notes
+        id: release_notes
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RELEASE_TAG: ${{ inputs.release_tag || github.ref_name }}
+        run: |
+          set -euo pipefail
+
+          notes_path="$RUNNER_TEMP/release-notes.md"
+          ./scripts/generate-release-notes.sh "$RELEASE_TAG" "$notes_path"
+          echo "path=$notes_path" >> "$GITHUB_OUTPUT"
+
       - name: Create or update GitHub Release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           RELEASE_TAG: ${{ inputs.release_tag || github.ref_name }}
+          RELEASE_NOTES_PATH: ${{ steps.release_notes.outputs.path }}
           ARCHIVE_PATH: ${{ steps.package.outputs.archive }}
           ARCHIVE_CHECKSUM_PATH: ${{ steps.package.outputs.archive_checksum }}
           DMG_PATH: ${{ steps.package.outputs.dmg }}
@@ -149,21 +162,11 @@ jobs:
         run: |
           set -euo pipefail
 
-          notes_file=".github/release-notes/${RELEASE_TAG}.md"
-
-          if [[ -f "$notes_file" ]]; then
-            notes_args=(--notes-file "$notes_file")
-          else
-            notes_args=(--generate-notes)
-          fi
-
           if gh release view "$RELEASE_TAG" >/dev/null 2>&1; then
-            if [[ -f "$notes_file" ]]; then
-              gh release edit \
-                "$RELEASE_TAG" \
-                --title "Bye.DS_Store $RELEASE_TAG" \
-                --notes-file "$notes_file"
-            fi
+            gh release edit \
+              "$RELEASE_TAG" \
+              --title "Bye.DS_Store $RELEASE_TAG · 更新说明 / Release Notes" \
+              --notes-file "$RELEASE_NOTES_PATH"
 
             gh release upload \
               "$RELEASE_TAG" \
@@ -180,8 +183,8 @@ jobs:
               "$DMG_PATH" \
               "$DMG_CHECKSUM_PATH" \
               --verify-tag \
-              "${notes_args[@]}" \
-              --title "Bye.DS_Store $RELEASE_TAG"
+              --notes-file "$RELEASE_NOTES_PATH" \
+              --title "Bye.DS_Store $RELEASE_TAG · 更新说明 / Release Notes"
           fi
 
       - name: Refresh GitHub Pages

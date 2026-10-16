@@ -57,7 +57,7 @@
 | Ausschlüsse | Ordner nach Namen oder Pfad ausschließen, etwa `node_modules` oder `lib/packages` |
 | Sicherheitsgrenzen | Vorher bestätigen, währenddessen stoppen und fehlgeschlagene Pfade danach prüfen |
 | Menüleisten-App | Kein Dock-Symbol, globaler Kurzbefehl `⌘⌥B` |
-| Automatische Updates | Prüft standardmäßig täglich nach einem neuen Release; in den Einstellungen abschaltbar oder manuell startbar |
+| Automatische Updates | Prüft täglich, zeigt Versionshinweise in der App und unterstützt manuelle oder optionale automatische Installation nach dem Download |
 | Sprachen | Systemerkennung oder 简体中文, 繁體中文, English, 日本語, Deutsch und Русский |
 
 ## Warum den Elternordner einbeziehen?
@@ -152,6 +152,8 @@ git push origin vX.Y.Z
 ```
 
 Der Workflow führt Tests aus, baut eine Universal-2-macOS-App, erstellt zip/DMG und SHA-256-Prüfsummen und verwendet Developer-ID-Signierung sowie Notarisierung, wenn Apple-Developer-Secrets hinterlegt sind.
+
+Titel und Hinweise des GitHub Release werden automatisch auf Chinesisch und Englisch erstellt. Jeder PR-Eintrag nennt den zugehörigen `@contributor`; Git-Tags behalten das Standardformat `vX.Y.Z`.
 
 Release-Beschreibungen liegen unter:
 

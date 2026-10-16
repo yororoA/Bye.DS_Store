@@ -1,4 +1,5 @@
 import Foundation
+import MarkdownUI
 import SwiftUI
 import SweeperCore
 
@@ -11,6 +12,7 @@ struct SettingsView: View {
     @State private var isShowingFullDiskScanDetails = false
     @State private var isShowingClearExclusionsConfirmation = false
     @State private var isShowingUpdateInstallConfirmation = false
+    @State private var releaseNotesRelease: AppUpdateRelease?
 
     init(model: SweeperAppModel) {
         self.model = model
@@ -260,6 +262,16 @@ struct SettingsView: View {
                     .foregroundStyle(.secondary)
                     .fixedSize(horizontal: false, vertical: true)
 
+                Toggle(
+                    AppStrings.automaticallyInstallUpdates,
+                    isOn: $settings.automaticallyInstallUpdates
+                )
+
+                Text(AppStrings.automaticInstallationDescription)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+
                 LabeledContent(
                     AppStrings.currentVersion,
                     value: model.currentAppVersion
@@ -344,6 +356,9 @@ struct SettingsView: View {
             if let report = model.fullDiskScanReport {
                 FullDiskScanDetailView(report: report)
             }
+        }
+        .sheet(item: $releaseNotesRelease) { release in
+            UpdateReleaseNotesView(release: release)
         }
     }
 
@@ -474,18 +489,13 @@ struct SettingsView: View {
                 .foregroundStyle(checksumVerified ? .green : .secondary)
             }
 
-            if let releaseNotes = release.releaseNotes {
-                Text(AppStrings.releaseNotes)
-                    .font(.caption.weight(.semibold))
-                Text(releaseNotes)
-                    .font(.caption2)
-                    .foregroundStyle(.secondary)
-                    .lineLimit(5)
-                    .textSelection(.enabled)
+            Button {
+                releaseNotesRelease = release
+            } label: {
+                Label(AppStrings.viewReleaseNotes, systemImage: "doc.text")
             }
-
-            Link(AppStrings.viewFullReleaseNotes, destination: release.releaseURL)
-                .font(.caption)
+            .buttonStyle(.borderless)
+            .font(.caption)
         }
         .padding(.vertical, 2)
     }
@@ -516,6 +526,86 @@ struct SettingsView: View {
                     .lineLimit(2)
             }
         }
+    }
+}
+
+private struct UpdateReleaseNotesView: View {
+    let release: AppUpdateRelease
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            HStack(alignment: .firstTextBaseline) {
+                VStack(alignment: .leading, spacing: 3) {
+                    Text(AppStrings.releaseNotes)
+                        .font(.title3.weight(.semibold))
+                    Text(release.tagName)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+
+                Spacer()
+
+                Button {
+                    dismiss()
+                } label: {
+                    Image(systemName: "xmark")
+                        .frame(width: 22, height: 22)
+                }
+                .buttonStyle(.borderless)
+                .help(AppStrings.text("完成", "Done"))
+                .accessibilityLabel(AppStrings.text("完成", "Done"))
+            }
+
+            if let publishedAt = release.publishedAt {
+                Label(
+                    publishedAt.formatted(date: .long, time: .omitted),
+                    systemImage: "calendar"
+                )
+                .font(.caption)
+                .foregroundStyle(.secondary)
+            }
+
+            Divider()
+
+            ScrollView {
+                if let releaseNotes = release.releaseNotes {
+                    Markdown(releaseNotes)
+                        .markdownTheme(.gitHub)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .textSelection(.enabled)
+                } else {
+                    Label(
+                        AppStrings.noReleaseNotes,
+                        systemImage: "doc.text"
+                    )
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .foregroundStyle(.secondary)
+                }
+            }
+
+            Divider()
+
+            HStack {
+                Link(
+                    destination: release.releaseURL
+                ) {
+                    Label(
+                        AppStrings.openReleaseOnGitHub,
+                        systemImage: "arrow.up.right.square"
+                    )
+                }
+
+                Spacer()
+
+                Button(AppStrings.text("完成", "Done")) {
+                    dismiss()
+                }
+                .keyboardShortcut(.defaultAction)
+            }
+        }
+        .padding(20)
+        .frame(width: 620, height: 520)
     }
 }
 

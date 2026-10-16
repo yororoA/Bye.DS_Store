@@ -57,7 +57,7 @@
 | 排除规则 | 用 `node_modules` 或 `lib/packages` 等名称/路径排除目录 |
 | 安全边界 | 扫描前确认、扫描中可停止、扫描后查看失败路径 |
 | 菜单栏体验 | 不占用 Dock，支持 `⌘⌥B` 全局快捷键 |
-| 自动更新 | 默认每天检查一次新版本，可在设置中关闭或手动检查 |
+| 自动更新 | 默认每天检查，应用内查看更新说明；可手动安装或启用下载后自动安装 |
 | 多语言 | 系统自动识别，也可固定为简体中文、繁體中文、English、日本語、Deutsch 或 Русский |
 
 ## 为什么默认包含父文件夹？
@@ -152,6 +152,8 @@ git push origin vX.Y.Z
 ```
 
 工作流会运行测试、构建 Universal 2 macOS 应用、生成 zip/DMG 及 SHA-256 校验文件，并在配置 Apple Developer secrets 时执行 Developer ID 签名和 notarization。
+
+GitHub Release 标题与正文会自动生成中英双语内容，每项 PR 变更会在对应条目后标注 `@contributor`；Git tag 保持标准的 `vX.Y.Z` 版本格式。
 
 对应版本的 Release 说明放在：
 
