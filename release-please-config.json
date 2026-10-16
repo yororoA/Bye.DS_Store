@@ -5,10 +5,33 @@
       "changelog-path": "CHANGELOG.md"
     }
   },
+  "changelog-sections": [
+    {
+      "type": "feat",
+      "section": "Features / 新功能"
+    },
+    {
+      "type": "fix",
+      "section": "Bug Fixes / 问题修复"
+    },
+    {
+      "type": "perf",
+      "section": "Performance Improvements / 性能优化"
+    },
+    {
+      "type": "docs",
+      "section": "Documentation / 文档"
+    },
+    {
+      "type": "revert",
+      "section": "Reverts / 回退"
+    }
+  ],
+  "include-commit-authors": true,
   "include-v-in-tag": true,
   "include-component-in-tag": false,
   "pull-request-title-pattern": "chore: release ${version}",
-  "pull-request-header": "This PR is managed by Release Please. Merge it to publish the next release.",
+  "pull-request-header": "This PR is managed by Release Please. Merge it to publish the next release.\n\n此 PR 由 Release Please 自动管理，合并后将发布下一版本。",
   "bump-minor-pre-major": true,
   "bump-patch-for-minor-pre-major": true
 }
